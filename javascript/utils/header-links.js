@@ -24,7 +24,7 @@ export default {
         { title: 'Transfer', url: `/d/${auth.dbName}/shipment/edit-new/transfer`, icon: 'icon arrow-right' },
         { title: 'Transfer Out', url: `/d/${auth.dbName}/shipment/edit-new/transfer-out`, icon: 'icon arrow-up' }
       ],
-      database: auth.roles.map(role => { return { title: role, url: `/d/${role}/`, icon: 'icon focus' } })
+      database: auth.prettyRoles.map(db => { return { title: db.name, url: `/d/${db.dbName}/`, icon: 'icon focus' } })
     }
     if (isLocal) {
       subLinks.admin.push(
@@ -49,21 +49,19 @@ export default {
       leftLinks.push({
         section: 'admin',
         icon: 'gear',
-        linkName: `Admin ${server}`,
-        containerclasses: 'text-left'
+        linkName: `Admin ${server}`
       })
     } else {
-      leftLinks.push([{
+      leftLinks.push({
         section: 'database',
         icon: 'focus',
-        linkName: (auth.dbName ? auth.currentLocation : 'Select Location') + server,
-        containerclasses: 'text-center'
-      }])
+        linkName: (auth.dbName ? auth.currentLocation : 'Select Location') + server
+      })
       if (auth.dbName) {
         rightLinks.unshift(
           { linkName: 'View', icon: 'menu', section: 'view' },
           { section: 'create', icon: 'plus', linkName: 'Create' },
-          { linkName: 'Search', icon: 'search', section: 'search', containerclasses: 'text-left' }
+          { linkName: 'Search', icon: 'search', section: 'search' }
         )
       }
     }

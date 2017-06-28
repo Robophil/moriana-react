@@ -22,7 +22,7 @@ const LoginPage = class extends React.Component {
             <div className='form-group'>
               <label className="col-lg-2 control-label">Username</label>
               <div className="col-sm-9 input-group">
-                <input className="form-control" type="text" ref='username' />
+                <input className="form-control" type="text" ref='username' autoFocus />
                 <p className="help-block error hide-lite">Username required</p>
               </div>
             </div>

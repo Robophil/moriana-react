@@ -1,12 +1,15 @@
 // actions and reducer for auth
 import client from 'client'
 import h from 'helpers'
+import config from 'config'
+import db from 'db'
 
 export const REQUEST_USER = 'REQUEST_USER'
 export const RECEIVED_USER = 'RECEIVED_USER'
 export const FAILED_USER = 'FAILED_USER'
 export const SUCCESS_LOGIN = 'SUCCESS_LOGIN'
 export const FAILURE_LOGIN = 'FAILURE_LOGIN'
+export const CHANGE_LOCATION = 'CHANGE_LOCATION'
 
 export const getUser = () => {
   return dispatch => {
@@ -39,12 +42,22 @@ export const login = (name, password) => {
 
 export const logout = () => {
   return dispatch => {
-    return client.post('logout')
+    return client.destroy('_session')
       .then(response => {
         window.location = '/login'
       })
   }
 }
+
+// export const changeLocation = (location) => {
+//   const urlSplit = window.location.pathname.split('d')
+//   if (urlSplit.length > 1 ) {
+//
+//   }
+//   return dispatch => {
+//     dispatch({ type: CHANGE_LOCATION, location })
+//   }
+// }
 
 const defaultAuth = {
   loading: false,
@@ -53,10 +66,11 @@ const defaultAuth = {
   authError: false,
   name: null,
   roles: [],
+  prettyRoles: [],
   isAdmin: false,
   getUserFailed: false,
   currentLocation: '',
-  currentDb: null
+  dbName: null
 }
 
 export default (state = defaultAuth, action) => {
@@ -65,20 +79,33 @@ export default (state = defaultAuth, action) => {
       return { ...defaultAuth, loading: true }
     }
     case RECEIVED_USER: {
-      const {userCtx} = action
-      return { ...state, ...userCtx, authenticated: true, isAdmin: userCtx.roles.indexOf('_admin') !== -1 }
+      return { ...state, ...parseUser(action.userCtx), authenticated: true }
     }
     case FAILED_USER: {
       return { ...defaultAuth, getUserFailed: true }
     }
     case SUCCESS_LOGIN: {
-      return { ...state, ...action.response, authenticated: true, loading: false, authError: false }
+      return { ...state, ...parseUser(action.response), authenticated: true, loading: false, authError: false }
     }
     case FAILURE_LOGIN: {
       return { ...state, authenticated: false, loading: false, authError: true }
     }
+    case CHANGE_LOCATION: {
+      console.log(action.location)
+      return { ...state, currentLocation: action.location }
+    }
     default: {
       return state
     }
+  }
+}
+
+function parseUser(response) {
+  return {
+    ...response,
+    isAdmin: response.roles.indexOf('_admin') !== -1,
+    prettyRoles: response.roles.sort().map(role => {
+      return { name: db.getNamefromDBName(role, config.deploymentName), dbName: role }
+    })
   }
 }

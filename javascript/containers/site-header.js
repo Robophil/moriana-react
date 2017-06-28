@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
-import { getUser, logout } from 'auth'
+import { getUser, logout, changeLocation } from 'auth'
 import ClickOutHandler from 'react-onclickout'
 import Logo from 'logo'
 import hl from 'header-links'
@@ -16,20 +16,29 @@ const SiteHeader = class extends React.Component {
   showSection = (e) => {
     let {section} = e.target.dataset
     section = (this.state.openSection === section) ? null : section
-    this.setState({ openSection:  section })
+    this.setState({ openSection:  section, sectionPosition: e.target.dataset.position })
+  }
+
+  linkClicked = (e) => {
+    if (e.target.pathname === '/logout') {
+      e.preventDefault()
+      this.props.logout()
+    }
+    this.hideLink()
   }
 
   hideLink = () => { this.setState({ openSection: false }) }
 
   render () {
+    this.props.changeLocation(this.props.dbName)
     const links =  hl.getLinks(this.props, config.isLocal)
     const subsections = hl.getSublinks(this.props, config.isLocal)
-    const {openSection} = this.state
+    const {openSection, sectionPosition} = this.state
     let subsection = openSection ? (
       <div className={`toggle-content toggle-content-${openSection}`}>
-        <div className="text-right">
+        <div className={`text-${sectionPosition}`}>
         {subsections[openSection].map((link, i) => (
-          <Link key={i} to={link.url} className="btn btn-default btn-lg some-margin">
+          <Link key={i} to={link.url} className="btn btn-default btn-lg some-margin" onClick={this.linkClicked}>
             <i className={`${link.icon} small`}></i> &nbsp; {link.title}
           </Link>
         ))}
@@ -49,7 +58,7 @@ const SiteHeader = class extends React.Component {
                 <ul className="nav navbar-nav left-links">
                   {links.leftLinks.map((link, i) => (
                     <li onClick={this.showSection} key={i}>
-                      <a href="#" data-section={link.section} className="toggle-link">
+                      <a href={null} data-section={link.section} className="toggle-link"  data-position='left'>
                         <i className={`${link.icon} icon`}></i> {link.linkName}
                       </a>
                     </li>
@@ -58,8 +67,10 @@ const SiteHeader = class extends React.Component {
               </div>
               <ul className="nav navbar-nav navbar-right">
                 {links.rightLinks.map((link, i) => (
-                  <li onClick={this.showSection} key={i}><a href="#" data-section={link.section} className="toggle-link">
-                    <i className={`${link.icon} icon`}></i> {link.linkName}</a>
+                  <li onClick={this.showSection} key={i}>
+                    <a href={null} data-section={link.section} className="toggle-link" data-position='right'>
+                      <i className={`${link.icon} icon`}></i> {link.linkName}
+                    </a>
                   </li>
                 ))}
                 <li></li>
@@ -76,5 +87,5 @@ const SiteHeader = class extends React.Component {
 
 export default connect(
   state => state.auth,
-  { getUser, logout }
+  { getUser, logout, changeLocation }
 )(SiteHeader)
