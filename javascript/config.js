@@ -1,7 +1,20 @@
-// says are we dev, prod, what are our urls, etc
-
-export default {
-
-  backendUrl: 'http://localhost:5984/'
-
+const config = {
+  backendUrl: '/',
+  deploymentName: 'moriana',
+  startDate: '2013-07-01',
+  isLocal: (window.location.href.indexOf('localhost') !== -1 || window.location.href.indexOf('127.0.0.1') !== -1)
 }
+
+if (window.location.href.indexOf('localhost:9000') !== -1) {
+  setupDevelopment()
+}
+
+function setupDevelopment() {
+  config.deploymentDomainCount = 1
+  config.backendUrl = 'http://localhost:5984/'
+  // show tests in console at all times
+  // config.testsView = new TestsView()
+  // config.testsView.logTestsCount()
+}
+
+export default config

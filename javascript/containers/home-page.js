@@ -20,8 +20,7 @@ const HomePage = class extends React.Component {
       <div className='home-page'>
         {this.props.loading ? (
           <div className='loading-indicator'>
-            <div className='loader' />
-            <p>Loading datasources...</p>
+            {/* <div className='loader' /> */}
           </div>
         ) : (
           <div>

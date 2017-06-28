@@ -4,19 +4,40 @@ import { Link, Redirect } from 'react-router-dom'
 import { getUser, logout } from 'auth'
 import ClickOutHandler from 'react-onclickout'
 import Logo from 'logo'
-import headerLinks from 'header-links'
+import hl from 'header-links'
+import config from 'config'
 
 const SiteHeader = class extends React.Component {
-  state = { showAccountDrawer: false }
+  state = { openSection: null }
 
   componentDidMount = this.props.getUser
   clickLogout = this.props.logout
-  toggleAccountDrawer = () => { this.setState({ showAccountDrawer: !this.state.showAccountDrawer }) }
-  hideDrawer = () => { this.setState({ showAccountDrawer: false }) }
+
+  showSection = (e) => {
+    let {section} = e.target.dataset
+    section = (this.state.openSection === section) ? null : section
+    this.setState({ openSection:  section })
+  }
+
+  hideLink = () => { this.setState({ openSection: false }) }
 
   render () {
+    const links =  hl.getLinks(this.props, config.isLocal)
+    const subsections = hl.getSublinks(this.props, config.isLocal)
+    const {openSection} = this.state
+    let subsection = openSection ? (
+      <div className={`toggle-content toggle-content-${openSection}`}>
+        <div className="text-right">
+        {subsections[openSection].map((link, i) => (
+          <Link key={i} to={link.url} className="btn btn-default btn-lg some-margin">
+            <i className={`${link.icon} small`}></i> &nbsp; {link.title}
+          </Link>
+        ))}
+        </div>
+      </div>
+    ) : ''
     return (
-      <ClickOutHandler onClickOut={this.hideDrawer}>
+      <ClickOutHandler onClickOut={this.hideLink}>
         <div className='header'>
           {this.props.getUserFailed && (<Redirect to='/login' />)}
           <nav className="navbar navbar-default no-print">
@@ -26,34 +47,26 @@ const SiteHeader = class extends React.Component {
                   <Logo />
                 </Link>
                 <ul className="nav navbar-nav left-links">
-                  {/* {{#each leftLinks}}
-                  <li><a href="#" data-section="{{section}}" className="toggle-link">
-                    <i className="{{icon}} icon"></i> {{linkName}}</a>
-                  </li>
-                  {{/each}} */}
+                  {links.leftLinks.map((link, i) => (
+                    <li onClick={this.showSection} key={i}>
+                      <a href="#" data-section={link.section} className="toggle-link">
+                        <i className={`${link.icon} icon`}></i> {link.linkName}
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <ul className="nav navbar-nav navbar-right">
-                {/* {{#each links}}
-                <li><a href="#" data-section="{{section}}" className="toggle-link">
-                  <i className="{{icon}} icon"></i> {{linkName}}</a>
-                </li>
-                {{/each}} */}
+                {links.rightLinks.map((link, i) => (
+                  <li onClick={this.showSection} key={i}><a href="#" data-section={link.section} className="toggle-link">
+                    <i className={`${link.icon} icon`}></i> {link.linkName}</a>
+                  </li>
+                ))}
                 <li></li>
               </ul>
             </div>
           </nav>
-          {/* {{#each allLinks}}
-          <div data-section="{{section}}" className="toggle-content toggle-content-{{section}} hidden">
-            <div className="{{#unless containerclasses}}text-right{{/unless}} {{containerclasses}}">
-              {{#each subLinks}}
-              <a href="{{url}}" className="btn btn-default btn-lg some-margin hide-on-click">
-                <i className="{{icon}} small"></i> &nbsp; {{title}}
-              </a>
-              {{/each}}
-            </div>
-          </div>
-          {{/each}} */}
+          {subsection}
           <hr />
         </div>
       </ClickOutHandler>

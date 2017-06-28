@@ -53,7 +53,10 @@ const defaultAuth = {
   authError: false,
   name: null,
   roles: [],
-  getUserFailed: false
+  isAdmin: false,
+  getUserFailed: false,
+  currentLocation: '',
+  currentDb: null
 }
 
 export default (state = defaultAuth, action) => {
@@ -62,7 +65,8 @@ export default (state = defaultAuth, action) => {
       return { ...defaultAuth, loading: true }
     }
     case RECEIVED_USER: {
-      return { ...state, ...userCtx, authenticated: true }
+      const {userCtx} = action
+      return { ...state, ...userCtx, authenticated: true, isAdmin: userCtx.roles.indexOf('_admin') !== -1 }
     }
     case FAILED_USER: {
       return { ...defaultAuth, getUserFailed: true }
