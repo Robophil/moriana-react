@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
-import { getUser, logout, changeLocation } from 'auth'
+import { getUser, logout } from 'auth'
+import { checkLocationChange } from 'locations'
 import ClickOutHandler from 'react-onclickout'
 import Logo from 'logo'
 import hl from 'header-links'
@@ -10,7 +11,12 @@ import config from 'config'
 const SiteHeader = class extends React.Component {
   state = { openSection: null }
 
-  componentDidMount = this.props.getUser
+  componentDidMount = () => {
+    this.props.getUser()
+    window.addEventListener('hashchange', (event) => {
+      this.props.checkLocationChange(event.newURL)
+    })
+  }
   clickLogout = this.props.logout
 
   showSection = (e) => {
@@ -23,6 +29,8 @@ const SiteHeader = class extends React.Component {
     if (e.target.pathname === '/logout') {
       e.preventDefault()
       this.props.logout()
+    } else {
+      this.props.checkLocationChange(e.currentTarget.href)
     }
     this.hideLink()
   }
@@ -30,9 +38,9 @@ const SiteHeader = class extends React.Component {
   hideLink = () => { this.setState({ openSection: false }) }
 
   render () {
-    this.props.changeLocation(this.props.dbName)
-    const links =  hl.getLinks(this.props, config.isLocal)
-    const subsections = hl.getSublinks(this.props, config.isLocal)
+    const { auth, locations } = this.props
+    const links =  hl.getLinks(auth, config.isLocal, locations.currentLocation)
+    const subsections = hl.getSublinks(auth.prettyRoles, config.isLocal, locations.currentLocationDbName)
     const {openSection, sectionPosition} = this.state
     let subsection = openSection ? (
       <div className={`toggle-content toggle-content-${openSection}`}>
@@ -48,7 +56,7 @@ const SiteHeader = class extends React.Component {
     return (
       <ClickOutHandler onClickOut={this.hideLink}>
         <div className='header'>
-          {this.props.getUserFailed && (<Redirect to='/login' />)}
+          {auth.getUserFailed && (<Redirect to='/login' />)}
           <nav className="navbar navbar-default no-print">
             <div className="container-fluid">
               <div className="navbar-header">
@@ -86,6 +94,8 @@ const SiteHeader = class extends React.Component {
 }
 
 export default connect(
-  state => state.auth,
-  { getUser, logout, changeLocation }
+  state => {
+    return { auth: state.auth, locations: state.locations }
+  },
+  { getUser, logout, checkLocationChange }
 )(SiteHeader)

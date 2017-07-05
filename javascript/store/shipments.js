@@ -1,5 +1,6 @@
 // actions and reducer for admin
 import client from 'client'
+import CHANGE_LOCATION from 'locations'
 
 export const REQUEST_SHIPMENTS = 'REQUEST_SHIPMENTS'
 export const RECEIVED_SHIPMENTS = 'RECEIVED_SHIPMENTS'

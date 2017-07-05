@@ -49,6 +49,16 @@ export default {
     } else {
       return list[0]
     }
+  },
+
+  capitalize (name) {
+    if (!name || typeof(name) !== 'string') return name
+    const words = name.split(' ').map(word => {
+      const letters = word.split('')
+      letters[0] = letters[0].toUpperCase()
+      return letters.join('')
+    })
+    return words.join(' ')
   }
 
 }

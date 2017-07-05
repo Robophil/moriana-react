@@ -1,6 +1,6 @@
 export default {
 
-  getSublinks(auth, isLocal) {
+  getSublinks(prettyRoles, isLocal, dbName) {
     const subLinks = {
       account: [
         { title: 'Account', url: '/account', icon: 'icon profile' },
@@ -15,16 +15,16 @@ export default {
         { title: 'Delete Doc', url: '/admin/delete-doc/' }
       ],
       view: [
-        { title: 'Shipments', url: `/d/${auth.dbName}/`, icon: 'icon mail-solid' },
-        { title: 'Current Stock', url: `/d/${auth.dbName}/stock/`, icon: 'icon menu' },
-        { title: 'Reports', url: `/d/${auth.dbName}/reports/`, icon: 'icono-barChart' }
+        { title: 'Shipments', url: `/d/${dbName}/`, icon: 'icon mail-solid' },
+        { title: 'Current Stock', url: `/d/${dbName}/stock/`, icon: 'icon menu' },
+        { title: 'Reports', url: `/d/${dbName}/reports/`, icon: 'icono-barChart' }
       ],
       create: [
-        { title: 'Receive', url: `/d/${auth.dbName}/shipment/edit-new/receive`, icon: 'icon arrow-down' },
-        { title: 'Transfer', url: `/d/${auth.dbName}/shipment/edit-new/transfer`, icon: 'icon arrow-right' },
-        { title: 'Transfer Out', url: `/d/${auth.dbName}/shipment/edit-new/transfer-out`, icon: 'icon arrow-up' }
+        { title: 'Receive', url: `/d/${dbName}/shipment/edit-new/receive`, icon: 'icon arrow-down' },
+        { title: 'Transfer', url: `/d/${dbName}/shipment/edit-new/transfer`, icon: 'icon arrow-right' },
+        { title: 'Transfer Out', url: `/d/${dbName}/shipment/edit-new/transfer-out`, icon: 'icon arrow-up' }
       ],
-      database: auth.prettyRoles.map(db => { return { title: db.name, url: `/d/${db.dbName}/`, icon: 'icon focus' } })
+      database: prettyRoles.map(db => { return { title: db.name, url: `/d/${db.dbName}/`, icon: 'icon focus' } })
     }
     if (isLocal) {
       subLinks.admin.push(
@@ -32,15 +32,15 @@ export default {
         { title: 'Offline Setup', url: '/admin/offline-setup/' }
       )
     }
-    if (auth.dbName && auth.currentLocation.toLowerCase().indexOf('dispensary') !== -1) {
+    if (dbName && dbName.toLowerCase().indexOf('dispensary') !== -1) {
       subLinks.create.push({
-        title: 'Dispense', url: `/d/${auth.dbName}/shipment/edit-new/dispense`, icon: 'icon arrow-right'
+        title: 'Dispense', url: `/d/${dbName}/shipment/edit-new/dispense`, icon: 'icon arrow-right'
       })
     }
     return subLinks
   },
 
-  getLinks(auth, isLocal) {
+  getLinks(auth, isLocal, currentLocationName) {
     if (!auth.name) return { leftLinks: [], rightLinks: [] }
     const server = isLocal ? ' [local]' : ' [online]'
     const leftLinks = []
@@ -55,9 +55,9 @@ export default {
       leftLinks.push({
         section: 'database',
         icon: 'focus',
-        linkName: (auth.dbName ? auth.currentLocation : 'Select Location') + server
+        linkName: (currentLocationName ? currentLocationName : 'Select Location') + server
       })
-      if (auth.dbName) {
+      if (currentLocationName) {
         rightLinks.unshift(
           { linkName: 'View', icon: 'menu', section: 'view' },
           { section: 'create', icon: 'plus', linkName: 'Create' },

@@ -9,7 +9,6 @@ export const RECEIVED_USER = 'RECEIVED_USER'
 export const FAILED_USER = 'FAILED_USER'
 export const SUCCESS_LOGIN = 'SUCCESS_LOGIN'
 export const FAILURE_LOGIN = 'FAILURE_LOGIN'
-export const CHANGE_LOCATION = 'CHANGE_LOCATION'
 
 export const getUser = () => {
   return dispatch => {
@@ -49,16 +48,6 @@ export const logout = () => {
   }
 }
 
-// export const changeLocation = (location) => {
-//   const urlSplit = window.location.pathname.split('d')
-//   if (urlSplit.length > 1 ) {
-//
-//   }
-//   return dispatch => {
-//     dispatch({ type: CHANGE_LOCATION, location })
-//   }
-// }
-
 const defaultAuth = {
   loading: false,
   apiError: false,
@@ -69,7 +58,6 @@ const defaultAuth = {
   prettyRoles: [],
   isAdmin: false,
   getUserFailed: false,
-  currentLocation: '',
   dbName: null
 }
 
@@ -89,10 +77,6 @@ export default (state = defaultAuth, action) => {
     }
     case FAILURE_LOGIN: {
       return { ...state, authenticated: false, loading: false, authError: true }
-    }
-    case CHANGE_LOCATION: {
-      console.log(action.location)
-      return { ...state, currentLocation: action.location }
     }
     default: {
       return state

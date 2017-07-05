@@ -7,12 +7,13 @@ import thunkMiddleware from 'redux-thunk'
 
 import auth from 'auth'
 import shipments from 'shipments'
+import locations from 'locations'
 // import inqueries from 'inqueries'
 // import preprocessing from 'preprocessing'
 import admin from 'admin'
 
 export default createStore(
-  combineReducers({ auth, admin, shipments }),
+  combineReducers({ auth, admin, shipments, locations }),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   applyMiddleware(thunkMiddleware)
 )
