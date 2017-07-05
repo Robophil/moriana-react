@@ -40,12 +40,12 @@ export default {
     return subLinks
   },
 
-  getLinks(auth, isLocal, currentLocationName) {
-    if (!auth.name) return { leftLinks: [], rightLinks: [] }
+  getLinks(user, isLocal, currentLocationName) {
+    if (!user.name) return { leftLinks: [], rightLinks: [] }
     const server = isLocal ? ' [local]' : ' [online]'
     const leftLinks = []
-    const rightLinks = [{ section: 'account', icon: 'profile', linkName: auth.name }]
-    if (auth.isAdmin) {
+    const rightLinks = [{ section: 'account', icon: 'profile', linkName: user.name }]
+    if (user.isAdmin) {
       leftLinks.push({
         section: 'admin',
         icon: 'gear',

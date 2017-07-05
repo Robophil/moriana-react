@@ -1,4 +1,4 @@
-// actions and reducer for auth
+// actions and reducer for user
 import client from 'client'
 import h from 'helpers'
 import config from 'config'

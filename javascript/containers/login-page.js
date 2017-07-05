@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
-import { login } from 'auth'
+import { login } from 'user'
 
 const LoginPage = class extends React.Component {
   state = {}
@@ -47,6 +47,6 @@ const LoginPage = class extends React.Component {
 }
 
 export default connect(
-  state => state.auth,
+  state => state.user,
   { login }
 )(LoginPage)
