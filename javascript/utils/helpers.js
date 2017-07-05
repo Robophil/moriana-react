@@ -5,6 +5,11 @@ export default {
     return Moment(date).fromNow()
   },
 
+  formatDate (date) {
+    // awful: http://stackoverflow.com/questions/7556591/javascript-date-object-always-one-day-off
+    return Moment(new Date(date.replace(/-/g, '\/').replace(/T.+/, ''))).format('LL')
+  },
+
   soronos (number) {
     return (number === 1) ? '' : 's'
   },

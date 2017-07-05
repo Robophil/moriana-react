@@ -4,10 +4,23 @@ import fetch from 'isomorphic-fetch'
 import config from 'config'
 
 export default {
-  get (url) {
-    return fetch(config.backendUrl + url, { credentials: 'include' })
+  get (url, params) {
+    return fetch(config.backendUrl + url, { credentials: 'include', body: params })
     .then(parseJSON)
     .catch(parseError)
+  },
+
+  getDesignDoc(dbName, designDocName) {
+    const searchParams = getParams({
+      reduce: false,
+      limit: 10,
+      descending: true
+    })
+    return this.get(`${dbName}/_design/${designDocName}/_view/${designDocName}?${searchParams}`)
+  },
+
+  getDoc(dbName, id) {
+    return this.get(`${dbName}/${id}`)
   },
 
   destroy (url) {
@@ -49,4 +62,8 @@ function parseError (error) {
     statusText: error.message,
     body: { error: error.message }
   }
+}
+
+function getParams (data) {
+  return Object.keys(data).map(key => [key, data[key]].map(encodeURIComponent).join("=")).join("&")
 }

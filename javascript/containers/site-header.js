@@ -26,7 +26,7 @@ const SiteHeader = class extends React.Component {
   }
 
   linkClicked = (e) => {
-    if (e.target.pathname === '/logout') {
+    if (e.currentTarget.href.indexOf('logout') !== -1) {
       e.preventDefault()
       this.props.logout()
     }
@@ -38,7 +38,7 @@ const SiteHeader = class extends React.Component {
   render () {
     const { user, locations } = this.props
     const links =  hl.getLinks(user, config.isLocal, locations.currentLocation)
-    const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, locations.currentLocationDbName)
+    const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, locations.dbName)
     const {openSection, sectionPosition} = this.state
     let subsection = openSection ? (
       <div className={`toggle-content toggle-content-${openSection}`}>

@@ -25,9 +25,9 @@ export const getLocations = () => {
 
 export const checkLocationChange = (path) => {
   return (dispatch, getState) => {
-    const { currentLocationDbName } =  getState().locations
-    const {name, dbName} = getCurrentLocation(path)
-    if (dbName !== currentLocationDbName) {
+    const currentDbName =  getState().locations.dbName
+    const { name, dbName } = getCurrentLocation(path)
+    if (dbName !== currentDbName) {
       dispatch({ type: CHANGE_LOCATION, name, dbName })
     }
   }
@@ -41,13 +41,13 @@ const defaultLocations = {
   locations: [],
   extensions: [],
   currentLocation: currentLocation.name,
-  currentLocationDbName: currentLocation.dbName
+  dbName: currentLocation.dbName
 }
 
 export default (state = defaultLocations, action) => {
   switch (action.type) {
     case CHANGE_LOCATION: {
-      return { ...state, currentLocation: action.name, currentLocationDbName: action.dbName }
+      return { ...state, currentLocation: action.name, dbName: action.dbName }
     }
     case REQUEST_LOCATIONS: {
       return { ...defaultLocations, loading: true }

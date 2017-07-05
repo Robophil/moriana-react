@@ -1,5 +1,11 @@
 var path = require('path');
 var webpack = require('webpack');
+// const ExtractTextPlugin = require("extract-text-webpack-plugin");
+//
+// const extractLess = new ExtractTextPlugin({
+//     filename: "styles.css",
+//     disable: process.env.NODE_ENV === "development"
+// });
 
 module.exports = {
   entry: './javascript/app.js',
@@ -39,7 +45,19 @@ module.exports = {
           { loader: "css-loader", options: { sourceMap: true } },
           { loader: "less-loader", options: { sourceMap: true } }
         ]
-      }
+      },
+      // {
+      //   test: /\.less$/,
+      //   use: extractLess.extract({
+      //       use: [{
+      //           loader: "css-loader"
+      //       }, {
+      //           loader: "less-loader"
+      //       }],
+      //       // use style-loader in development
+      //       fallback: "style-loader"
+      //   })
+      // }
     ]
   },
   devServer: {
@@ -50,6 +68,7 @@ module.exports = {
    port: 9000
  },
  plugins: [
-   new webpack.HotModuleReplacementPlugin()
+   new webpack.HotModuleReplacementPlugin(),
+  //  extractLess
  ]
 };
