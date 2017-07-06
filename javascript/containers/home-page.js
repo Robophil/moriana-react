@@ -2,13 +2,23 @@ import React from 'react'
 import { connect } from 'react-redux'
 import {getShipments} from 'shipments'
 import ShipmentsTable from 'shipments-table'
+import Pagination from 'pagination'
+import { withRouter } from 'react-router'
 
 const HomePage = class extends React.Component {
+  limit =  500
   componentDidMount = () => {
-    this.props.getShipments(this.props.match.params.dbName)
+    const {dbName, offset} = this.props.match.params
+    this.props.getShipments(dbName, offset, this.limit)
+  }
+
+  fetchShipments = (offset) => {
+    const { dbName } = this.props.match.params
+    this.props.getShipments(dbName, offset, this.limit)
   }
 
   render () {
+    let { dbName, offset } = this.props.match.params
     return (
       <div className='home-page'>
         {this.props.loading ? (
@@ -22,16 +32,14 @@ const HomePage = class extends React.Component {
             </h5>
             <button className='download-button btn btn-default btn-md pull-right'>Download</button>
 
-            <div className='pull-right pagination'>
-              <div className='pagination'>
-                <ul className='pagination pagination-sm'>
-                  <li className='disabled previous'><a href='javascript:void(0)'>«</a></li>
-                  <li><a className='darker trigger-page' data-offset='0' href='https://lesotho.pih-emr.org:8999/#d/moriana_test_warehouse/0'>1 - 25 of 25</a></li>
-                  <li className='disabled next'><a href='javascript:void(0)'>»</a></li>
-                </ul>
-              </div>
-            </div>
-            <ShipmentsTable dbName={this.props.match.params.dbName} shipments={this.props.rows} />
+            <Pagination
+              offset={offset}
+              count={this.props.shipmentsCount}
+              dbName={dbName}
+              limit={this.limit}
+              onClick={this.fetchShipments}
+              displayedCount={this.props.rows.length} />
+            <ShipmentsTable dbName={dbName} shipments={this.props.rows} />
           </div>
         )}
       </div>
@@ -39,7 +47,7 @@ const HomePage = class extends React.Component {
   }
 }
 
-export default connect(
+export default withRouter(connect(
   state => state.shipments,
   { getShipments }
-)(HomePage)
+)(HomePage))

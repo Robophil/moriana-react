@@ -6,6 +6,7 @@ export default {
   },
 
   formatDate (date) {
+    if (!date) return date
     // awful: http://stackoverflow.com/questions/7556591/javascript-date-object-always-one-day-off
     return Moment(new Date(date.replace(/-/g, '\/').replace(/T.+/, ''))).format('LL')
   },

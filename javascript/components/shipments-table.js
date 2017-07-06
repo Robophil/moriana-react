@@ -1,6 +1,6 @@
 import React from 'react'
 import h from 'helpers'
-import { Link } from 'react-router-dom'
+import ShipmentLink from 'shipment-link'
 
 export default class extends React.Component {
   render () {
@@ -22,12 +22,12 @@ export default class extends React.Component {
         <tbody>
           {this.props.shipments.map((row, i) => (
             <tr key={i}>
-              <td className='date'>{h.formatDate(row.date)}<small>({h.dateFromNow(row.date)})</small></td>
+              <td className='date'>{h.formatDate(row.date)} <small> ({h.dateFromNow(row.date)})</small></td>
               <td className='text-capitalize'>{row.from}</td>
               <td className='text-capitalize'>{row.to}</td>
               <td>{row.totalTransactions}</td>
               <td>{h.num(row.value)}</td>
-              <td><Link to={`/d/${this.props.dbName}/shipment/${row.id}`}>view</Link></td>
+              <td><ShipmentLink id={row.id} dbName={this.props.dbName} >view</ShipmentLink></td>
               <td>
               </td>
               <td><small>{h.dateFromNow(row.updated)}</small></td>

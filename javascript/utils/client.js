@@ -10,11 +10,12 @@ export default {
     .catch(parseError)
   },
 
-  getDesignDoc(dbName, designDocName) {
+  getDesignDoc(dbName, designDocName, options = {}) {
     const searchParams = getParams({
       reduce: false,
       limit: 10,
-      descending: true
+      descending: true,
+      ...options
     })
     return this.get(`${dbName}/_design/${designDocName}/_view/${designDocName}?${searchParams}`)
   },

@@ -22,7 +22,7 @@ ReactDOM.render(
         <div className='container'>
           {/* <Route exact path='/' component={HomePage} /> */}
           <Route path='/login' component={LoginPage} />
-          <Route exact path='/d/:dbName' component={HomePage} />
+          <Route exact path='/d/:dbName/:offset?' component={HomePage} />
           <Route exact path='/d/:dbName/shipment/:id' component={ShipmentPage} />
         </div>
         {/* <Route path='/admin/users' component={AdminPage} /> */}

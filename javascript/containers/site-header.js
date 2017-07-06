@@ -37,8 +37,10 @@ const SiteHeader = class extends React.Component {
 
   render () {
     const { user, locations } = this.props
+    const {dbName} = locations
+    const headerLink = dbName ? `/d/${dbName}/` : '/'
     const links =  hl.getLinks(user, config.isLocal, locations.currentLocation)
-    const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, locations.dbName)
+    const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, dbName)
     const {openSection, sectionPosition} = this.state
     let subsection = openSection ? (
       <div className={`toggle-content toggle-content-${openSection}`}>
@@ -58,7 +60,7 @@ const SiteHeader = class extends React.Component {
           <nav className="navbar navbar-default no-print">
             <div className="container-fluid">
               <div className="navbar-header">
-                <Link to='/' className="navbar-brand show-drop-nav location-link">
+                <Link to={headerLink} className="navbar-brand show-drop-nav location-link">
                   <Logo />
                 </Link>
                 <ul className="nav navbar-nav left-links">
