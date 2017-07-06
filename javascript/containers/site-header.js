@@ -1,8 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Link, Redirect } from 'react-router-dom'
 import { getUser, logout } from 'user'
-import { checkLocationChange } from 'locations'
 import ClickOutHandler from 'react-onclickout'
 import Logo from 'logo'
 import hl from 'header-links'
@@ -11,12 +9,7 @@ import config from 'config'
 const SiteHeader = class extends React.Component {
   state = { openSection: null }
 
-  componentDidMount = () => {
-    this.props.getUser()
-    window.addEventListener('hashchange', (event) => {
-      this.props.checkLocationChange(event.newURL)
-    })
-  }
+  componentDidMount = this.props.getUser
   clickLogout = this.props.logout
 
   showSection = (e) => {
@@ -36,19 +29,22 @@ const SiteHeader = class extends React.Component {
   hideLink = () => { this.setState({ openSection: false }) }
 
   render () {
-    const { user, locations } = this.props
-    const {dbName} = locations
-    const headerLink = dbName ? `/d/${dbName}/` : '/'
-    const links =  hl.getLinks(user, config.isLocal, locations.currentLocation)
+    const { user, route } = this.props
+    if (user.getUserFailed) {
+      window.history.replaceState({}, null, '/#/login')
+    }
+    const { dbName, currentLocationName } = route
+    const headerLink = dbName ? `/#d/${dbName}/` : '/'
+    const links =  hl.getLinks(user, config.isLocal, currentLocationName)
     const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, dbName)
     const {openSection, sectionPosition} = this.state
     let subsection = openSection ? (
       <div className={`toggle-content toggle-content-${openSection}`}>
         <div className={`text-${sectionPosition}`}>
         {subsections[openSection].map((link, i) => (
-          <Link key={i} to={link.url} className="btn btn-default btn-lg some-margin" onClick={this.linkClicked}>
+          <a key={i} href={link.url} className="btn btn-default btn-lg some-margin" onClick={this.linkClicked}>
             <i className={`${link.icon} small`}></i> &nbsp; {link.title}
-          </Link>
+          </a>
         ))}
         </div>
       </div>
@@ -56,13 +52,13 @@ const SiteHeader = class extends React.Component {
     return (
       <ClickOutHandler onClickOut={this.hideLink}>
         <div className='header'>
-          {user.getUserFailed && (<Redirect to='/login' />)}
+          {/* {user.getUserFailed && (<Redirect to='/login' />)} */}
           <nav className="navbar navbar-default no-print">
             <div className="container-fluid">
               <div className="navbar-header">
-                <Link to={headerLink} className="navbar-brand show-drop-nav location-link">
+                <a href={headerLink} className="navbar-brand show-drop-nav location-link">
                   <Logo />
-                </Link>
+                </a>
                 <ul className="nav navbar-nav left-links">
                   {links.leftLinks.map((link, i) => (
                     <li onClick={this.showSection} key={i}>
@@ -95,7 +91,7 @@ const SiteHeader = class extends React.Component {
 
 export default connect(
   state => {
-    return { user: state.user, locations: state.locations }
+    return { user: state.user }
   },
-  { getUser, logout, checkLocationChange }
+  { getUser, logout }
 )(SiteHeader)

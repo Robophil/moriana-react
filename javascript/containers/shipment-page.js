@@ -6,13 +6,14 @@ import ShipmentLink from 'shipment-link'
 
 const ShipmentPage = class extends React.Component {
   componentDidMount = () => {
-    const { id, dbName } = this.props.match.params
+    const { dbName, params } = this.props.route
+    const { id } = params
     this.props.getShipment(dbName, id)
   }
 
   render () {
     const ship = this.props.currentShipment || { transactions: [] }
-    const { dbName } = this.props.match.params
+    const { dbName } = this.props.route
     return (
       <div className='shipment-page'>
         {this.props.loading ? (

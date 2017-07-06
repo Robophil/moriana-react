@@ -1,7 +1,7 @@
-import helpers from 'helpers'
+import config from 'config'
 
 export default {
-  getNamefromDBName (input, deploymentName) {
+  getNamefromDBName (input, deploymentName = config.deploymentName) {
     if (!input || input.indexOf(deploymentName) === -1) return input
     let name = ''
     const inputWithoutPrefix = this.removeDeploymentPrefix(input, deploymentName)
@@ -14,7 +14,7 @@ export default {
       })
       name = name.join('')
     }
-    return helpers.capitalize(name)
+    return name
   },
 
   removeDeploymentPrefix (input, deploymentName) {

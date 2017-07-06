@@ -1,6 +1,5 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Link, Redirect } from 'react-router-dom'
 import { login } from 'user'
 
 const LoginPage = class extends React.Component {
@@ -12,7 +11,10 @@ const LoginPage = class extends React.Component {
   }
 
   render () {
-    if (this.props.authenticated) return (<Redirect to='/' />)
+    // if (this.props.authenticated) return (<Redirect to='/' />)
+    if (this.props.authenticated) {
+      window.history.replaceState({}, null, '/#/')
+    }
     return (
       <div className="login">
         <h5 className="text-capitalize header">Login</h5>

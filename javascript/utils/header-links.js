@@ -15,16 +15,16 @@ export default {
         { title: 'Delete Doc', url: '/admin/delete-doc/' }
       ],
       view: [
-        { title: 'Shipments', url: `/d/${dbName}/`, icon: 'icon mail-solid' },
-        { title: 'Current Stock', url: `/d/${dbName}/stock/`, icon: 'icon menu' },
-        { title: 'Reports', url: `/d/${dbName}/reports/`, icon: 'icono-barChart' }
+        { title: 'Shipments', url: `#d/${dbName}/`, icon: 'icon mail-solid' },
+        { title: 'Current Stock', url: `#d/${dbName}/stock/`, icon: 'icon menu' },
+        { title: 'Reports', url: `#d/${dbName}/reports/`, icon: 'icono-barChart' }
       ],
       create: [
-        { title: 'Receive', url: `/d/${dbName}/shipment/edit-new/receive`, icon: 'icon arrow-down' },
-        { title: 'Transfer', url: `/d/${dbName}/shipment/edit-new/transfer`, icon: 'icon arrow-right' },
-        { title: 'Transfer Out', url: `/d/${dbName}/shipment/edit-new/transfer-out`, icon: 'icon arrow-up' }
+        { title: 'Receive', url: `#d/${dbName}/shipment/edit-new/receive`, icon: 'icon arrow-down' },
+        { title: 'Transfer', url: `#d/${dbName}/shipment/edit-new/transfer`, icon: 'icon arrow-right' },
+        { title: 'Transfer Out', url: `#d/${dbName}/shipment/edit-new/transfer-out`, icon: 'icon arrow-up' }
       ],
-      database: prettyRoles.map(db => { return { title: db.name, url: `/d/${db.dbName}/`, icon: 'icon focus' } })
+      database: prettyRoles.map(db => { return { title: db.name, url: `#d/${db.dbName}/`, icon: 'icon focus' } })
     }
     if (isLocal) {
       subLinks.admin.push(
@@ -34,7 +34,7 @@ export default {
     }
     if (dbName && dbName.toLowerCase().indexOf('dispensary') !== -1) {
       subLinks.create.push({
-        title: 'Dispense', url: `/d/${dbName}/shipment/edit-new/dispense`, icon: 'icon arrow-right'
+        title: 'Dispense', url: `#d/${dbName}/shipment/edit-new/dispense`, icon: 'icon arrow-right'
       })
     }
     return subLinks

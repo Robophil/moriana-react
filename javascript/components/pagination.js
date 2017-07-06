@@ -1,11 +1,7 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import h from 'helpers'
 
 export default class extends React.Component {
-  clicked = () => {
-    
-  }
   render () {
     const { count, dbName, displayedCount, limit } = this.props
     let offset = Number(this.props.offset)
@@ -18,19 +14,19 @@ export default class extends React.Component {
         <div className='pagination'>
           <ul className='pagination pagination-sm'>
             <li className={offset ? '' : 'disabled'}>
-              <Link onClick={this.} className='darker trigger-page' to={`/d/${dbName}/${previousNumber}`}>
+              <a className='darker trigger-page' href={`/#d/${dbName}/${previousNumber}`}>
                 «
-              </Link>
+              </a>
             </li>
             <li>
-              <Link className='darker trigger-page' to={`/d/${dbName}/`}>
+              <a className='darker trigger-page' href={`/#d/${dbName}/`}>
                 {h.num(startingNumber)} - {h.num(offset + displayedCount)} of {h.num(count)}
-              </Link>
+              </a>
             </li>
             <li className={nextNumber ? '' : 'disabled'}>
-              <Link className='darker trigger-page' to={`/d/${dbName}/${nextNumber}`}>
+              <a className='darker trigger-page' href={`/#d/${dbName}/${nextNumber}`}>
                 »
-              </Link>
+              </a>
             </li>
           </ul>
         </div>
