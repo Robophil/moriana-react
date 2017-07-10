@@ -13,7 +13,6 @@ export default {
   getDesignDoc(dbName, designDocName, options = {}) {
     const searchParams = getParams({
       reduce: false,
-      limit: 10,
       descending: true,
       ...options
     })

@@ -65,6 +65,17 @@ export default {
       return letters.join('')
     })
     return words.join(' ')
+  },
+
+  expiration (exp) {
+    if (!exp) return '';
+    const momentDate = Moment(exp)
+    if (momentDate.isValid()) {
+      momentDate.add('15', 'days')
+      return momentDate.format('MM/YYYY')
+    } else {
+      return ''
+    }
   }
 
 }

@@ -43,7 +43,7 @@ export const logout = () => {
   return dispatch => {
     return client.destroy('_session')
       .then(response => {
-        window.location = '/#/login'
+        window.location.href = '/'
       })
   }
 }

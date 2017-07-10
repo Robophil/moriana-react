@@ -9,7 +9,13 @@ import config from 'config'
 const SiteHeader = class extends React.Component {
   state = { openSection: null }
 
-  componentDidMount = this.props.getUser
+  componentDidMount = () => {
+    this.props.getUser()
+    const { dbName, path } = this.props.route
+    if (!dbName && path === '/') {
+      this.setState({ openSection: 'database' })
+    }
+  }
   clickLogout = this.props.logout
 
   showSection = (e) => {

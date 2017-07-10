@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { getShipment } from 'shipments'
 import h from 'helpers'
 import ShipmentLink from 'shipment-link'
+import StockcardLink from 'stockcard-link'
 
 const ShipmentPage = class extends React.Component {
   componentDidMount = () => {
@@ -20,11 +21,11 @@ const ShipmentPage = class extends React.Component {
           <div className='loader'></div>
         ) : (
           <div>
-            <h5 className="text-capitalize">
-              <i className="icon mail-solid"></i>{ship.prettyType}: {ship.from} to {ship.to}
+            <h5 className='text-capitalize'>
+              <i className='icon mail-solid'></i>{ship.prettyType}: {ship.from} to {ship.to}
             </h5>
             <hr />
-            <div className="shipment-details">
+            <div className='shipment-details'>
               <strong>{h.formatDate(ship.date)}</strong> ({h.dateFromNow(ship.date)})
               <strong> {ship.totalTransactions}</strong> transactions
               total value <strong>{h.num(ship.totalValue)} </strong>
@@ -36,7 +37,7 @@ const ShipmentPage = class extends React.Component {
                 | <ShipmentLink type='print' id={`${ship._id}/reversed`} dbName={dbName} > print reversed </ShipmentLink>
             </div>
             <hr />
-            <table className="table table-striped table-hover">
+            <table className='table table-striped table-hover'>
               <thead>
                 <tr>
                   <th>Item</th>
@@ -52,7 +53,11 @@ const ShipmentPage = class extends React.Component {
               <tbody>
                 {ship.transactions.map((t, i) => (
                   <tr key={i}>
-                    <td><a href="#d/moriana_central_warehouse/stockcard/MEDICAL%20SUPPLIES/Gauze%20swabs%20100*100*8ply%20100/">{t.item}</a></td>
+                    <td>
+                      <StockcardLink dbName={dbName} category={t.category} item={t.item}>
+                        {t.item}
+                      </StockcardLink>
+                    </td>
                     <td>{t.category}</td>
                     <td>{t.lotNum}</td>
                     <td>{t.expiration}</td>

@@ -9,7 +9,7 @@ const HomePage = class extends React.Component {
   componentDidMount = () => {
     const { dbName, params } = this.props.route
     const {offset} = params
-    this.props.getShipments(dbName, offset, this.limit)
+    if (dbName) this.props.getShipments(dbName, offset, this.limit)
   }
 
   render () {
@@ -18,25 +18,30 @@ const HomePage = class extends React.Component {
     return (
       <div className='home-page'>
         {this.props.loading ? (
-          <div className='loader'>
-          </div>
-        ) : (
+          <div className='loader' />
+        ) :
+        dbName ? (
           <div className='shipments'>
-            <h5 className='title'>
-              <i className='icon mail-solid'></i>
-              Shipments: <span className='text-capitalize'>{currentLocationName}</span>
-            </h5>
-            <button className='download-button btn btn-default btn-md pull-right'>Download</button>
 
-            <Pagination
-              offset={offset}
-              count={this.props.shipmentsCount}
-              dbName={dbName}
-              limit={this.limit}
-              displayedCount={this.props.rows.length} />
-            <ShipmentsTable dbName={dbName} shipments={this.props.rows} />
-          </div>
-        )}
+           <h5 className='title'>
+             <i className='icon mail-solid'></i>
+             Shipments: <span className='text-capitalize'>{currentLocationName}</span>
+           </h5>
+
+           <button className='download-button btn btn-default btn-md pull-right'>Download</button>
+
+           <Pagination
+             offset={offset}
+             count={this.props.shipmentsCount}
+             dbName={dbName}
+             limit={this.limit}
+             displayedCount={this.props.rows.length} />
+
+           <ShipmentsTable dbName={dbName} shipments={this.props.rows} />
+
+         </div>
+       ) : (<div />)
+      }
       </div>
     )
   }

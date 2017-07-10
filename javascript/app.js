@@ -13,6 +13,7 @@ import SiteFooter from 'site-footer'
 import HomePage from 'home-page'
 import LoginPage from 'login-page'
 import ShipmentPage from 'shipment-page'
+import StockCardPage from 'stockcard-page'
 
 require('./styles/app.less')
 
@@ -23,6 +24,7 @@ const PAGES = {
   '/': { component: HomePage, params: ['offset'] },
   'login': { component: LoginPage, params: [] },
   'shipment': { component: ShipmentPage, params: ['id'] },
+  'stockcard': { component: StockCardPage, params: ['category', 'item'] },
   // '/login': HomePage,
 }
 
