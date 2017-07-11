@@ -17,6 +17,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "bootstrap": "^3.3.7",
     "bootswatch": "^3.3.7",
+    "chai": "^4.0.2",
     "css-loader": "^0.28.0",
     "extract-text-webpack-plugin": "^2.1.2",
     "isomorphic-fetch": "^2.2.1",

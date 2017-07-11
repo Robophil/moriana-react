@@ -1,3 +1,5 @@
+import runTests from 'run-tests'
+
 const config = {
   backendUrl: '/',
   deploymentName: 'moriana',
@@ -13,8 +15,7 @@ function setupDevelopment() {
   config.deploymentDomainCount = 1
   config.backendUrl = 'http://localhost:5984/'
   // show tests in console at all times
-  // config.testsView = new TestsView()
-  // config.testsView.logTestsCount()
+  runTests()
 }
 
 export default config

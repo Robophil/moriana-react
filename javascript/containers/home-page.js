@@ -4,7 +4,7 @@ import {getShipments} from 'shipments'
 import ShipmentsTable from 'shipments-table'
 import Pagination from 'pagination'
 
-const HomePage = class extends React.Component {
+export class HomePage extends React.Component {
   limit =  500
   componentDidMount = () => {
     const { dbName, params } = this.props.route

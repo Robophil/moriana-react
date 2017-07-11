@@ -58,7 +58,7 @@ function parseResponse (body) {
   }
 }
 
-function getBatches (transactions, batchLevel = true, inputBatches = {}) {
+export function getBatches (transactions, batchLevel = true, inputBatches = {}) {
   const batchesHash = batchReduce(inputBatches, transactions, batchLevel)
   const batches = Object.keys(batchesHash).map((key) => {
     return Object.assign(makeTransactionFromBatchKey(key), batchesHash[key])
@@ -116,8 +116,8 @@ function makeTransactionFromBatchKey(batchKey) {
 }
 
 function sortByFEFO (inputBatches) {
-  return inputBatches.sort((a, b) => a.expiration > b.expiration)
-  .sort((a, b) => a.item.toLowerCase() > b.item.toLowerCase())
+  return inputBatches.sort((a, b) => a.item.toLowerCase() > b.item.toLowerCase())
+  .sort((a, b) => a.expiration > b.expiration)
 }
 
 function getCategories (items) {

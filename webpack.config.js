@@ -22,6 +22,7 @@ module.exports = {
       path.resolve(__dirname, 'javascript', 'containers'),
       path.resolve(__dirname, 'javascript', 'store'),
       path.resolve(__dirname, 'javascript', 'utils'),
+      path.resolve(__dirname, 'javascript', 'tests'),
       path.resolve(__dirname, 'node_modules')
     ]
   },

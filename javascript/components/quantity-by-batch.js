@@ -4,7 +4,6 @@ import h from 'helpers'
 export default class extends React.Component {
   render () {
     const {batches} = this.props
-    console.log(batches)
     return (
       <div className='col-md-5 no-print'>
         <h4>Quantity by Batch</h4>
