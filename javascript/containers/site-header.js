@@ -36,9 +36,7 @@ const SiteHeader = class extends React.Component {
 
   render () {
     const { user, route } = this.props
-    if (user.getUserFailed) {
-      window.history.replaceState({}, null, '/#/login')
-    }
+    if (user.getUserFailed) window.location.hash = '#/login'
     const { dbName, currentLocationName } = route
     const headerLink = dbName ? `/#d/${dbName}/` : '/'
     const links =  hl.getLinks(user, config.isLocal, currentLocationName)

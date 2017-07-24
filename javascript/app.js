@@ -17,7 +17,7 @@ import StockCardPage from 'stockcard-page'
 
 require('./styles/app.less')
 
-// custom router inspired by https://hackernoon.com/routing-in-react-the-uncomplicated-way-b2c5ffaee997
+// custom router https://hackernoon.com/routing-in-react-the-uncomplicated-way-b2c5ffaee997
 // & https://medium.freecodecamp.org/you-might-not-need-react-router-38673620f3d
 
 const PAGES = {
