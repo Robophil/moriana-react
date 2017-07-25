@@ -83,7 +83,8 @@ export default {
       13: 'ENTER',
       27: 'ESCAPE',
       38: 'ARROW_UP',
-      40: 'ARROW_DOWN'
+      40: 'ARROW_DOWN',
+      191: 'FORWARD_SLASH'
     }
     return keys[keyCode]
   },

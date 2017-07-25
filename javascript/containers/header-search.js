@@ -71,7 +71,7 @@ const HeaderSearch = class extends React.Component {
           <div className='loader'></div>
         ) : (
           <div className='search-view-container'>
-            <h5>Search<button type='button' className='close'><span>×</span></button></h5>
+            <h5>Search<button type='button' onClick={this.props.closeClicked} className='close'><span>×</span></button></h5>
             <hr />
             <input autoFocus className='form-control' ref='query' value={query} onKeyUp={this.checkKeys} onChange={this.runSearch} />
             <div className='btn-group'>

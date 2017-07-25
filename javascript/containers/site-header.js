@@ -6,7 +6,7 @@ import Logo from 'logo'
 import hl from 'header-links'
 import config from 'config'
 import HeaderSearch from 'header-search'
-
+import h from 'helpers'
 const SiteHeader = class extends React.Component {
   state = { openSection: 'search' }
   // state = { openSection: null }
@@ -17,6 +17,11 @@ const SiteHeader = class extends React.Component {
     if (!dbName && path === '/') {
       this.setState({ openSection: 'database' })
     }
+    document.addEventListener('keyup', (event) => {
+      if (event.target.nodeName === 'BODY' && h.keyMap(event.keyCode) === 'FORWARD_SLASH') {
+        this.setState({ openSection: 'search' })
+      }
+    })
   }
   clickLogout = this.props.logout
 
