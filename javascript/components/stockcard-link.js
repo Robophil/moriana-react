@@ -6,6 +6,8 @@ export default class extends React.Component {
     const {dbName, category, item} = this.props
     return (<a
       className={this.props.className}
+      onMouseEnter={this.props.onMouseEnter}
+      data-index={this.props.dataIndex}
       onClick={this.props.onClick}
       href={h.stockCardLink(dbName, category, item)}>
       {this.props.children}

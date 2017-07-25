@@ -32,6 +32,7 @@ const HeaderSearch = class extends React.Component {
       case 'ENTER': {
         const item = this.state.results[this.state.currIndex]
         window.location.href = h.stockCardLink(this.props.dbName, item.category, item.item)
+        this.props.closeClicked()
         break
       }
       case 'ESCAPE': {
@@ -48,13 +49,17 @@ const HeaderSearch = class extends React.Component {
       }
       case 'ARROW_UP': {
         if (this.state.currIndex < 0) {
-          this.setState({ currIndex: this.state.results.length - 2 })
+          this.setState({ currIndex: this.state.results.length - 1 })
         } else {
           this.setState({ currIndex: this.state.currIndex - 1 })
         }
         break
       }
     }
+  }
+
+  setCurrIndex = (e) => {
+    this.setState({ currIndex: Number(e.target.dataset.index) })
   }
 
   render () {
@@ -82,11 +87,13 @@ const HeaderSearch = class extends React.Component {
                     key={i} dbName={dbName}
                     item={item.item}
                     onClick={this.props.closeClicked}
+                    onMouseEnter={this.setCurrIndex}
+                    dataIndex={i}
                     category={item.category}>
                     {item.item} {item.category}
                   </StockcardLink>
                 ))}
-                <a href='javascript:void(0)' data-index='0' className='list-group-item result'>
+                <a  href='javascript:void(0)' className='list-group-item result'>
                   items: {query ? `${query} found ` : ''} {results.length} of {h.num(rows.length)}
                 </a>
               </div>
