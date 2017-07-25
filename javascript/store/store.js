@@ -9,10 +9,11 @@ import user from 'user'
 import shipments from 'shipments'
 import locations from 'locations'
 import stock from 'stock'
+import items from 'items'
 import admin from 'admin'
 
 export default createStore(
-  combineReducers({ user, stock, admin, shipments, locations }),
+  combineReducers({ user, stock, admin, shipments, locations, items }),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   applyMiddleware(thunkMiddleware)
 )

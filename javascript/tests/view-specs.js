@@ -1,5 +1,5 @@
-import chai from 'chai';
-const expect = chai.expect;
+import chai from 'chai'
+const expect = chai.expect
 import testUtils from 'test-utils'
 import { HomePage } from 'home-page'
 

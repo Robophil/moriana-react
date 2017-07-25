@@ -5,9 +5,11 @@ import ClickOutHandler from 'react-onclickout'
 import Logo from 'logo'
 import hl from 'header-links'
 import config from 'config'
+import HeaderSearch from 'header-search'
 
 const SiteHeader = class extends React.Component {
-  state = { openSection: null }
+  state = { openSection: 'search' }
+  // state = { openSection: null }
 
   componentDidMount = () => {
     this.props.getUser()
@@ -53,6 +55,9 @@ const SiteHeader = class extends React.Component {
         </div>
       </div>
     ) : ''
+    if (openSection === 'search') {
+      subsection = (<HeaderSearch closeClicked={this.hideLink} dbName={dbName} currentLocationName={currentLocationName} />)
+    }
     return (
       <ClickOutHandler onClickOut={this.hideLink}>
         <div className='header'>

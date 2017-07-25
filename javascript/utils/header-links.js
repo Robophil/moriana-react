@@ -24,6 +24,7 @@ export default {
         { title: 'Transfer', url: `#d/${dbName}/shipment/edit-new/transfer`, icon: 'icon arrow-right' },
         { title: 'Transfer Out', url: `#d/${dbName}/shipment/edit-new/transfer-out`, icon: 'icon arrow-up' }
       ],
+      search: [],
       database: prettyRoles.map(db => { return { title: db.name, url: `#d/${db.dbName}/`, icon: 'icon focus' } })
     }
     if (isLocal) {

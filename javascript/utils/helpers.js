@@ -76,6 +76,20 @@ export default {
     } else {
       return ''
     }
+  },
+
+  keyMap (keyCode) {
+    const keys = {
+      13: 'ENTER',
+      27: 'ESCAPE',
+      38: 'ARROW_UP',
+      40: 'ARROW_DOWN'
+    }
+    return keys[keyCode]
+  },
+
+  stockCardLink(dbName, category, item) {
+    return `/#d/${dbName}/stockcard/${encodeURIComponent(category)}/${encodeURIComponent(item)}/`
   }
 
 }
