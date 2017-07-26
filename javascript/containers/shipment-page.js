@@ -54,7 +54,7 @@ const ShipmentPage = class extends React.Component {
                 {ship.transactions.map((t, i) => (
                   <tr key={i}>
                     <td>
-                      <StockcardLink dbName={dbName} category={t.category} item={t.item}>
+                      <StockcardLink dbName={dbName} transaction={t}>
                         {t.item}
                       </StockcardLink>
                     </td>

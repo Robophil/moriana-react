@@ -89,8 +89,14 @@ export default {
     return keys[keyCode]
   },
 
-  stockCardLink(dbName, category, item) {
-    return `/#d/${dbName}/stockcard/${encodeURIComponent(category)}/${encodeURIComponent(item)}/`
+  stockCardLink(dbName, transaction, atBatch=false) {
+    const { item, category } = transaction
+    let link = `/#d/${dbName}/stockcard/${encodeURIComponent(category)}/${encodeURIComponent(item)}/`
+    if (atBatch) {
+      let { expiration, lot } = transaction
+      link += `${expiration}__${lot}/`
+    }
+    return link
   }
 
 }

@@ -8,8 +8,7 @@ import config from 'config'
 import HeaderSearch from 'header-search'
 import h from 'helpers'
 const SiteHeader = class extends React.Component {
-  state = { openSection: 'search' }
-  // state = { openSection: null }
+  state = { openSection: null }
 
   componentDidMount = () => {
     this.props.getUser()
@@ -60,7 +59,7 @@ const SiteHeader = class extends React.Component {
         </div>
       </div>
     ) : ''
-    if (openSection === 'search') {
+    if (openSection === 'search' && dbName) {
       subsection = (<HeaderSearch closeClicked={this.hideLink} dbName={dbName} currentLocationName={currentLocationName} />)
     }
     return (

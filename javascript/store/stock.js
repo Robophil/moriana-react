@@ -3,9 +3,16 @@ import client from 'client'
 export const REQUEST_STOCK = 'REQUEST_STOCK'
 export const RECEIVED_STOCK = 'RECEIVED_STOCK'
 
-export const getStock = (dbName, currentLocationName, category, item) => {
+export const getStock = (dbName, currentLocationName, category, item, filter = null) => {
   return dispatch => {
-    dispatch({ type: REQUEST_STOCK })
+    const currentItem = { item, category, expiration: null, lot: null }
+    let atBatch = false
+    if (filter) {
+      currentItem.expiration = filter.split('__')[0]
+      currentItem.lot = filter.split('__')[1]
+      atBatch = true
+    }
+    dispatch({ type: REQUEST_STOCK, item: currentItem, atBatch })
     const key = [currentLocationName.toLowerCase(), item, category]
     const startkey = JSON.stringify([...key, {}])
     const endkey = JSON.stringify([...key])
@@ -14,7 +21,7 @@ export const getStock = (dbName, currentLocationName, category, item) => {
         const { body } = response
         dispatch({
           type: RECEIVED_STOCK,
-          response: { ...parseResponse(body) }
+          response: { ...parseResponse(body, currentItem, atBatch) }
       })
     })
   }
@@ -25,13 +32,15 @@ const defaultStock = {
   rows: [],
   apiError: null,
   totalTransactions: 0,
-  batches: []
+  batches: [],
+  currentItem: {},
+  atBatch: false
 }
 
 export default (state = defaultStock, action) => {
   switch (action.type) {
     case REQUEST_STOCK: {
-      return { ...defaultStock, loading: true }
+      return { ...defaultStock, loading: true, currentItem: action.item, atBatch: action.atBatch }
     }
     case RECEIVED_STOCK: {
       return { ...state, loading: false, ...action.response }
@@ -42,15 +51,20 @@ export default (state = defaultStock, action) => {
   }
 }
 
-function parseResponse (body) {
+function parseResponse (body, currentItem, atBatch) {
   const headers = ['from', 'item', 'category', 'expiration',
    'lot', 'unitPrice', 'date', '_id', 'from', 'to', 'username']
-  const rows = body.rows.map(row => {
+  let rows = body.rows.map(row => {
     headers.map((header, i) => row[header] = row.key[i])
     row.quantity = row.value
+    row.totalValue = Math.abs(row.quantity * row.unitPrice)
     return row
   })
-  const totalTransactions = body.rows.length
+  if (atBatch) {
+    rows = rows.filter(row => row.expiration === currentItem.expiration && row.lot === currentItem.lot)
+  }
+  rows = addResultingQuantities(rows)
+  const totalTransactions = rows.length
   return {
     rows,
     totalTransactions,
@@ -246,5 +260,14 @@ function getBatchesWithTransferQuantity(batches, quantity) {
       batch.resultingQuantity = batch.sum - batch.quantity
     }
     return batch
+  })
+}
+
+function addResultingQuantities (rows) {
+  const sum = rows.reduce((sum, t) => sum += t.quantity, 0)
+  const rowsByDate = rows.sort((a, b) => b.date.localeCompare(a.date))
+  return rowsByDate.map((t, i) => {
+    t.result = (i === 0) ? sum : rowsByDate[i - 1].result - rowsByDate[i - 1].quantity
+    return t
   })
 }

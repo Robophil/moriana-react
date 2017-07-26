@@ -1,9 +1,10 @@
 import React from 'react'
 import h from 'helpers'
+import StockCardLink from 'stockcard-link'
 
 export default class extends React.Component {
   render () {
-    const {batches} = this.props
+    const { batches, dbName} = this.props
     return (
       <div className='col-md-5 no-print'>
         <h4>Quantity by Batch</h4>
@@ -22,7 +23,14 @@ export default class extends React.Component {
                 <td>{h.expiration(row.expiration)}</td>
                 <td>{row.lot}</td>
                 <td>{h.num(row.sum)}</td>
-                <td><a href='#d/moriana_central_warehouse/stockcard/TB%20Medication/Pyridoxine%2025mg%201000/2018-10-01T00:00:00.000Z__'>filter</a></td>
+                <td>
+                  <StockCardLink
+                    dbName={dbName}
+                    transaction={row}
+                    atBatch>
+                    filter
+                  </StockCardLink>
+                </td>
               </tr>
             ))}
           </tbody>

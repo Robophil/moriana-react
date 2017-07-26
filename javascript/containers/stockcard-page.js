@@ -4,18 +4,18 @@ import { getStock } from 'stock'
 import QuantityByBatch from 'quantity-by-batch'
 import AMCTable from 'amc-table'
 import ShipmentLink from 'shipment-link'
+import StockCardLink from 'stockcard-link'
 import h from 'helpers'
 
 const StockCardPage = class extends React.Component {
-  state = { item: null, category: null, showAll: false }
+  state = { showAll: false }
 
   componentDidMount = () => {
     const { dbName, currentLocationName, params } = this.props.route
-    let { category, item } = params
+    let { category, item, atBatch } = params
     category = decodeURIComponent(category)
     item = decodeURIComponent(item)
-    this.setState({ item, category })
-    this.props.getStock(dbName, currentLocationName, category, item)
+    this.props.getStock(dbName, currentLocationName, category, item, atBatch)
   }
 
   showAllRows = () => {
@@ -27,9 +27,11 @@ const StockCardPage = class extends React.Component {
   }
 
   render () {
+    const { currentItem, totalTransactions, batches, atBatch } = this.props
+    const { item, category, expiration, lot } = currentItem
+    const { dbName } = this.props.route
+    const { showAll} = this.state
     let rows = this.props.rows || []
-    const { totalTransactions, batches } = this.props
-    const {item, category, showAll} = this.state
     if (!showAll) rows = rows.slice(0, 100)
     return (
       <div className='stockcard-page'>
@@ -38,11 +40,24 @@ const StockCardPage = class extends React.Component {
         ) : (
           <div>
             <h5 className='text-capitalize'>
-              {item} | {category}
+              {item} | {category} {h.expiration(expiration)} {lot}
             </h5>
             <hr />
             <div className='row'>
-              <QuantityByBatch batches={batches} />
+              {atBatch ? (<div className='col-md-5 no-print'>
+                <div className='alert alert-info'>
+                  Filtering on batch: {h.expiration(expiration)} {lot}
+                  <StockCardLink
+                    dbName={dbName}
+                    className='pull-right'
+                    transaction={currentItem}
+                    >
+                    remove filter
+                  </StockCardLink>
+                </div>
+              </div>) : (
+                <QuantityByBatch dbName={dbName} batches={batches} />
+              )}
               <AMCTable />
             </div>
             <button className='download-button btn btn-default btn-md pull-right'>Download</button>
@@ -73,16 +88,24 @@ const StockCardPage = class extends React.Component {
                         {h.formatDate(row.date)}
                       </ShipmentLink>
                     </td>
-                    <td>{h.expiration(row.expiration)}</td>
-                    <td>{h.num(row.unitPrice)}</td>
-                    <td>{h.num(row.totalValue)}</td>
-                    <td className='no-print'><a href='#d/moriana_central_warehouse/stockcard/TB%20Medication/Pyridoxine%2025mg%201000/2018-10-01T00:00:00.000Z__'>filter</a></td>
-                    <td>{row.lot}</td>
+                    <td className={`${atBatch ? 'alert-info' : ''}`}>{h.expiration(row.expiration)}</td>
+                    <td className={`${atBatch ? 'alert-info' : ''}`}>{h.num(row.unitPrice)}</td>
+                    <td className={`${atBatch ? 'alert-info' : ''}`}>{h.num(row.totalValue)}</td>
+                    <td className={`no-print ${atBatch ? 'alert-info' : ''}`}>
+                      <StockCardLink
+                        dbName={dbName}
+                        transaction={row}
+                        atBatch={!atBatch}
+                        >
+                        {atBatch ? (<span>remove filter</span>) : (<span>filter</span>)}
+                      </StockCardLink>
+                    </td>
+                    <td className={`${atBatch ? 'alert-info' : ''}`}>{row.lot}</td>
                     <td className='text-capitalize'>{row.from}</td>
                     <td className='text-capitalize'>{row.to}</td>
                     <td>{row.username}</td>
                     <td>{h.num(row.quantity)}</td>
-                    <td></td>
+                    <td>{row.result}</td>
                   </tr>
                 ))}
               </tbody>

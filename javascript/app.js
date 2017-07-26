@@ -24,7 +24,7 @@ const PAGES = {
   '/': { component: HomePage, params: ['offset'] },
   'login': { component: LoginPage, params: [] },
   'shipment': { component: ShipmentPage, params: ['id'] },
-  'stockcard': { component: StockCardPage, params: ['category', 'item'] },
+  'stockcard': { component: StockCardPage, params: ['category', 'item', 'atBatch'] },
   // '/login': HomePage,
 }
 

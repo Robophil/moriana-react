@@ -31,7 +31,7 @@ const HeaderSearch = class extends React.Component {
     switch (h.keyMap(e.keyCode)) {
       case 'ENTER': {
         const item = this.state.results[this.state.currIndex]
-        window.location.href = h.stockCardLink(this.props.dbName, item.category, item.item)
+        window.location.href = h.stockCardLink(this.props.dbName, item)
         this.props.closeClicked()
         break
       }
@@ -84,12 +84,13 @@ const HeaderSearch = class extends React.Component {
                 {results.map((item, i) => (
                   <StockcardLink
                     className={`list-group-item result ${currIndex === i ? 'active' : ''}`}
-                    key={i} dbName={dbName}
-                    item={item.item}
+                    key={i}
+                    dbName={dbName}
+                    transaction={item}
                     onClick={this.props.closeClicked}
                     onMouseEnter={this.setCurrIndex}
                     dataIndex={i}
-                    category={item.category}>
+                    >
                     {item.item} {item.category}
                   </StockcardLink>
                 ))}
