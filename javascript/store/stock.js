@@ -1,4 +1,5 @@
 import client from 'client'
+import amc from 'amc'
 
 export const REQUEST_STOCK = 'REQUEST_STOCK'
 export const RECEIVED_STOCK = 'RECEIVED_STOCK'
@@ -34,7 +35,8 @@ const defaultStock = {
   totalTransactions: 0,
   batches: [],
   currentItem: {},
-  atBatch: false
+  atBatch: false,
+  amcDetails: {}
 }
 
 export default (state = defaultStock, action) => {
@@ -68,7 +70,8 @@ function parseResponse (body, currentItem, atBatch) {
   return {
     rows,
     totalTransactions,
-    batches: getBatches(rows).filter(batch => batch.sum !== 0)
+    batches: getBatches(rows).filter(batch => batch.sum !== 0),
+    amcDetails: amc.getAMCDetails(rows)
   }
 }
 

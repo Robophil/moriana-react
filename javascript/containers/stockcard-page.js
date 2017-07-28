@@ -27,7 +27,7 @@ const StockCardPage = class extends React.Component {
   }
 
   render () {
-    const { currentItem, totalTransactions, batches, atBatch } = this.props
+    const { currentItem, totalTransactions, batches, atBatch, amcDetails } = this.props
     const { item, category, expiration, lot } = currentItem
     const { dbName } = this.props.route
     const { showAll} = this.state
@@ -58,7 +58,7 @@ const StockCardPage = class extends React.Component {
               </div>) : (
                 <QuantityByBatch dbName={dbName} batches={batches} />
               )}
-              <AMCTable />
+              <AMCTable amcDetails={amcDetails} />
             </div>
             <button className='download-button btn btn-default btn-md pull-right'>Download</button>
             <h5 className='transactions-header'>{totalTransactions} Transaction{h.soronos(totalTransactions)}</h5>
@@ -105,7 +105,7 @@ const StockCardPage = class extends React.Component {
                     <td className='text-capitalize'>{row.to}</td>
                     <td>{row.username}</td>
                     <td>{h.num(row.quantity)}</td>
-                    <td>{row.result}</td>
+                    <td>{h.num(row.result)}</td>
                   </tr>
                 ))}
               </tbody>
