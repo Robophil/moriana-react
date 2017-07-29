@@ -50,7 +50,7 @@ export const logout = () => {
 
 const defaultAuth = {
   loading: false,
-  apiError: false,
+  apiError: null,
   authenticated: false,
   authError: false,
   name: null,

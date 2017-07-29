@@ -22,14 +22,14 @@ export const getItems = (dbName, currentLocationName) => {
 
 const defaultItems = {
   loading: false,
-  rows: [],
+  items: [],
   apiError: null
 }
 
 export default (state = defaultItems, action) => {
   switch (action.type) {
     case REQUEST_ITEMS: {
-      return { ...defaultItems, loading: true }
+      return { ...state, loading: true, apiError: null }
     }
     case RECEIVED_ITEMS: {
       return { ...state, loading: false, ...action.response }
@@ -42,9 +42,9 @@ export default (state = defaultItems, action) => {
 
 function parseResponse (body) {
   const headers = ['from', 'item', 'category']
-  const rows = body.rows.map(row => {
+  const items = body.rows.map(row => {
     headers.map((header, i) => row[header] = row.key[i])
     return row
   }).sort((a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase()))
-  return { rows }
+  return { items }
 }

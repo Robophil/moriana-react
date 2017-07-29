@@ -1,36 +1,38 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getItems } from 'items'
+import { getLocations } from 'locations'
 import h from 'helpers'
 import StockcardLink from 'stockcard-link'
 
 const HeaderSearch = class extends React.Component {
-  state = { limit: 50, openButton: 'items', query: '', currIndex: 0, results: [] }
+  state = { limit: 50, openButton: 'items', query: '', currIndex: 0, itemResults: [] }
 
   componentDidMount = () => {
     this.props.getItems(this.props.dbName, this.props.currentLocationName)
+    this.props.getLocations(this.props.dbName, this.props.currentLocationName)
   }
 
   componentWillReceiveProps = (newProps) => {
     this.setState({
-      results: newProps.rows.slice(0, this.state.limit)
+      itemResults: newProps.items.items.slice(0, this.state.limit)
     });
   }
 
   runSearch = (e) => {
     const query = e.currentTarget.value
     const cleanedQuery = query.toLowerCase().trim()
-    const results = this.props.rows.filter(item =>
+    const itemResults = this.props.items.items.filter(item =>
       item.item.toLowerCase().indexOf(cleanedQuery) != -1
       || item.category.toLowerCase().indexOf(cleanedQuery) != -1
     )
-    this.setState({ query, results, currIndex: 0 })
+    this.setState({ query, itemResults, currIndex: 0 })
   }
 
   checkKeys = (e) => {
     switch (h.keyMap(e.keyCode)) {
       case 'ENTER': {
-        const item = this.state.results[this.state.currIndex]
+        const item = this.state.itemResults[this.state.currIndex]
         window.location.href = h.stockCardLink(this.props.dbName, item)
         this.props.closeClicked()
         break
@@ -40,7 +42,7 @@ const HeaderSearch = class extends React.Component {
         break
       }
       case 'ARROW_DOWN': {
-        if (this.state.currIndex === (this.state.results.length - 1)) {
+        if (this.state.currIndex === (this.state.itemResults.length - 1)) {
           this.setState({ currIndex: 0 })
         } else {
           this.setState({ currIndex: this.state.currIndex + 1 })
@@ -49,7 +51,7 @@ const HeaderSearch = class extends React.Component {
       }
       case 'ARROW_UP': {
         if (this.state.currIndex < 0) {
-          this.setState({ currIndex: this.state.results.length - 1 })
+          this.setState({ currIndex: this.state.itemResults.length - 1 })
         } else {
           this.setState({ currIndex: this.state.currIndex - 1 })
         }
@@ -63,11 +65,12 @@ const HeaderSearch = class extends React.Component {
   }
 
   render () {
-    const { rows, dbName } = this.props
-    const { query, results, currIndex } = this.state
+    const { dbName } = this.props
+    const { loading, items } = this.props.items
+    const { query, itemResults, currIndex } = this.state
     return (
       <div className='search-view'>
-        {this.props.loading ? (
+        {items.length === 0 && loading ? (
           <div className='loader'></div>
         ) : (
           <div className='search-view-container'>
@@ -81,7 +84,7 @@ const HeaderSearch = class extends React.Component {
             <br /><br />
             <div className='results'>
               <div className='list-group'>
-                {results.map((item, i) => (
+                {itemResults.map((item, i) => (
                   <StockcardLink
                     className={`list-group-item result ${currIndex === i ? 'active' : ''}`}
                     key={i}
@@ -95,7 +98,7 @@ const HeaderSearch = class extends React.Component {
                   </StockcardLink>
                 ))}
                 <a  href='javascript:void(0)' className='list-group-item result'>
-                  items: {query ? `${query} found ` : ''} {results.length} of {h.num(rows.length)}
+                  items: {query ? `${query} found ` : ''} {itemResults.length} of {h.num(items.length)}
                 </a>
               </div>
             </div>
@@ -107,6 +110,11 @@ const HeaderSearch = class extends React.Component {
 }
 
 export default connect(
-  state => state.items,
-  { getItems }
+  state => {
+    return {
+      items: state.items,
+      locations: state.locations
+    }
+  },
+  { getItems, getLocations }
 )(HeaderSearch)

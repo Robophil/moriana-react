@@ -19,7 +19,7 @@ export const getShipments = (dbName, offset, limit) => {
           dispatch({
             type: RECEIVED_SHIPMENTS,
             response: {
-              rows: parseShipments(body.rows),
+              shipments: parseShipments(body.rows),
               shipmentsCount: body.total_rows,
               offset: body.offset
             }
@@ -46,7 +46,7 @@ export const getShipment = (dbName, id) => {
 
 const defaultShipments = {
   loading: false,
-  rows: [],
+  shipments: [],
   apiError: null,
   currentShipment: null,
   shipmentsCount: 0
@@ -55,13 +55,13 @@ const defaultShipments = {
 export default (state = defaultShipments, action) => {
   switch (action.type) {
     case REQUEST_SHIPMENTS: {
-      return { ...state, loading: true }
+      return { ...state, loading: true, apiError: null }
     }
     case RECEIVED_SHIPMENTS: {
       return { ...state, loading: false, ...action.response }
     }
     case REQUEST_SHIPMENT: {
-      return { ...state, loading: true }
+      return { ...state, loading: true, apiError: null, currentShipment: null }
     }
     case RECEIVED_SHIPMENT: {
       return { ...state, loading: false, currentShipment: action.shipment }

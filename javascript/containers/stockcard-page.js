@@ -31,8 +31,8 @@ const StockCardPage = class extends React.Component {
     const { item, category, expiration, lot } = currentItem
     const { dbName } = this.props.route
     const { showAll} = this.state
-    let rows = this.props.rows || []
-    if (!showAll) rows = rows.slice(0, 100)
+    let transactions = this.props.transactions || []
+    if (!showAll) transactions = transactions.slice(0, 100)
     return (
       <div className='stockcard-page'>
         {this.props.loading ? (
@@ -80,7 +80,7 @@ const StockCardPage = class extends React.Component {
                 </tr>
               </thead>
               <tbody className='transactions'>
-                {rows.map((row, i) => (
+                {transactions.map((row, i) => (
                   <tr key={i}>
                     <td>{h.dateFromNow(row.date)}</td>
                     <td>
@@ -111,9 +111,9 @@ const StockCardPage = class extends React.Component {
               </tbody>
             </table>
             <div className='text-center show-all'>
-              Showing {h.num(rows.length)} of {h.num(totalTransactions)} transaction
+              Showing {h.num(transactions.length)} of {h.num(totalTransactions)} transaction
               {h.soronos(totalTransactions)}. &nbsp;
-              {!showAll && rows.length === totalTransactions ? <span /> :
+              {!showAll && transactions.length === totalTransactions ? <span /> :
               !showAll ? (<button onClick={this.showAllRows} className='btn btn-default btn-lg'>Show All</button>) : (
                 <div className='text-center scroll-to-top'>
                   <button onClick={this.scrollToTop} className='btn btn-default btn-lg'>Scroll To Top</button>

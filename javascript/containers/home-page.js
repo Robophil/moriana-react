@@ -13,11 +13,12 @@ export class HomePage extends React.Component {
   }
 
   render () {
-    const { dbName, currentLocationName, params } = this.props.route
+    const { loading, route, shipments } = this.props
+    const { dbName, currentLocationName, params } = route
     const {offset} = params
     return (
       <div className='home-page'>
-        {this.props.loading ? (
+        {shipments.length === 0 && loading ? (
           <div className='loader' />
         ) :
         dbName ? (
@@ -35,9 +36,9 @@ export class HomePage extends React.Component {
              count={this.props.shipmentsCount}
              dbName={dbName}
              limit={this.limit}
-             displayedCount={this.props.rows.length} />
+             displayedCount={shipments.length} />
 
-           <ShipmentsTable dbName={dbName} shipments={this.props.rows} />
+           <ShipmentsTable dbName={dbName} shipments={shipments} />
 
          </div>
        ) : (<div />)

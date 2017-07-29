@@ -23,13 +23,14 @@ export const getUsers = () => {
 const defaultAdmin = {
   loading: false,
   users: [],
-  earlyUsers: []
+  earlyUsers: [],
+  apiError: null
 }
 
 export default (state = defaultAdmin, action) => {
   switch (action.type) {
     case GET_USERS_REQUEST: {
-      return { ...state, loading: true }
+      return { ...state, loading: true, apiError: null }
     }
     case GET_USERS_SUCCESS: {
       return {

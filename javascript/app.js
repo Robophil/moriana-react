@@ -1,12 +1,10 @@
 // starting point for the frontend
-
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import store from 'store'
 
-import db from 'db'
-import h from 'helpers'
+import { parseHash } from 'routing'
 
 import SiteHeader from 'site-header'
 import SiteFooter from 'site-footer'
@@ -24,17 +22,24 @@ const PAGES = {
   '/': { component: HomePage, params: ['offset'] },
   'login': { component: LoginPage, params: [] },
   'shipment': { component: ShipmentPage, params: ['id'] },
-  'stockcard': { component: StockCardPage, params: ['category', 'item', 'atBatch'] },
-  // '/login': HomePage,
+  'stockcard': { component: StockCardPage, params: ['category', 'item', 'atBatch'] }
 }
 
 class App extends React.Component {
   state = {
-    route: parseHash(location.hash)
+    route: parseHash(location.hash, PAGES),
+
   }
   componentDidMount = () => {
     window.addEventListener('hashchange', (event) => {
-      this.setState({ route: parseHash(location.hash) })
+      // reset state on db change
+      const newRoute = parseHash(location.hash, PAGES)
+      const { dbName } = this.state.route
+      if (newRoute.dbName !== dbName && dbName !== null) {
+        // reload page instead of clear store; for occassional application updates.
+        window.location.reload()
+      }
+      this.setState({ route: newRoute })
     })
   }
   render() {
@@ -59,33 +64,3 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('app')
 )
-
-function parseHash(hash) {
-  const route = { dbName: null, currentLocationName: null, path: '/', params: {} }
-  if (!hash) return route
-  let hashSplit = hash.split('/')
-  if (hashSplit[0] === '#d') {
-    hashSplit.splice(0, 1)
-    route.dbName = hashSplit.splice(0, 1)[0]
-    route.currentLocationName = h.capitalize(db.getNamefromDBName(route.dbName))
-  } else {
-    hashSplit.splice(0, 1)
-  }
-  route.path = hashSplit.splice(0, 1)[0]
-  if (!PAGES[route.path]) {
-    hashSplit = [route.path]
-    route.path = '/'
-  }
-  route.params = buildParams(PAGES[route.path].params, hashSplit)
-  return route
-}
-
-function buildParams(params, paramsArray) {
-  const paramsMapped = {}
-  params.forEach((paramName, i) => {
-    let paramValue = paramsArray[i]
-    paramValue = isNaN(Number(paramValue)) ? paramValue : Number(paramValue)
-    paramsMapped[paramName] = paramValue
-  })
-  return paramsMapped
-}

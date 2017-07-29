@@ -1,20 +1,31 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getUser, logout } from 'user'
 import ClickOutHandler from 'react-onclickout'
-import Logo from 'logo'
+
+import { getUser, logout } from 'user'
+import { getItems } from 'items'
+import { getLocations } from 'locations'
+
 import hl from 'header-links'
-import config from 'config'
 import HeaderSearch from 'header-search'
+import Logo from 'logo'
+
+import config from 'config'
 import h from 'helpers'
+
+
 const SiteHeader = class extends React.Component {
   state = { openSection: null }
 
   componentDidMount = () => {
     this.props.getUser()
-    const { dbName, path } = this.props.route
+    const { dbName, path, currentLocationName } = this.props.route
     if (!dbName && path === '/') {
       this.setState({ openSection: 'database' })
+    } else {
+      // cache locations and items for reports, header search 
+      this.props.getItems(dbName, currentLocationName)
+      this.props.getLocations(dbName, currentLocationName)
     }
     document.addEventListener('keyup', (event) => {
       if (event.target.nodeName === 'BODY' && h.keyMap(event.keyCode) === 'FORWARD_SLASH') {
@@ -106,5 +117,5 @@ export default connect(
   state => {
     return { user: state.user }
   },
-  { getUser, logout }
+  { getUser, logout, getItems, getLocations }
 )(SiteHeader)

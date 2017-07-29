@@ -7,8 +7,8 @@ export default {
   'Viewing all shipments': {
     'should render given shipments' () {
       const numShipments = 10
-      const rows = testUtils.getShipments(numShipments)
-      const props = { ...testUtils.getRoute(), rows }
+      const shipments = testUtils.getShipments(numShipments)
+      const props = { ...testUtils.getRoute(), shipments }
       const homePageEl = testUtils.getElement(new HomePage(props))
       expect(homePageEl.querySelectorAll('tbody tr').length).eq(numShipments)
     }

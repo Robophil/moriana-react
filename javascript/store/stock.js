@@ -7,11 +7,11 @@ export const RECEIVED_STOCK = 'RECEIVED_STOCK'
 export const getStock = (dbName, currentLocationName, category, item, filter = null) => {
   return dispatch => {
     const currentItem = { item, category, expiration: null, lot: null }
-    let atBatch = false
+    let atBatch = filter ? true : false
     if (filter) {
-      currentItem.expiration = filter.split('__')[0]
-      currentItem.lot = filter.split('__')[1]
-      atBatch = true
+      const { expiration, lot } = parseBatchFilter(filter)
+      currentItem.expiration = expiration
+      currentItem.lot = lot
     }
     dispatch({ type: REQUEST_STOCK, item: currentItem, atBatch })
     const key = [currentLocationName.toLowerCase(), item, category]
@@ -30,7 +30,7 @@ export const getStock = (dbName, currentLocationName, category, item, filter = n
 
 const defaultStock = {
   loading: false,
-  rows: [],
+  transactions: [],
   apiError: null,
   totalTransactions: 0,
   batches: [],
@@ -42,7 +42,7 @@ const defaultStock = {
 export default (state = defaultStock, action) => {
   switch (action.type) {
     case REQUEST_STOCK: {
-      return { ...defaultStock, loading: true, currentItem: action.item, atBatch: action.atBatch }
+      return { ...state, loading: true, apiError: null, currentItem: action.item, atBatch: action.atBatch }
     }
     case RECEIVED_STOCK: {
       return { ...state, loading: false, ...action.response }
@@ -68,11 +68,20 @@ function parseResponse (body, currentItem, atBatch) {
   rows = addResultingQuantities(rows)
   const totalTransactions = rows.length
   return {
-    rows,
+    transactions: rows,
     totalTransactions,
     batches: getBatches(rows).filter(batch => batch.sum !== 0),
     amcDetails: amc.getAMCDetails(rows)
   }
+}
+
+function parseBatchFilter (filter) {
+  let expiration, lot
+  expiration = filter.split('__')[0]
+  lot = filter.split('__')[1]
+  if (lot === 'null') lot = null
+  if (expiration === 'null') expiration = null
+  return { expiration, lot }
 }
 
 export function getBatches (transactions, batchLevel = true, inputBatches = {}) {
