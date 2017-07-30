@@ -56,5 +56,6 @@ export const getCategories = (items) => {
     }
     return memo
   }, [])
-  .sort((cat) => cat.toLowerCase())
+  .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+  .map(cat => { return { name: cat } })
 }

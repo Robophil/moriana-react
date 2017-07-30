@@ -5,6 +5,7 @@ import { getCategories } from 'items'
 
 export const REQUEST_ALL_TRANSACTIONS = 'REQUEST_ALL_TRANSACTIONS'
 export const RECEIVED_ALL_TRANSACTIONS = 'RECEIVED_ALL_TRANSACTIONS'
+export const RUN_FILTERED_REPORT = 'RUN_FILTERED_REPORT'
 
 export const TRANSACTIONS_ERROR = 'TRANSACTIONS_ERROR'
 
@@ -31,6 +32,12 @@ const fetchAllShipments = (dbName, resolve, reject, limit = 1000, skip = 0, ship
   })
 }
 
+export const setFilter = (filterType, filterIndex) => {
+  return dispatch => {
+    dispatch({ type: RUN_FILTERED_REPORT, filterType, filterIndex })
+  }
+}
+
 const defaultReports = {
   loading: false,
   apiError: null,
@@ -45,23 +52,11 @@ const defaultReports = {
     { name: 'Filtering at Item Level', itemLevel: true },
   ],
   reportTypes: {
-    consumption: {
-      name: 'Monthly Consumption',
-      filters: ['dates', 'categories', 'batches']
-    },
-    quality: {
-      name: 'Data Quality',
-    },
-    expired: {
-      name: 'Expired',
-      filters: ['dates'],
-    },
-    short: {
-      name: 'Short Dated',
-    },
-    out: {
-      name: 'Out of Stock',
-    },
+    consumption: { name: 'Monthly Consumption', filters: ['dates', 'categories', 'batches'] },
+    quality: { name: 'Data Quality', },
+    expired: { name: 'Expired', filters: ['dates'], },
+    short: { name: 'Short Dated', },
+    out: { name: 'Out of Stock', },
   },
 }
 
@@ -92,6 +87,10 @@ export default (state = defaultReports, action) => {
         allCategoryFilters,
         allDateFilters
       }
+    }
+    case RUN_FILTERED_REPORT: {
+      console.log(action.filterType, action.filterIndex)
+      return { ...state }
     }
     default: {
       return state

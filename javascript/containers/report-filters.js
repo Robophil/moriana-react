@@ -5,6 +5,7 @@ export default class extends React.Component {
   state = {
     openFilter: null
   }
+
   showFilter = (event) => {
     event.preventDefault()
     let selectedFilter = event.target.dataset.filterName
@@ -13,9 +14,18 @@ export default class extends React.Component {
     }
     this.setState({ openFilter: selectedFilter })
   }
+
+  filterClicked = (event) => {
+    this.props.setFilter(event.target.dataset.filterType, event.target.dataset.index)
+    this.setState({ openFilter: null })
+  }
+
   render () {
     const { openFilter } = this.state
-    const { dateFilter, categoryFilter, batchFilter  } = this.props
+    const {
+      dateFilter, categoryFilter, batchFilter,
+      allDateFilters, allCategoryFilters, allBatchFilters
+    } = this.props
     const availableFilters = { date: dateFilter, category: categoryFilter, batch: batchFilter }
     return (
       <div>
@@ -66,116 +76,47 @@ export default class extends React.Component {
             </div>
             <div className='row text-center dates-filters filters'>
               <br />
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='0'>
-                June 2017
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='1'>
-                May 2017
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='2'>
-                April 2017
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='3'>
-                March 2017
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='4'>
-                February 2017
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='5'>
-                January 2017
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='6'>
-                December 2016
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='7'>
-                November 2016
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='8'>
-                October 2016
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='9'>
-                September 2016
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='10'>
-                August 2016
-              </button>
-              <button className='col-md-3 filter btn btn-default' data-filter-type='dates' data-index='11'>
-                July 2016
-              </button>
+              {allDateFilters.map((month, i) => (
+                <button
+                  onClick={this.filterClicked}
+                  key={i}
+                  data-index={i}
+                  className='col-md-3 filter btn btn-default'
+                  data-filter-type='dates'>
+                  {month.name}
+                </button>
+              ))}
             </div>
           </div>
         )}
         {this.state.openFilter === 'category' && (
           <div className='row text-center categories-filters filters'>
             <br />
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='0'>
-              All Categories
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='1'>
-              ARV'S PREPARATIONS
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='2'>
-              compassinate use
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='3'>
-              Donation
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='4'>
-              EndTB
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='5'>
-              EYE &amp; EAR PREPARATIONS
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='6'>
-              FAMILY PLANING PREPARATIONS
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='7'>
-              FRIDGE-LINE PREPARATIONS
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='8'>
-              GLC
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='9'>
-              HABIT FORMING itemS
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='10'>
-              INJECTIONS &amp; IV INFUSIONS
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='11'>
-              LFDS Pharmacy
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='12'>
-              MEDICAL SUPPLIES
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='13'>
-              NTP consignment
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='14'>
-              SUTURES
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='15'>
-              SYRUPS, MIXTURE, SUSPENSIONS ETC
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='16'>
-              Tablets and Capsules
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='17'>
-              TB Medication
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='categories' data-index='18'>
-              TOPICAL CREAM,LOTION,OINTMENT &amp; SOLUTION PREPARATIONS
-            </button>
+            {allCategoryFilters.map((cat, i) => (
+              <button
+                onClick={this.filterClicked}
+                key={i}
+                data-index={i}
+                className='col-md-3 filter btn btn-default'
+                data-filter-type='categories'>
+                {cat.name}
+              </button>
+            ))}
           </div>
         )}
         {this.state.openFilter === 'batch' && (
           <div className='row text-center batches-filters filters'>
             <br />
-            <button className='col-md-3 filter btn btn-default' data-filter-type='batches' data-index='0'>
-              Filtering at Batch Level
-            </button>
-            <button className='col-md-3 filter btn btn-default' data-filter-type='batches' data-index='1'>
-              Filtering at Item Level
-            </button>
+            {allBatchFilters.map((b, i) => (
+              <button
+                onClick={this.filterClicked}
+                key={i}
+                data-index={i}
+                className='col-md-3 filter btn btn-default'
+                data-filter-type='batches'>
+                {b.name}
+              </button>
+            ))}
           </div>
         )}
       </div>

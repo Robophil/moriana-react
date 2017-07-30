@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getReportInfo } from 'reports'
+import { getReportInfo, setFilter } from 'reports'
 import ShipmentsTable from 'shipments-table'
 import ReportFilters from 'report-filters'
 
@@ -50,6 +50,7 @@ export class ReportsPage extends React.Component {
                 dateFilter={this.props.dateFilter}
                 categoryFilter={this.props.categoryFilter}
                 batchFilter={this.props.batchFilter}
+                setFilter={this.props.setFilter}
               />
             </div>
           )
@@ -61,5 +62,5 @@ export class ReportsPage extends React.Component {
 
 export default connect(
   state => state.reports,
-  { getReportInfo }
+  { getReportInfo, setFilter }
 )(ReportsPage)
