@@ -44,7 +44,7 @@ export default (state = defaultLocations, action) => {
 }
 
 function parseLocations (locations, extensions) {
-  console.log(locations, extensions)
+  // console.log(locations, extensions)
   return {}
   // const headers = ['type', 'name', 'attributes']
   // const rows = body.rows.map(row => {

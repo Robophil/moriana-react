@@ -48,3 +48,13 @@ function parseResponse (body) {
   }).sort((a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase()))
   return { items }
 }
+
+export const getCategories = (items) => {
+  return items.reduce((memo, item) => {
+    if (memo.indexOf(item.category) === -1) {
+      memo.push(item.category)
+    }
+    return memo
+  }, [])
+  .sort((cat) => cat.toLowerCase())
+}

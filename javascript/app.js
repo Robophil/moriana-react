@@ -12,6 +12,7 @@ import HomePage from 'home-page'
 import LoginPage from 'login-page'
 import ShipmentPage from 'shipment-page'
 import StockCardPage from 'stockcard-page'
+import ReportsPage from 'reports-page'
 
 require('./styles/app.less')
 
@@ -22,7 +23,8 @@ const PAGES = {
   '/': { component: HomePage, params: ['offset'] },
   'login': { component: LoginPage, params: [] },
   'shipment': { component: ShipmentPage, params: ['id'] },
-  'stockcard': { component: StockCardPage, params: ['category', 'item', 'atBatch'] }
+  'stockcard': { component: StockCardPage, params: ['category', 'item', 'atBatch'] },
+  'reports': { component: ReportsPage, params: ['reportType'] },
 }
 
 class App extends React.Component {
@@ -43,13 +45,15 @@ class App extends React.Component {
     })
   }
   render() {
-    const page = PAGES[this.state.route.path]
+    const pageName = this.state.route.path
+    const page = PAGES[pageName]
     const Handler = page ? page.component : HomePage
+    const classes = pageName === 'reports' ? '' : 'container'
 
     return (
       <div>
         <SiteHeader route={this.state.route} />
-        <div className='container'>
+        <div className={classes}>
           <Handler key={location.hash} route={this.state.route} />
         </div>
         <SiteFooter />
