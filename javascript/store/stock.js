@@ -6,23 +6,15 @@ export const RECEIVED_STOCK = 'RECEIVED_STOCK'
 
 export const getStock = (dbName, currentLocationName, category, item, filter = null) => {
   return dispatch => {
-    const currentItem = { item, category, expiration: null, lot: null }
-    let atBatch = filter ? true : false
-    if (filter) {
-      const { expiration, lot } = parseBatchFilter(filter)
-      currentItem.expiration = expiration
-      currentItem.lot = lot
-    }
-    dispatch({ type: REQUEST_STOCK, item: currentItem, atBatch })
+    dispatch({ type: REQUEST_STOCK, item, category })
     const key = [currentLocationName.toLowerCase(), item, category]
     const startkey = JSON.stringify([...key, {}])
     const endkey = JSON.stringify([...key])
     return client.getDesignDoc(dbName, 'stock', { startkey: startkey, endkey: endkey })
     .then(response => {
-        const { body } = response
         dispatch({
           type: RECEIVED_STOCK,
-          response: { ...parseResponse(body, currentItem, atBatch) }
+          response: { ...parseResponse(response.body, filter) }
       })
     })
   }
@@ -30,19 +22,23 @@ export const getStock = (dbName, currentLocationName, category, item, filter = n
 
 const defaultStock = {
   loading: false,
-  transactions: [],
   apiError: null,
-  totalTransactions: 0,
-  batches: [],
-  currentItem: {},
   atBatch: false,
-  amcDetails: {}
+  item: null,
+  category: null,
+  expiration: null,
+  lot: null,
+  // unitPrice: null,
+  batches: [],
+  transactions: [],
+  totalTransactions: 0,
+  amcDetails: {},
 }
 
 export default (state = defaultStock, action) => {
   switch (action.type) {
     case REQUEST_STOCK: {
-      return { ...state, loading: true, apiError: null, currentItem: action.item, atBatch: action.atBatch }
+      return { ...defaultStock, loading: true, apiError: null, item: action.item, category: action.category }
     }
     case RECEIVED_STOCK: {
       return { ...state, loading: false, ...action.response }
@@ -53,35 +49,47 @@ export default (state = defaultStock, action) => {
   }
 }
 
-function parseResponse (body, currentItem, atBatch) {
+export function parseResponse (body, filter) {
+  const parsedResponse = {}
   const headers = ['from', 'item', 'category', 'expiration',
    'lot', 'unitPrice', 'date', '_id', 'from', 'to', 'username']
   let rows = body.rows.map(row => {
     headers.map((header, i) => row[header] = row.key[i])
     row.quantity = row.value
     row.totalValue = Math.abs(row.quantity * row.unitPrice)
-    return row
+    return cleanTransaction(row)
   })
-  if (atBatch) {
-    rows = rows.filter(row => row.expiration === currentItem.expiration && row.lot === currentItem.lot)
+  if (filter) {
+    parsedResponse.atBatch = true
+    const { expiration, lot } = parseBatchFilter(filter)
+    parsedResponse.expiration = expiration
+    parsedResponse.lot = lot
+    rows = batchFilter(rows, expiration, lot)
   }
-  rows = addResultingQuantities(rows)
-  const totalTransactions = rows.length
-  return {
-    transactions: rows,
-    totalTransactions,
-    batches: getBatches(rows).filter(batch => batch.sum !== 0),
-    amcDetails: amc.getAMCDetails(rows)
-  }
+  parsedResponse.totalTransactions = rows.length
+  parsedResponse.batches = getBatches(rows).filter(batch => batch.sum !== 0)
+  parsedResponse.amcDetails = amc.getAMCDetails(rows)
+  parsedResponse.transactions = addResultingQuantities(rows)
+  return parsedResponse
+}
+
+function cleanTransaction(transaction) {
+  transaction.expiration = !transaction.expiration ? null : transaction.expiration
+  transaction.lot = !transaction.lot ? null : transaction.lot
+  return transaction
 }
 
 function parseBatchFilter (filter) {
   let expiration, lot
   expiration = filter.split('__')[0]
   lot = filter.split('__')[1]
-  if (lot === 'null') lot = null
-  if (expiration === 'null') expiration = null
+  if (!lot || lot === 'null') lot = null
+  if (!expiration || expiration === 'null') expiration = null
   return { expiration, lot }
+}
+
+function batchFilter(rows, expiration, lot) {
+  return rows.filter(row => row.expiration === expiration && row.lot === lot)
 }
 
 export function getBatches (transactions, batchLevel = true, inputBatches = {}) {

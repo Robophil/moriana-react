@@ -94,6 +94,8 @@ export default {
     let link = `/#d/${dbName}/stockcard/${encodeURIComponent(category)}/${encodeURIComponent(item)}/`
     if (atBatch) {
       let { expiration, lot } = transaction
+      expiration = null ? '' : expiration
+      lot = null ? '' : lot
       link += `${expiration}__${lot}/`
     }
     return link

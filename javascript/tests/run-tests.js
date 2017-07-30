@@ -3,13 +3,13 @@
 // { 'section of tests name': { 'individual test name': () => { //expect goes here } }}
 
 import viewSpecs from 'view-specs'
-import storeSpecs from 'store-specs'
+import stockSpecs from 'stock-specs'
 
 export default function () {
-  console.log('Running tests in local dev environment...')
+  console.log('%c Running tests in local dev environment...', 'color: blue;')
   let testsCount = 0
   let testsPassed = 0
-  const testFiles = {viewSpecs, storeSpecs}
+  const testFiles = {viewSpecs, stockSpecs}
   Object.keys(testFiles).forEach(filename => {
     Object.keys(testFiles[filename]).map(description => {
       Object.keys(testFiles[filename][description]).map(testName => {
@@ -24,5 +24,5 @@ export default function () {
       })
     })
   })
-  console.log(`${testsPassed} of ${testsCount} tests passed. (${Math.floor( testsPassed / testsCount * 100 )}%)`);
+  console.log(`%c ${testsPassed} of ${testsCount} tests passed. (${Math.floor( testsPassed / testsCount * 100 )}%)`, 'color: blue;');
 }

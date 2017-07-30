@@ -27,8 +27,7 @@ const StockCardPage = class extends React.Component {
   }
 
   render () {
-    const { currentItem, totalTransactions, batches, atBatch, amcDetails } = this.props
-    const { item, category, expiration, lot } = currentItem
+    const { totalTransactions, batches, atBatch, amcDetails, item, category, expiration, lot } = this.props
     const { dbName } = this.props.route
     const { showAll} = this.state
     let transactions = this.props.transactions || []
@@ -50,7 +49,7 @@ const StockCardPage = class extends React.Component {
                   <StockCardLink
                     dbName={dbName}
                     className='pull-right'
-                    transaction={currentItem}
+                    transaction={{ item, category, expiration, lot}}
                     >
                     remove filter
                   </StockCardLink>

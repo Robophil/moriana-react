@@ -60,7 +60,7 @@ const ShipmentPage = class extends React.Component {
                     </td>
                     <td>{t.category}</td>
                     <td>{t.lotNum}</td>
-                    <td>{t.expiration}</td>
+                    <td>{h.expiration(t.expiration)}</td>
                     <td>{t.quantity}</td>
                     <td>{h.num(t.unitPrice)}</td>
                     <td>{h.num(t.totalValue)}</td>
