@@ -2,9 +2,7 @@ import React from 'react'
 import h from 'helpers'
 
 export default class extends React.Component {
-  state = {
-    openFilter: null
-  }
+  state = { openFilter: null }
 
   showFilter = (event) => {
     event.preventDefault()
@@ -16,7 +14,7 @@ export default class extends React.Component {
   }
 
   filterClicked = (event) => {
-    this.props.setFilter(event.target.dataset.filterType, event.target.dataset.index)
+    this.props.filterSet(event.target.dataset.filterType, event.target.dataset.index)
     this.setState({ openFilter: null })
   }
 

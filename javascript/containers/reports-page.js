@@ -1,14 +1,19 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getReportInfo, setFilter } from 'reports'
+import { getReportInfo, runReport } from 'reports'
 import ShipmentsTable from 'shipments-table'
 import ReportFilters from 'report-filters'
 
 export class ReportsPage extends React.Component {
-  state = { reportType: {} }
+  state = { reportType: null }
 
   componentDidMount = () => {
     this.props.getReportInfo(this.props.route.dbName)
+    this.setState({ reportType: this.props.route.params.reportType })
+  }
+
+  filterSet = (filterType, filterIndex) => {
+    this.props.runReport(this.state.reportType, filterType, filterIndex)
   }
 
   changeReport = (event) => {
@@ -22,7 +27,6 @@ export class ReportsPage extends React.Component {
   render () {
     const { loading, route, reportTypes, transactions } = this.props
     const { dbName, currentLocationName, params } = route
-    const activeReport = this.state.reportType || params.reportType || null
     return (
       <div className='reports'>
         {
@@ -35,7 +39,7 @@ export class ReportsPage extends React.Component {
                   <h5>Reports &nbsp; &nbsp; </h5>
                 </li>
                 {Object.keys(reportTypes).map((slug, i) => {
-                  const activeClass = (slug === activeReport) ? 'active' : ''
+                  const activeClass = (slug === this.state.reportType) ? 'active' : ''
                   return (<li key={i} className={`report-links consumption ${activeClass}`}>
                     <a onClick={this.changeReport} data-type={slug}>{reportTypes[slug].name}</a>
                   </li>)
@@ -50,7 +54,7 @@ export class ReportsPage extends React.Component {
                 dateFilter={this.props.dateFilter}
                 categoryFilter={this.props.categoryFilter}
                 batchFilter={this.props.batchFilter}
-                setFilter={this.props.setFilter}
+                filterSet={this.filterSet}
               />
             </div>
           )
@@ -62,5 +66,5 @@ export class ReportsPage extends React.Component {
 
 export default connect(
   state => state.reports,
-  { getReportInfo, setFilter }
+  { getReportInfo, runReport }
 )(ReportsPage)

@@ -32,9 +32,9 @@ const fetchAllShipments = (dbName, resolve, reject, limit = 1000, skip = 0, ship
   })
 }
 
-export const setFilter = (filterType, filterIndex) => {
+export const runReport = (reportType, filterType, filterIndex) => {
   return dispatch => {
-    dispatch({ type: RUN_FILTERED_REPORT, filterType, filterIndex })
+    dispatch({ type: RUN_FILTERED_REPORT, reportType, filterType, filterIndex })
   }
 }
 
@@ -89,8 +89,16 @@ export default (state = defaultReports, action) => {
       }
     }
     case RUN_FILTERED_REPORT: {
-      console.log(action.filterType, action.filterIndex)
-      return { ...state }
+      console.log(action.reportType, action.filterType, action.filterIndex)
+      let { dateFilter, categoryFilter, batchFilter } = state
+      if (action.filterType === 'dates') {
+        dateFilter = state.allDateFilters[action.filterIndex]
+      } else if (action.filterType === 'categories') {
+        categoryFilter = state.allCategoryFilters[action.filterIndex]
+      } else if (action.filterType === 'batches') {
+        batchFilter = state.allBatchFilters[action.filterIndex]
+      }
+      return { ...state, dateFilter, categoryFilter, batchFilter }
     }
     default: {
       return state
