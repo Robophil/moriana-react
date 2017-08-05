@@ -54,6 +54,8 @@ export const defaultReportsState = {
   allItemsFetched: false,
   apiError: null,
   allItems: [],
+  reportRows: [],
+  reportHeaders: [],
   dateFilter: {},
   categoryFilter: {},
   batchFilter: {},
@@ -89,11 +91,13 @@ export default (state = defaultReportsState, action) => {
       const categoryFilter = allCategoryFilters[0]
       const batchFilter = state.allBatchFilters[0]
 
+      const allItems = buildItemsHash(transactions)
+
       return {
         ...state,
         loading: false,
         allItemsFetched: true,
-        transactions,
+        allItems,
         dateFilter,
         categoryFilter,
         batchFilter,
@@ -102,8 +106,18 @@ export default (state = defaultReportsState, action) => {
       }
     }
     case RUN_FILTERED_REPORT: {
-      const { reportType } = action
+      const {reportType} = action
+      const reportBuilders = {
+        consumption: buildConsumption,
+        quality: buildQuality,
+        expired: buildExpired,
+        short: buildShortList,
+        out: buildOutOfStock,
+      }
+      const reportBuilder = reportBuilders[reportType]
+
       let { dateFilter, categoryFilter, batchFilter } = state
+
       if (action.filterType === 'dates') {
         dateFilter = state.allDateFilters[action.filterIndex]
       } else if (action.filterType === 'categories') {
@@ -111,6 +125,9 @@ export default (state = defaultReportsState, action) => {
       } else if (action.filterType === 'batches') {
         batchFilter = state.allBatchFilters[action.filterIndex]
       }
+
+      const { reportRows, reportHeaders } = reportBuilder(state.allItems, dateFilter, categoryFilter, batchFilter)
+
       return { ...state, reportType, dateFilter, categoryFilter, batchFilter }
     }
     default: {
@@ -144,4 +161,37 @@ const getDateFilters = () => {
     const endDate = beginningOfMonth.endOf('month').toISOString()
     return { startDate, endDate, name: Moment.utc(startDate).endOf('day').format('MMMM YYYY') }
   })
+}
+
+const buildItemsHash = (transactions) => {
+  return transactions.reduce((memo, t) => {
+    const itemKey = `${t.item}__${t.category}`
+    const batchKey = `${t.expiration || null}__${t.lot || null}`
+    memo[itemKey] = memo[itemKey] || {}
+    memo[itemKey][batchKey] = memo[itemKey][batchKey] || []
+    memo[itemKey][batchKey].push(t)
+    return memo
+  }, {})
+}
+
+const buildConsumption = (allItems) => {
+  const reportHeaders = []
+  const reportRows = []
+  return { reportRows, reportHeaders }
+}
+
+const buildQuality = (allItems) => {
+
+}
+
+const buildExpired = (allItems) => {
+
+}
+
+const buildShortList = (allItems) => {
+
+}
+
+const buildOutOfStock = (allItems) => {
+
 }

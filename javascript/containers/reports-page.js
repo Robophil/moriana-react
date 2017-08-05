@@ -8,7 +8,7 @@ export class ReportsPage extends React.Component {
   state = { reportType: null }
 
   componentDidMount = () => {
-    this.setState({ reportType: this.props.route.params.reportType })
+    this.setState({ reportType: this.props.route.params.reportType || 'consumption' })
     this.props.getReportInfo(this.props.route.dbName).then(() => {
       this.props.runReport(this.state.reportType)
     })
