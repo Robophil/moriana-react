@@ -7,17 +7,18 @@ export const RECEIVED_LOCATIONS = 'RECEIVED_LOCATIONS'
 export const getLocations = (dbName) => {
   return dispatch => {
     dispatch({ type: REQUEST_LOCATIONS })
+    let locations
     return client.getDesignDoc(dbName, 'locations', { reduce: true, group: true })
     .then(locationsResponse => {
-        const locations = locationsResponse.body
-        return client.getDesignDoc(dbName, 'types', { key: '"extension"', include_docs: true, descending: false, reduce: false })
-        .then(extensionsResponse => {
-          const extensions = extensionsResponse.body
-          dispatch({
-            type: RECEIVED_LOCATIONS,
-            response: { ...parseLocations(locations, extensions) }
-          })
-        })
+      locations = locationsResponse.body
+      return client.getDesignDoc(dbName, 'types', { key: '"extension"', include_docs: true, descending: false, reduce: false })
+    })
+    .then(extensionsResponse => {
+      const extensions = extensionsResponse.body
+      dispatch({
+        type: RECEIVED_LOCATIONS,
+        response: { ...parseLocations(locations, extensions) }
+      })
     })
   }
 }
@@ -43,7 +44,7 @@ export default (state = defaultLocations, action) => {
   }
 }
 
-function parseLocations (locations, extensions) {
+export const parseLocations = (locations, extensions) => {
   // console.log(locations, extensions)
   return {}
   // const headers = ['type', 'name', 'attributes']
