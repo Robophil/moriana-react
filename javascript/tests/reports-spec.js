@@ -21,8 +21,6 @@ const lastMonthName = Moment.utc().subtract(1, 'months').startOf('month').format
 
 const consumptionState = reportsReducer(defaultFiltersState, runReportAction('consumption'))
 
-console.log(defaultFiltersState)
-
 export default {
   'receivedAllAction': {
     'should return a list of available date filters' () {

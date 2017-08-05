@@ -126,9 +126,9 @@ export default (state = defaultReportsState, action) => {
         batchFilter = state.allBatchFilters[action.filterIndex]
       }
 
-      const { reportRows, reportHeaders } = reportBuilder(state.allItems, dateFilter, categoryFilter, batchFilter)
+      const { reportRows, reportHeaders } = reportBuilder(state.allItems, batchFilter, dateFilter, categoryFilter)
 
-      return { ...state, reportType, dateFilter, categoryFilter, batchFilter }
+      return { ...state, reportType, dateFilter, categoryFilter, batchFilter, reportRows, reportHeaders }
     }
     default: {
       return state
@@ -174,10 +174,93 @@ const buildItemsHash = (transactions) => {
   }, {})
 }
 
-const buildConsumption = (allItems) => {
-  const reportHeaders = []
+const getItemHeaders = (itemLevel) => {
+  const itemLevelHeaders = [
+    { key: 'item', name: 'Item' },
+    { key: 'category', name: 'Category' },
+  ]
+  if (itemLevel) {
+    return itemLevelHeaders
+  } else {
+    return itemLevelHeaders.concat([
+      { key: 'expiration', name: 'Expiration' },
+      { key: 'lot', name: 'Lot Num' },
+    ])
+  }
+}
+
+const reportHeaders = [
+  { key: 'amc', name: 'AMC' },
+  { key: 'opening', name: 'Opening' },
+  { key: 'received', name: 'Received' },
+  { key: 'closing', name: 'Closing' },
+  { key: 'consumed', name: 'Consumed' },
+  { key: 'expired', name: 'Expired' },
+  { key: 'lost', name: 'Damaged/Lost' },
+  { key: 'miscount', name: 'Miscount' },
+  { key: 'positiveAdjustments', name: 'Positive Adjustments' },
+  { key: 'negativeAdjustments', name: 'Negative Adjustments' },
+]
+
+const buildBlankConsumptionRow = () => {
+  return reportHeaders.reduce((memo, header) => {
+    memo[header.key] = 0
+    return memo
+  }, {})
+}
+
+const buildConsumption = (allItems, batchFilter, dateFilter, categoryFilter) => {
   const reportRows = []
-  return { reportRows, reportHeaders }
+  const {itemLevel} = batchFilter
+  Object.keys(allItems).forEach(itemKey => {
+    const itemRow = buildBlankConsumptionRow()
+    Object.keys(allItems[itemKey]).forEach(batchKey => {
+      let batchRow = batchFilter.itemLevel ? itemRow : buildBlankConsumptionRow()
+      allItems[itemKey][batchKey].forEach(t => addConsumptionColumns(batchRow, t, dateFilter.startDate, dateFilter.endDate))
+      if (!itemLevel) {
+        reportRows.push(batchRow)
+      }
+    }, [])
+    if (itemLevel) {
+      reportRows.push(itemRow)
+    }
+  })
+  return { reportRows, reportHeaders: getItemHeaders(itemLevel).concat(reportHeaders) }
+}
+
+const addConsumptionColumns = (row, t, startDate, endDate) => {
+  ['item', 'category', 'expiration', 'lot'].forEach(key => row[key] = t[key])
+  if (t.date <= endDate) {
+    row.closing += t.quantity
+  }
+  if (t.date < startDate) {
+    row.opening += t.quantity
+  }
+  if (t.date > startDate && t.date <= endDate) {
+    if (t.to == 'Expired') {
+      row.expired += t.quantity
+    }
+    else if (t.to == 'Lost' || t.to == 'Damaged') {
+      row.lost += t.quantity
+    }
+    else if (t.to == 'Miscount') {
+      row.miscount += t.quantity
+    }
+    else if (t.to == 'Miscount') {
+      row.miscount += t.quantity
+    }
+    else if (t.fromAttributes && t.fromAttributes.excludeFromConsumption) {
+      row.positiveAdjustments += t.quantity
+    }
+    else if (t.toAttributes && t.toAttributes.excludeFromConsumption) {
+      row.negativeAdjustments += t.quantity
+    }
+    else if (t.quantity > 0) {
+      row.received += t.quantity
+    } else {
+      row.consumed += t.quantity
+    }
+  }
 }
 
 const buildQuality = (allItems) => {
