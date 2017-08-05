@@ -1,7 +1,8 @@
 import React from 'react'
 import h from 'helpers'
+// import PropTypes from 'prop-types'
 
-export default class extends React.Component {
+export default class Pagination extends React.Component {
   render () {
     const { count, dbName, displayedCount, limit } = this.props
     let offset = Number(this.props.offset)
@@ -34,3 +35,7 @@ export default class extends React.Component {
     )
   }
 }
+
+// Pagination.propTypes = {
+//   count: PropTypes.number.isRequired,
+// }

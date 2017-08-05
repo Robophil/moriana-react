@@ -8,8 +8,10 @@ export class ReportsPage extends React.Component {
   state = { reportType: null }
 
   componentDidMount = () => {
-    this.props.getReportInfo(this.props.route.dbName)
     this.setState({ reportType: this.props.route.params.reportType })
+    this.props.getReportInfo(this.props.route.dbName).then(() => {
+      this.props.runReport(this.state.reportType)
+    })
   }
 
   filterSet = (filterType, filterIndex) => {

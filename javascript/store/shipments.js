@@ -1,6 +1,7 @@
 // actions and reducer for admin
 import client from 'client'
 import decorateShipment from 'decorate-shipment';
+import {objectFromKeys} from 'utils'
 
 export const REQUEST_SHIPMENT = 'REQUEST_SHIPMENT'
 export const RECEIVED_SHIPMENT = 'RECEIVED_SHIPMENT'
@@ -36,7 +37,7 @@ export const getShipments = (dbName, offset, limit) => {
         dispatch({
           type: RECEIVED_SHIPMENTS,
           response: {
-            shipments: parseShipments(body.rows),
+            shipments: parseShipments(body),
             shipmentsCount: body.total_rows,
             offset: body.offset
           }
@@ -81,11 +82,6 @@ export default (state = defaultShipments, action) => {
   }
 }
 
-const parseShipments = (rows) => {
-  const headers = ['date', 'from', 'to', 'updated', 'totalTransactions', 'username']
-  return rows.map(row => {
-    headers.map((header, i) => row[header] = row.key[i])
-    delete row.key
-    return row
-  })
+const parseShipments = (response) => {
+  return objectFromKeys(['date', 'from', 'to', 'updated', 'totalTransactions', 'username'], response)
 }

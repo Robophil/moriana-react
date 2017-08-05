@@ -1,5 +1,6 @@
 // actions and reducer for locations
 import client from 'client'
+import {objectFromKeys} from 'utils'
 
 export const REQUEST_LOCATIONS = 'REQUEST_ULOCATION'
 export const RECEIVED_LOCATIONS = 'RECEIVED_LOCATIONS'
@@ -27,7 +28,7 @@ const defaultLocations = {
   loading: false,
   apiError: false,
   locations: [],
-  excludedFromConsumptionLocations: {}
+  locationsExcludedFromConsumption: {}
 }
 
 export default (state = defaultLocations, action) => {
@@ -44,13 +45,20 @@ export default (state = defaultLocations, action) => {
   }
 }
 
-export const parseLocations = (locations, extensions) => {
-  // console.log(locations, extensions)
-  return {}
-  // const headers = ['type', 'name', 'attributes']
-  // const rows = body.rows.map(row => {
-  //   headers.map((header, i) => row[header] = row.key[i])
-  //   return row
-  // }).sort((a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase()))
-  // return { rows }
+export const parseLocations = (locationsResponse, extensionsResponse) => {
+  const locations = objectFromKeys(['type', 'name', 'attributes'], locationsResponse)
+  const locationsExcludedFromConsumption = locations.reduce((memo, location) => {
+    if (location.type === 'EV' || location.attributes && location.attributes.excludeFromConsumption) {
+      memo[location.name] = true
+    }
+    return memo
+  }, {})
+  extensionsResponse.rows.map(row => row.doc).reduce((memo, doc) => {
+    if (doc.docType === 'extension' && doc.subjectType === 'location'
+      && doc.attributes && doc.attributes.excludeFromConsumption) {
+      memo[doc.subject] = true
+    }
+    return memo
+  }, locationsExcludedFromConsumption)
+  return { locations, locationsExcludedFromConsumption }
 }

@@ -32,7 +32,7 @@ const fetchAllShipments = (dbName, resolve, reject, limit = 1000, skip = 0, ship
   })
 }
 
-export const runReport = (reportType, filterType, filterIndex) => {
+export const runReport = (reportType, filterType = null, filterIndex = null) => {
   return dispatch => {
     dispatch({ type: RUN_FILTERED_REPORT, reportType, filterType, filterIndex })
   }
@@ -89,7 +89,7 @@ export default (state = defaultReports, action) => {
       }
     }
     case RUN_FILTERED_REPORT: {
-      console.log(action.reportType, action.filterType, action.filterIndex)
+      const { reportType } = action
       let { dateFilter, categoryFilter, batchFilter } = state
       if (action.filterType === 'dates') {
         dateFilter = state.allDateFilters[action.filterIndex]
@@ -98,7 +98,7 @@ export default (state = defaultReports, action) => {
       } else if (action.filterType === 'batches') {
         batchFilter = state.allBatchFilters[action.filterIndex]
       }
-      return { ...state, dateFilter, categoryFilter, batchFilter }
+      return { ...state, reportType, dateFilter, categoryFilter, batchFilter }
     }
     default: {
       return state
