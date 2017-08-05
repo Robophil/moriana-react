@@ -15,7 +15,9 @@ const extensions = {"total_rows":100,"offset":0,"rows":[
 export default {
   'parseLocations': {
     'should return a unique list of locations' () {
-      expect(false).eq(true)
+      const locationsState = parseLocations(locations, extensions)
+      expect(locationsState.locations instanceof Array).eq(true)
+      expect(locationsState.locations).eq(true)
     },
     'should return a hash of locations that are excluded from consumption' () {
       expect(false).eq(true)
