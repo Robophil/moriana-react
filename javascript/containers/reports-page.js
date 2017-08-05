@@ -27,12 +27,12 @@ export class ReportsPage extends React.Component {
   }
 
   render () {
-    const { loading, route, reportTypes, transactions } = this.props
+    const { allItemsFetched, loading, route, reportTypes } = this.props
     const { dbName, currentLocationName, params } = route
     return (
       <div className='reports'>
         {
-          transactions.length === 0 && loading ? ( <div className='loader' /> )
+          !allItemsFetched ? ( <div className='loader' /> )
           : (
             <div>
               <br />
@@ -58,6 +58,7 @@ export class ReportsPage extends React.Component {
                 batchFilter={this.props.batchFilter}
                 filterSet={this.filterSet}
               />
+              {!allItemsFetched && ( <div className='loader' /> )}
             </div>
           )
         }

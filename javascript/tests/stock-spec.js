@@ -1,6 +1,6 @@
 import chai from 'chai';
 const expect = chai.expect;
-import testUtils from 'test-utils'
+import {getTransactions} from 'test-utils'
 import { getBatches, parseResponse } from 'stock'
 
 // Our headers are: ['from', 'item', 'category', 'expiration', 'lot', 'unitPrice', 'date', '_id', 'from', 'to', 'username']
@@ -13,7 +13,7 @@ const stockResponse = {'total_rows':104778,'offset':91915,'rows':[
 export default {
   'getBatches reducer': {
     'should return batches in First Expiration in First Out (FEFO)' () {
-      const transactions = testUtils.getTransactions()
+      const transactions = getTransactions()
       const batches = getBatches(transactions)
       expect(batches[0].expiration < batches[1].expiration).eq(true)
     }
