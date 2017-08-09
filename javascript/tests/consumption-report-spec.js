@@ -21,8 +21,6 @@ const lastMonthName = Moment.utc().subtract(1, 'months').startOf('month').format
 
 const consumptionState = reportsReducer(defaultFiltersState, runReportAction('consumption'))
 
-console.log(consumptionState)
-
 export default {
   'consumption report headers': {
     'should return consumption headers defaulted to batch level' () {

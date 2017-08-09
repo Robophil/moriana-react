@@ -3,26 +3,16 @@ const expect = chai.expect
 import Moment from 'moment'
 import reportsReducer from 'reports'
 import { defaultReportsState, receivedAllAction, runReportAction } from 'reports'
+import { shipmentsFixtures, testExpiration } from 'report-fixtures'
 
-const expiration = '2020-09-01T00:00:00.000Z'
-const receiveTransactions = [
-  { item: 'abc', category: 'catA', expiration, lot: '', quantity: 1, unitPrice: 10 },
-  { item: 'abc', category: 'catA', expiration, lot: null, quantity: 1, unitPrice: 10 },
-  { item: 'bcd', category: 'catA', expiration: '', lot: 'abc', quantity: 1, unitPrice: 10 },
-  { item: 'bcd', category: 'catA', expiration: null, lot: 'abc', quantity: 1, unitPrice: 10 },
-]
-
-const shipments = [
-  { date: '2017-03-08T07:02:05.687Z', from: 'test warehouse', to: 'test dispensary', transactions: receiveTransactions }
-]
-
-const defaultFiltersState = reportsReducer(defaultReportsState, receivedAllAction(shipments, {}))
+const defaultFiltersState = reportsReducer(defaultReportsState, receivedAllAction(shipmentsFixtures, {}))
 const lastMonthName = Moment.utc().subtract(1, 'months').startOf('month').format('MMMM YYYY')
 
 const consumptionState = reportsReducer(defaultFiltersState, runReportAction('consumption'))
+const consumptionStateItemLevel = reportsReducer(defaultFiltersState, runReportAction('consumption', 'batches', 1))
 
 export default {
-  'receivedAllAction': {
+  'Report setup': {
     'should return a list of available date filters' () {
       expect(defaultFiltersState.allDateFilters[0].name).eq(lastMonthName)
     },
@@ -41,14 +31,33 @@ export default {
     },
     'should return a hash of all available items' () {
       expect(defaultFiltersState.allItems['abc__catA']).not.eq(undefined)
-      expect(defaultFiltersState.allItems['abc__catA'][`${expiration}__null`][0].quantity).eq(1)
+      expect(defaultFiltersState.allItems['abc__catA'][`${testExpiration}__null`][0].quantity).eq(1)
       expect(defaultFiltersState.allItems['bcd__catA'][`null__abc`].length).eq(2)
     },
   },
-  'runReportAction': {
+  'Running a report': {
     'should return report rows and report headers' () {
       expect(consumptionState.reportRows instanceof Array).eq(true)
       expect(consumptionState.reportHeaders instanceof Array).eq(true)
+    },
+    'should default to batch level' () {
+      expect(consumptionState.reportRows.length).gt(5)
+    },
+    'should filter out batch rows with all zeros but leave one row at the item level' () {
+      expect(consumptionState.reportRows.length).eq(6)
+    },
+    'should order alphabetically' () {
+      const expectedOrder = ['abc', 'bcd', 'bcd', 'cde', 'cde', 'def', 'efg']
+      consumptionState.reportRows.forEach((row, i) => {
+        expect(row.item).eq(expectedOrder[i])
+      })
+    },
+  },
+  'Running a report with item level filter': {
+    'should return rows condensed to item level' () {
+      console.log(consumptionStateItemLevel.reportRows)
+      expect(consumptionStateItemLevel.reportRows.length).eq(5)
+      expect(consumptionStateItemLevel.reportRows[0].expiration).eq(undefined)
     },
   }
 

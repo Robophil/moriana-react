@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { getReportInfo, runReport } from 'reports'
 import ShipmentsTable from 'shipments-table'
 import ReportFilters from 'report-filters'
+import ReportTable from 'report-table'
+import h from 'helpers'
 
 export class ReportsPage extends React.Component {
   state = { reportType: null }
@@ -27,7 +29,7 @@ export class ReportsPage extends React.Component {
   }
 
   render () {
-    const { allItemsFetched, loading, route, reportTypes } = this.props
+    const { allItemsFetched, loading, route, reportTypes, reportHeaders, reportRows } = this.props
     const { dbName, currentLocationName, params } = route
     return (
       <div className='reports'>
@@ -49,16 +51,24 @@ export class ReportsPage extends React.Component {
                 <button className='btn btn-default btn-md pull-right'>Download</button>
               </ul>
               <hr />
-              <ReportFilters
-                allDateFilters={this.props.allDateFilters}
-                allCategoryFilters={this.props.allCategoryFilters}
-                allBatchFilters={this.props.allBatchFilters}
-                dateFilter={this.props.dateFilter}
-                categoryFilter={this.props.categoryFilter}
-                batchFilter={this.props.batchFilter}
-                filterSet={this.filterSet}
-              />
-              {!allItemsFetched && ( <div className='loader' /> )}
+              {allItemsFetched ?
+                <div>
+                  <ReportFilters
+                    allDateFilters={this.props.allDateFilters}
+                    allCategoryFilters={this.props.allCategoryFilters}
+                    allBatchFilters={this.props.allBatchFilters}
+                    dateFilter={this.props.dateFilter}
+                    categoryFilter={this.props.categoryFilter}
+                    batchFilter={this.props.batchFilter}
+                    filterSet={this.filterSet}
+                  />
+                  <div className='report'>
+                    <hr />
+                    <div className='pull-right table-description'>Rows: {h.num(reportRows.length)}</div>
+                    <ReportTable headers={reportHeaders} rows={reportRows} />
+                  </div>
+                </div>
+              : ( <div className='loader' /> )}
             </div>
           )
         }
