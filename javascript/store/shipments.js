@@ -28,7 +28,7 @@ export const getShipment = (dbName, id) => {
 
 export const getShipments = (dbName, offset, limit) => {
   return dispatch => {
-    dispatch({ type: REQUEST_SHIPMENTS })
+    dispatch({ type: REQUEST_SHIPMENTS, offset })
     return client.getDesignDoc(dbName, 'shipments', { skip: offset || 0, limit }).then(response => {
       const { body } = response
       if (response.status >= 400) {
@@ -53,6 +53,7 @@ const defaultShipments = {
   apiError: null,
   currentShipment: null,
   shipmentsCount: 0,
+  offsetLoaded: null,
 }
 
 export default (state = defaultShipments, action) => {
@@ -64,10 +65,12 @@ export default (state = defaultShipments, action) => {
       return { ...state, loading: false, currentShipment: action.shipment }
     }
     case REQUEST_SHIPMENTS: {
-      return { ...state, loading: true, apiError: null }
+      const loading = (action.offset !== state.offsetLoaded)
+      return { ...state, loading, apiError: null }
     }
     case RECEIVED_SHIPMENTS: {
-      return { ...state, loading: false, ...action.response }
+      const offsetLoaded = action.response.offset
+      return { ...state, offsetLoaded, loading: false, ...action.response }
     }
     case SHIPMENTS_ERROR: {
       return {

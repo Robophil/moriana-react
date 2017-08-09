@@ -4,12 +4,12 @@ import {getShipments} from 'shipments'
 import ShipmentsTable from 'shipments-table'
 import Pagination from 'pagination'
 
-export class HomePage extends React.Component {
-  limit =  500
+export class ShipmentsPage extends React.Component {
+  state = { limit: 500 }
   componentDidMount = () => {
     const { dbName, params } = this.props.route
     const {offset} = params
-    if (dbName) this.props.getShipments(dbName, offset, this.limit)
+    if (dbName) this.props.getShipments(dbName, offset, this.state.limit)
   }
 
   render () {
@@ -18,7 +18,7 @@ export class HomePage extends React.Component {
     const {offset} = params
     return (
       <div className='home-page'>
-        {shipments.length === 0 && loading ? (
+        {loading ? (
           <div className='loader' />
         ) :
         dbName ? (
@@ -35,7 +35,7 @@ export class HomePage extends React.Component {
              offset={offset}
              count={this.props.shipmentsCount}
              dbName={dbName}
-             limit={this.limit}
+             limit={this.state.limit}
              displayedCount={shipments.length} />
 
            <ShipmentsTable dbName={dbName} shipments={shipments} />
@@ -51,4 +51,4 @@ export class HomePage extends React.Component {
 export default connect(
   state => state.shipments,
   { getShipments }
-)(HomePage)
+)(ShipmentsPage)

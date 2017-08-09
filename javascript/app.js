@@ -8,7 +8,7 @@ import { parseHash } from 'routing'
 
 import SiteHeader from 'site-header'
 import SiteFooter from 'site-footer'
-import HomePage from 'home-page'
+import ShipmentsPage from 'shipments-page'
 import LoginPage from 'login-page'
 import ShipmentPage from 'shipment-page'
 import StockCardPage from 'stockcard-page'
@@ -20,7 +20,7 @@ require('./styles/app.less')
 // & https://medium.freecodecamp.org/you-might-not-need-react-router-38673620f3d
 
 const PAGES = {
-  '/': { component: HomePage, params: ['offset'] },
+  '/': { component: ShipmentsPage, params: ['offset'] },
   'login': { component: LoginPage, params: [] },
   'shipment': { component: ShipmentPage, params: ['id'] },
   'stockcard': { component: StockCardPage, params: ['category', 'item', 'atBatch'] },
@@ -47,7 +47,7 @@ class App extends React.Component {
   render() {
     const pageName = this.state.route.path
     const page = PAGES[pageName]
-    const Handler = page ? page.component : HomePage
+    const Handler = page ? page.component : ShipmentsPage
     const classes = pageName === 'reports' ? '' : 'container'
 
     return (

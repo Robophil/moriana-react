@@ -1,7 +1,7 @@
 import chai from 'chai'
 const expect = chai.expect
 import {getShipments, getRoute, getElement} from 'test-utils'
-import { HomePage } from 'home-page'
+import { ShipmentsPage } from 'shipments-page'
 
 export default {
   'Viewing all shipments': {
@@ -9,7 +9,7 @@ export default {
       const numShipments = 10
       const shipments = getShipments(numShipments)
       const props = { ...getRoute(), shipments }
-      const homePageEl = getElement(new HomePage(props))
+      const homePageEl = getElement(new ShipmentsPage(props))
       expect(homePageEl.querySelectorAll('tbody tr').length).eq(numShipments)
     }
   }
