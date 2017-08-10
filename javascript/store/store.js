@@ -5,16 +5,15 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 
-import user from 'user'
-import shipments from 'shipments'
-import reports from 'reports'
-import locations from 'locations'
-import stock from 'stock'
-import items from 'items'
-import admin from 'admin'
+const testsContext = require.context('./', false, /.js/)
+const modules = testsContext.keys().reduce((memo, filename) => {
+  const name = filename.split('./')[1].split('.js')[0]
+  if (name !== 'store') memo[name] = testsContext(filename).default
+  return memo
+}, {})
 
 export default createStore(
-  combineReducers({ user, stock, admin, shipments, reports, locations, items }),
+  combineReducers(modules),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   applyMiddleware(thunkMiddleware)
 )
