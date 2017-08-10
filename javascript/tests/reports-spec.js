@@ -5,11 +5,12 @@ import reportsReducer from 'reports'
 import { defaultReportsState, receivedAllAction, runReportAction } from 'reports'
 import { shipmentsFixtures, testExpiration } from 'report-fixtures'
 
-const defaultFiltersState = reportsReducer(defaultReportsState, receivedAllAction(shipmentsFixtures, {}))
+const defaultFiltersState = reportsReducer(defaultReportsState, receivedAllAction(shipmentsFixtures, 'test warehouse', {}))
 const lastMonthName = Moment.utc().subtract(1, 'months').startOf('month').format('MMMM YYYY')
 
 const consumptionState = reportsReducer(defaultFiltersState, runReportAction('consumption'))
 const consumptionStateItemLevel = reportsReducer(defaultFiltersState, runReportAction('consumption', 'batches', 1))
+const consumptionStateCategoryFilter = reportsReducer(defaultFiltersState, runReportAction('consumption', 'categories', 1))
 
 export default {
   'Report setup': {
@@ -47,7 +48,7 @@ export default {
       expect(consumptionState.reportRows.length).eq(6)
     },
     'should order alphabetically' () {
-      const expectedOrder = ['abc', 'bcd', 'bcd', 'cde', 'cde', 'def', 'efg']
+      const expectedOrder = ['abc', 'bcd', 'bcd', 'cde', 'def', 'efg']
       consumptionState.reportRows.forEach((row, i) => {
         expect(row.item).eq(expectedOrder[i])
       })
@@ -55,9 +56,18 @@ export default {
   },
   'Running a report with item level filter': {
     'should return rows condensed to item level' () {
-      console.log(consumptionStateItemLevel.reportRows)
       expect(consumptionStateItemLevel.reportRows.length).eq(5)
       expect(consumptionStateItemLevel.reportRows[0].expiration).eq(undefined)
+      expect(consumptionStateItemLevel.reportRows[1].opening).eq(3)
+    },
+  },
+  'Running a report with category filters': {
+    'should only return rows for the specified category' () {
+      expect(consumptionStateCategoryFilter.reportRows.length).eq(4)
+      expect(consumptionStateCategoryFilter.reportRows[0].category).eq('catA')
+      const catBState = reportsReducer(defaultFiltersState, runReportAction('consumption', 'categories', 2))
+      expect(catBState.reportRows.length).eq(1)
+      expect(catBState.reportRows[0].category).eq('catB')
     },
   }
 

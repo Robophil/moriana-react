@@ -11,10 +11,10 @@ const receiveTransactions = [
 ]
 
 const transferTransactions = [
-  { item: 'def', category: 'catC', expiration: '', lot: 'abc', quantity: -1, unitPrice: 10 },
-  { item: 'def', category: 'catC', expiration: null, lot: 'abc', quantity: -1, unitPrice: 10 },
-  { item: 'cde', category: 'catB', expiration: testExpiration, lot: '', quantity: -1, unitPrice: 10 },
-  { item: 'cde', category: 'catB', expiration: null, lot: null, quantity: -1, unitPrice: 10 },
+  { item: 'def', category: 'catC', expiration: '', lot: 'abc', quantity: 1, unitPrice: 10 },
+  { item: 'def', category: 'catC', expiration: null, lot: 'abc', quantity: 1, unitPrice: 10 },
+  { item: 'cde', category: 'catB', expiration: testExpiration, lot: '', quantity: 1, unitPrice: 10 },
+  { item: 'cde', category: 'catB', expiration: null, lot: null, quantity: 1, unitPrice: 10 },
 ]
 
 export const shipmentsFixtures = [
@@ -25,10 +25,12 @@ export const shipmentsFixtures = [
 // result after both shipments: five items, seven batches
 
 // item abc is one batch with 2 quantity
-// item bcd is two batch with 1 quantity each
+// item bcd is two batches with quantities 1 and 2
 // item cde is two batches with 0 quantity each
 // item def is one batch with -2 quantity
 // item efg is one batch with 1 quantity
+
+// catA should have four batches
 
 // but, requirements are that (when filtering at the batch level) batches with all zeros should be removed
 // from the report, and one row should be left for the item itself to show it was all zeros for all batches.

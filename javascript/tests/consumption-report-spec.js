@@ -3,34 +3,47 @@ const expect = chai.expect
 import Moment from 'moment'
 import reportsReducer from 'reports'
 import { defaultReportsState, receivedAllAction, runReportAction } from 'reports'
+import { shipmentsFixtures } from 'report-fixtures'
 
-const expiration = '2020-09-01T00:00:00.000Z'
-const receiveTransactions = [
-  { item: 'abc', category: 'catA', expiration, lot: '', quantity: 1, unitPrice: 10 },
-  { item: 'abc', category: 'catA', expiration, lot: null, quantity: 1, unitPrice: 10 },
-  { item: 'bcd', category: 'catA', expiration: '', lot: 'abc', quantity: 1, unitPrice: 10 },
-  { item: 'bcd', category: 'catA', expiration: null, lot: 'abc', quantity: 1, unitPrice: 10 },
-]
-
-const shipments = [
-  { date: '2017-03-08T07:02:05.687Z', from: 'test warehouse', to: 'test dispensary', transactions: receiveTransactions }
-]
-
-const defaultFiltersState = reportsReducer(defaultReportsState, receivedAllAction(shipments, {}))
-const lastMonthName = Moment.utc().subtract(1, 'months').startOf('month').format('MMMM YYYY')
-
+const defaultFiltersState = reportsReducer(defaultReportsState, receivedAllAction(shipmentsFixtures, 'test warehouse', {}))
 const consumptionState = reportsReducer(defaultFiltersState, runReportAction('consumption'))
+const dateFilter = {
+  name: 'April 2017',
+  startDate: new Date('2017-04-01').toISOString(),
+  endDate: new Date('2017-05-01').toISOString(),
+}
+const stateFilteredOnDates = reportsReducer(
+    defaultFiltersState, runReportAction('consumption', 'dates', null, dateFilter))
 
 export default {
-  'consumption report headers': {
-    'should return consumption headers defaulted to batch level' () {
-      expect(consumptionState.reportHeaders[0].key).eq('item')
-      expect(consumptionState.reportHeaders[2].key).eq('expiration')
+  'Consumption reports with no date filters': {
+    'opening qty should be total received quantity minus transferred qty' () {
+      // abc is one batch with 2 received qty
+      expect(consumptionState.reportRows[0].opening).eq(2)
+      // bcd is two batch with 1 received qty each
+      expect(consumptionState.reportRows[1].opening).eq(2)
+      expect(consumptionState.reportRows[2].opening).eq(1)
+      // cde is two batches but both zeros
+      expect(consumptionState.reportRows[3].opening).eq(0)
+      expect(consumptionState.reportRows[3].opening).eq(0)
+      // def is two transfer outs of same batch with 1 qty each, no receives
+      expect(consumptionState.reportRows[4].opening).eq(-2)
     },
-    'should return report rows at batch level with items and categories' () {
-      expect(consumptionState.reportRows.length).eq(2)
-      expect(consumptionState.reportRows[0].item).eq('abc')
-      expect(consumptionState.reportRows[1].item).eq('bcd')
+    'closing quantities should be equal to openings' () {
+      expect(consumptionState.reportRows[0].closing).eq(2)
+      expect(consumptionState.reportRows[1].closing).eq(2)
+      expect(consumptionState.reportRows[2].closing).eq(1)
+      expect(consumptionState.reportRows[3].closing).eq(0)
+      expect(consumptionState.reportRows[3].closing).eq(0)
+      expect(consumptionState.reportRows[4].closing).eq(-2)
+    },
+  },
+  'Consumption report with date filtered over second shipment': {
+    'closing qty over range should be sum of transactions to date +/- any in range' () {
+      expect(stateFilteredOnDates.reportRows[3].opening).eq(1)
+      expect(stateFilteredOnDates.reportRows[4].opening).eq(1)
+      expect(stateFilteredOnDates.reportRows[3].closing).eq(0)
+      expect(stateFilteredOnDates.reportRows[4].closing).eq(0)
     },
   }
 

@@ -10,8 +10,8 @@ export const RECEIVED_ALL_TRANSACTIONS = 'RECEIVED_ALL_TRANSACTIONS'
 export const RUN_FILTERED_REPORT = 'RUN_FILTERED_REPORT'
 export const TRANSACTIONS_ERROR = 'TRANSACTIONS_ERROR'
 
-export const receivedAllAction = (shipments, excludedLocations) => {
-  return { type: RECEIVED_ALL_TRANSACTIONS, shipments, excludedLocations }
+export const receivedAllAction = (shipments, currentLocationName, excludedLocations) => {
+  return { type: RECEIVED_ALL_TRANSACTIONS, shipments, currentLocationName, excludedLocations }
 }
 
 export const runReportAction = (reportType, filterType = null, filterIndex = 0, customDateRange = null) => {
@@ -20,13 +20,13 @@ export const runReportAction = (reportType, filterType = null, filterIndex = 0, 
 
 // thunkettes
 
-export const getReportInfo = (dbName, excludedLocations = {}) => {
+export const getReportInfo = (dbName, currentLocationName, excludedLocations = {}) => {
   return dispatch => {
     dispatch({ type: REQUEST_ALL_TRANSACTIONS })
     return new Promise((resolve, reject) => {
       fetchAllShipments(dbName, resolve, reject)
     }).then((shipments) => {
-      dispatch(receivedAllAction(shipments, excludedLocations))
+      dispatch(receivedAllAction(shipments, currentLocationName, excludedLocations))
     })
   }
 }
@@ -48,6 +48,8 @@ export const runReport = (reportType, filterType = null, filterIndex = null, cus
     dispatch(runReportAction(reportType, filterType, filterIndex, customDateRange))
   }
 }
+
+// reducers
 
 export const defaultReportsState = {
   loading: false,
@@ -80,7 +82,7 @@ export default (state = defaultReportsState, action) => {
       return { ...state, loading: true, apiError: null }
     }
     case RECEIVED_ALL_TRANSACTIONS: {
-      const transactions = getTransactionsFromShipments(action.shipments, action.locationsExcludedFromConsumption)
+      const transactions = getTransactionsFromShipments(action.shipments, action.currentLocationName, action.locationsExcludedFromConsumption)
       const allDateFilters = getDateFilters()
 
       const categories = getCategories(transactions)
@@ -119,14 +121,28 @@ export default (state = defaultReportsState, action) => {
       let { dateFilter, categoryFilter, batchFilter } = state
 
       if (action.filterType === 'dates') {
-        dateFilter = state.allDateFilters[action.filterIndex]
+        if (action.customDateRange) {
+          dateFilter = action.customDateRange
+        } else {
+          dateFilter = state.allDateFilters[action.filterIndex]
+        }
       } else if (action.filterType === 'categories') {
         categoryFilter = state.allCategoryFilters[action.filterIndex]
       } else if (action.filterType === 'batches') {
         batchFilter = state.allBatchFilters[action.filterIndex]
       }
 
-      let { reportRows, reportHeaders } = reportBuilder(state.allItems, batchFilter, dateFilter, categoryFilter)
+      let items = state.allItems
+      if (categoryFilter.name !== 'All Categories') {
+        items = Object.keys(state.allItems).reduce((memo, itemKey) => {
+          if (categoryFilter.name === itemKey.split('__')[1]) {
+            memo[itemKey] = state.allItems[itemKey]
+          }
+          return memo
+        }, {})
+      }
+
+      let { reportRows, reportHeaders } = reportBuilder(items, batchFilter, dateFilter, categoryFilter)
 
       reportRows = reportRows.sort((a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase()))
 
@@ -138,15 +154,17 @@ export default (state = defaultReportsState, action) => {
   }
 }
 
-const getTransactionsFromShipments = (shipments, locationsExcludedFromConsumption) => {
+const getTransactionsFromShipments = (shipments, currentLocationName, locationsExcludedFromConsumption) => {
   // TODO: extend shipments with locationsExcludedFromConsumption, likely forEach shipment add excluded...?
   // or in reports later check locationsExcludedFromConsumption?
+  currentLocationName = currentLocationName.toLowerCase()
   const transactions = []
   shipments.forEach(ship => {
-    delete ship.totalValue
-    ship.transactions.map(t => {
-      Object.assign(t, ship)
-      t.quantity = Math.abs(t.quantity)
+    ship.transactions.map(transaction => {
+      const { from, fromType, to, toType, date } = ship
+      const t = { from, fromType, to, toType, date }
+      Object.assign(t, transaction)
+      if (t.from === currentLocationName) t.quantity = (-1 * t.quantity)
       t.expiration = !t.expiration ? null : t.expiration
       t.lot = !t.lot ? null : t.lot
       transactions.push(t)
@@ -245,16 +263,17 @@ const buildConsumption = (allItems, batchFilter, dateFilter, categoryFilter) => 
     })
   } else {
     Object.keys(allItems).forEach(itemKey => {
-      let allBatchesAreZeros = true
       const itemsBatchKeys = Object.keys(allItems[itemKey])
       let row
+      let allBatchesAreZeros = true
       for (let i = 0; i < itemsBatchKeys.length; i++) {
         row = getBlankConsumptionRow(false, itemKey, itemsBatchKeys[i])
-        allItems[itemKey][itemsBatchKeys[i]].forEach(t =>
-          addTransactionsConsumption(row, t, dateFilter.startDate, dateFilter.endDate, allBatchesAreZeros)
-        )
-        if (!allBatchesAreZeros) {
+        allItems[itemKey][itemsBatchKeys[i]].forEach(t => {
+          addTransactionsConsumption(row, t, dateFilter.startDate, dateFilter.endDate)
+        })
+        if (!allColumnsAreZeros(row)) {
           reportRows.push(row)
+          allBatchesAreZeros = false
         }
       }
 
@@ -268,17 +287,14 @@ const buildConsumption = (allItems, batchFilter, dateFilter, categoryFilter) => 
   return { reportRows, reportHeaders: getItemHeaders(itemLevel).concat(reportHeaders) }
 }
 
-const addTransactionsConsumption = (row, t, startDate, endDate, allZeros) => {
+const addTransactionsConsumption = (row, t, startDate, endDate) => {
   if (t.date <= endDate) {
     row.closing += t.quantity
-    allZeros = false
   }
   if (t.date < startDate) {
     row.opening += t.quantity
-    allZeros = false
   }
   if (t.date > startDate && t.date <= endDate) {
-    allZeros = false
     if (t.to == 'Expired') {
       row.expired += t.quantity
     }
@@ -303,6 +319,16 @@ const addTransactionsConsumption = (row, t, startDate, endDate, allZeros) => {
       row.consumed += t.quantity
     }
   }
+}
+
+const allColumnsAreZeros = (row) => {
+  let allZeros = true
+  reportHeaders.forEach(header => {
+    if (row[header.key] !== 0) {
+      allZeros = false
+    }
+  })
+  return allZeros
 }
 
 const buildQuality = (allItems) => {
