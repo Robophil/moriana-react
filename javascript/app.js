@@ -20,11 +20,11 @@ require('./styles/app.less')
 // & https://medium.freecodecamp.org/you-might-not-need-react-router-38673620f3d
 
 const PAGES = {
-  '/': { component: ShipmentsPage, params: ['offset'] },
-  'login': { component: LoginPage, params: [] },
-  'shipment': { component: ShipmentPage, params: ['id'] },
-  'stockcard': { component: StockCardPage, params: ['category', 'item', 'atBatch'] },
-  'reports': { component: ReportsPage, params: ['reportType'] },
+  '/': { component: ShipmentsPage, paramKeys: ['offset'] },
+  'login': { component: LoginPage, paramKeys: [] },
+  'shipment': { component: ShipmentPage, paramKeys: ['id'] },
+  'stockcard': { component: StockCardPage, paramKeys: ['category', 'item', 'atBatch'] },
+  'reports': { component: ReportsPage, paramKeys: ['reportType'] },
 }
 
 class App extends React.Component {

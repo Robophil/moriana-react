@@ -1,3 +1,4 @@
+// actions and reducer for viewing items
 import client from 'client'
 
 export const REQUEST_ITEMS = 'REQUEST_ITEMS'

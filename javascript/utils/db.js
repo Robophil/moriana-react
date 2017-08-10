@@ -1,7 +1,7 @@
 import config from 'config'
 
 export default {
-  getNamefromDBName (input, deploymentName = config.deploymentName) {
+  getNamefromDBName (input, deploymentName = config ? config.deploymentName : 'moriana') {
     if (!input || input.indexOf(deploymentName) === -1) return input
     let name = ''
     const inputWithoutPrefix = this.removeDeploymentPrefix(input, deploymentName)

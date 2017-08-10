@@ -1,4 +1,4 @@
-// actions and reducer for admin
+// actions and reducer for viewing shipments
 import client from 'client'
 import decorateShipment from 'decorate-shipment';
 import {objectFromKeys} from 'utils'

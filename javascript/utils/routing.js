@@ -12,20 +12,34 @@ export const parseHash = (hash, PAGES) => {
   } else {
     hashSplit.splice(0, 1)
   }
-  route.path = hashSplit.splice(0, 1)[0]
-  if (!PAGES[route.path]) {
-    hashSplit = [route.path]
-    route.path = '/'
+  // if our path is /shipment/edit-new/receive and there's a route for it,
+  // we want to use that route before /shipment/ or /shipment/edit-new/
+  let tempPath, paramValues = []
+  const dirsLength = hashSplit.length
+  for (let i = 0; i < dirsLength; i++) {
+    const dir = hashSplit.shift()
+    tempPath = tempPath ? tempPath + '/' + dir : dir
+    if (dirsLength === 1 && !PAGES[tempPath]) {
+      route.path = '/'
+      paramValues = [dir]
+    } else if (PAGES[tempPath]) {
+      route.path = tempPath
+      paramValues = hashSplit.map(param => param)
+    }
   }
-  route.params = buildParams(PAGES[route.path].params, hashSplit)
+  route.params = buildParams(PAGES[route.path].paramKeys, paramValues)
   return route
 }
 
-function buildParams(params, paramsArray) {
+function buildParams(paramKeys, paramValues) {
   const paramsMapped = {}
-  params.forEach((paramName, i) => {
-    let paramValue = paramsArray[i]
-    paramValue = isNaN(Number(paramValue)) ? paramValue : Number(paramValue)
+  paramKeys.forEach((paramName, i) => {
+    let paramValue = paramValues[i]
+    if (paramValue === undefined) {
+      paramValue = 0
+    } else {
+      paramValue = isNaN(Number(paramValue)) ? paramValue : Number(paramValue)
+    }
     paramsMapped[paramName] = paramValue
   })
   return paramsMapped
