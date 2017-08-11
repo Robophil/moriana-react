@@ -4,6 +4,7 @@ import { updateShipment, startNewShipment } from 'editreceive'
 import h from 'helpers'
 import StockcardLink from 'stockcard-link'
 import DateInput from 'date-input'
+import VendorIdInput from 'vendor-id-input'
 
 const EditReceivePage = class extends React.Component {
   componentDidMount = () => {
@@ -11,9 +12,9 @@ const EditReceivePage = class extends React.Component {
   }
 
   render () {
-    const { shipment, loadingInitialShipment, route } = this.props
-    console.log(shipment)
+    const { shipment, loadingInitialShipment, route, dateError } = this.props
     const { dbName } = route
+    console.log(shipment)
     return this.props.loadingInitialShipment ? (
         <div className='loader'></div>
       ) : (
@@ -31,7 +32,12 @@ const EditReceivePage = class extends React.Component {
               <div>
                 <form className='form-horizontal edit-details-form'>
                   <fieldset>
-                    <DateInput valueKey={'date'} value={shipment.date} valueUpdated={this.props.updateShipment} />
+                    <DateInput
+                      valueKey={'date'}
+                      error={dateError}
+                      value={shipment.date}
+                      valueUpdated={this.props.updateShipment}
+                    />
                     <div className='form-group field from-location text-capitalize editable-location'>
                       <label className='col-lg-2 control-label'>From Location</label>
                       <div className='col-sm-9 input-group'>
@@ -72,17 +78,11 @@ const EditReceivePage = class extends React.Component {
                         </div>
                       </div>
                     </div>
-                    <div className='form-group field vendor-id save-on-blur'>
-                      <label className='col-lg-2 control-label'>Vendor Id</label>
-                      <div className='col-sm-9 input-group'>
-                        {/* <div className='form-control-static hidden'>
-                          <span className='static-value'></span>
-                          (<a href='#' data-fieldname='vendor-id' className='edit-field text-no-transform'>
-                            edit</a>)
-                        </div> */}
-                        <input className='form-control form-input ' type='text' data-fieldname='vendor-id' />
-                      </div>
-                    </div>
+                    <VendorIdInput
+                      valueKey={'vendorId'}
+                      value={shipment.vendorId}
+                      valueUpdated={this.props.updateShipment}
+                    />
                   </fieldset>
                 </form>
                 <br />
