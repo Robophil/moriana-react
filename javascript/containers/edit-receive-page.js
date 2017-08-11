@@ -8,8 +8,10 @@ import LocationsSearch from 'locations-search'
 import VendorIdInput from 'vendor-id-input'
 
 const EditReceivePage = class extends React.Component {
-  componentDidMount = () => {
-    this.props.startNewShipment(this.props.dbName, this.props.currentLocationName)
+  componentWillReceiveProps = (newProps) => {
+    if (!this.props.editReceive.shipment.username && newProps.user.name) {
+      this.props.startNewShipment(this.props.route.currentLocationName, newProps.user.name)
+    }
   }
 
   render () {
@@ -43,7 +45,7 @@ const EditReceivePage = class extends React.Component {
                     <LocationsSearch
                       locations={locations.externalLocations}
                       loading={locations.loading}
-                      value={{name: shipment.from, type: shipment.fromType}}
+                      value={{name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}}
                       valueKey={'from'}
                       valueUpdated={this.props.updateShipment}
                       label={'From Location'}
@@ -52,7 +54,7 @@ const EditReceivePage = class extends React.Component {
                       <label className='col-lg-2 control-label'>To Location</label>
                       <div className='col-sm-9 input-group'>
                         <div className='form-control-static '>
-                          <span className='static-value'>test warehouse</span>
+                          <span className='static-value'>{shipment.to}</span>
                         </div>
                       </div>
                     </div>
@@ -81,7 +83,7 @@ const EditReceivePage = class extends React.Component {
 
 export default connect(
   state => {
-    return { editReceive: state.editreceive, locations: state.locations }
+    return { editReceive: state.editreceive, user: state.user, locations: state.locations }
   },
   { startNewShipment, updateShipment }
 )(EditReceivePage)

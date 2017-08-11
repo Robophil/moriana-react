@@ -66,12 +66,8 @@ export default (state = defaultEditReceive, action) => {
       return { ...state, shipment }
     }
 
-    case UPDATE_FROM: {
-      // continue to UPDATE_LOCATION
-    }
-    case UPDATE_TO: {
-      // continue to UPDATE_LOCATION
-    }
+    case UPDATE_FROM: { /* continue to UPDATE_LOCATION */ }
+    case UPDATE_TO: { /* continue to UPDATE_LOCATION */ }
     case UPDATE_LOCATION: {
       const shipment = clone(state.shipment)
       shipment[action.key] = action.inputValue.name
@@ -87,7 +83,13 @@ export default (state = defaultEditReceive, action) => {
 }
 
 const createNewShipment = (currentLocationName, currentUsername) => {
+  const date = new Date().toISOString()
   return {
-    date: new Date().toISOString(),
+    date,
+    created: date,
+    updated: date,
+    username: currentUsername,
+    to: currentLocationName,
+    toType: 'I',
   }
 }
