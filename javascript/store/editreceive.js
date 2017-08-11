@@ -8,34 +8,27 @@ import {getISODateFromInput} from 'input-transforms'
 // actions
 
 export const START_NEW_SHIPMENT = 'START_NEW_SHIPMENT'
-export const REQUEST_UPDATE = 'REQUEST_UPDATE'
+export const UPDATE_DATE = 'UPDATE_DATE'
+export const UPDATE_FROM = 'UPDATE_FROM'
+export const UPDATE_TO = 'UPDATE_TO'
+export const UPDATE_LOCATION = 'UPDATE_LOCATION'
+export const UPDATE_VENDORID = 'UPDATE_VENDORID'
+export const UPDATE_TRANSACTIONS = 'UPDATE_TRANSACTIONS'
+
 export const UPDATE_ERROR = 'UPDATE_ERROR'
 
 export const startNewShipment = (currentLocationName, currentUsername) => {
-  const shipment = createNewShipment(currentLocationName, currentUsername)
-  return { type: START_NEW_SHIPMENT, shipment }
-}
-
-export const updateShipment = (key, inputValue) => {
-  switch (key) {
-    case 'date': {
-      const error = validateDateInput(inputValue)
-      if (error) {
-        return { type: UPDATE_ERROR, errorType: 'dateError', 'errorValue': true }
-      } else {
-        const value = getISODateFromInput(inputValue)
-        return { type: REQUEST_UPDATE, key, value, errorType: 'dateError', 'errorValue': false }
-      }
-      break
-    }
-    case 'vendorId': {
-      return { type: REQUEST_UPDATE, key, value: inputValue }
-      break
-    }
-  }
+  return { type: START_NEW_SHIPMENT, currentLocationName, currentUsername }
 }
 
 // thunkettes
+
+export const updateShipment = (key, inputValue) => {
+  return dispatch => {
+    const type = key.toUpperCase()
+    dispatch({ type: `UPDATE_${type}`, key, inputValue })
+  }
+}
 
 // reducers
 
@@ -50,21 +43,43 @@ const defaultEditReceive = {
 export default (state = defaultEditReceive, action) => {
   switch (action.type) {
     case START_NEW_SHIPMENT: {
-      return { ...state, shipment: action.shipment }
+      const shipment = createNewShipment(action.currentLocationName, action.currentUsername)
+      return { ...state, shipment }
     }
-    case REQUEST_UPDATE: {
+
+    case UPDATE_DATE: {
       const newState = { ...state, shipment: clone(state.shipment) }
-      newState.shipment[action.key] = action.value
-      if (action.errorType) {
-        newState[action.errorType] = action.errorValue
+      const error = validateDateInput(action.inputValue)
+      if (error) {
+        newState.dateError = true
+        return newState
+      } else {
+        newState.shipment.date = getISODateFromInput(action.inputValue)
+        newState.dateError = false
       }
       return newState
     }
-    case UPDATE_ERROR: {
-      const newState = { ...state, shipment: clone(state.shipment) }
-      newState[action.errorType] = action.errorValue
-      return newState
+
+    case UPDATE_VENDORID: {
+      const shipment = clone(state.shipment)
+      shipment.vendorId = action.inputValue
+      return { ...state, shipment }
     }
+
+    case UPDATE_FROM: {
+      // continue to UPDATE_LOCATION
+    }
+    case UPDATE_TO: {
+      // continue to UPDATE_LOCATION
+    }
+    case UPDATE_LOCATION: {
+      const shipment = clone(state.shipment)
+      shipment[action.key] = action.inputValue.name
+      shipment[`${action.key}Type`] = action.inputValue.type
+      shipment[`${action.key}Attributes`] = action.inputValue.attributes
+      return { ...state, shipment }
+    }
+
     default: {
       return state
     }

@@ -53,8 +53,8 @@ export const parseLocations = (locationsResponse, extensionsResponse) => {
       memo[`${location.name}__${location.type}`] = location
       return memo
     }, {})
-  const locations = Object.keys(locationsHash).map(key => locationsHash[key])
-  const locationsExcludedFromConsumption = locations.reduce((memo, location) => {
+  const locationsExcludedFromConsumption = Object.keys(locationsHash).reduce((memo, locationKey) => {
+    const location = locationsHash[locationKey]
     if (location.type === 'EV' || location.attributes && location.attributes.excludeFromConsumption) {
       memo[location.name] = true
     }
@@ -64,9 +64,15 @@ export const parseLocations = (locationsResponse, extensionsResponse) => {
     if (doc.docType === 'extension' && doc.subjectType === 'location'
       && doc.attributes && doc.attributes.excludeFromConsumption) {
       memo[doc.subject] = true
+      const locationKey = Object.keys(locationsHash).find(key => (key.indexOf(doc.subject) === 0))
+      if (locationKey) {
+        locationsHash[locationKey].attributes = locationsHash[locationKey].attributes || {}
+        locationsHash[locationKey].attributes.excludeFromConsumption = true
+      }
     }
     return memo
   }, locationsExcludedFromConsumption)
+  const locations = Object.keys(locationsHash).map(key => locationsHash[key])
   const externalLocations = locations.reduce((memo, location) => {
     if (location.type === 'E' || location.type === 'EV') {
       memo.push(location)
