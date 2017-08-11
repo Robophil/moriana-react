@@ -7,3 +7,11 @@ export const objectFromKeys = (headers, response) => {
     return obj
   })
 }
+
+export const clone = (obj) => {
+  return JSON.parse(JSON.stringify(obj))
+}
+
+export const isNumeric = (inputValue) => {
+  return !isNaN(parseFloat(inputValue)) && isFinite(inputValue)
+}
