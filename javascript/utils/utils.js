@@ -1,6 +1,7 @@
 export const objectFromKeys = (headers, response) => {
   return response.rows.map(row => {
-    const obj = { id: row.id, value: row.value}
+    const obj = { value: row.value}
+    if (row.id) obj.id = row.id
     headers.forEach((header, i) => {
       obj[header] = row.key[i]
     })

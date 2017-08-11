@@ -28,7 +28,8 @@ const defaultLocations = {
   loading: false,
   apiError: false,
   locations: [],
-  locationsExcludedFromConsumption: {}
+  locationsExcludedFromConsumption: {},
+  externalLocations: [],
 }
 
 export default (state = defaultLocations, action) => {
@@ -46,7 +47,13 @@ export default (state = defaultLocations, action) => {
 }
 
 export const parseLocations = (locationsResponse, extensionsResponse) => {
-  const locations = objectFromKeys(['type', 'name', 'attributes'], locationsResponse)
+  // let's get unique locations
+  const locationsHash = objectFromKeys(['type', 'name', 'attributes'], locationsResponse)
+    .reduce((memo, location) => {
+      memo[`${location.name}__${location.type}`] = location
+      return memo
+    }, {})
+  const locations = Object.keys(locationsHash).map(key => locationsHash[key])
   const locationsExcludedFromConsumption = locations.reduce((memo, location) => {
     if (location.type === 'EV' || location.attributes && location.attributes.excludeFromConsumption) {
       memo[location.name] = true
@@ -60,5 +67,11 @@ export const parseLocations = (locationsResponse, extensionsResponse) => {
     }
     return memo
   }, locationsExcludedFromConsumption)
-  return { locations, locationsExcludedFromConsumption }
+  const externalLocations = locations.reduce((memo, location) => {
+    if (location.type === 'E' || location.type === 'EV') {
+      memo.push(location)
+    }
+    return memo
+  }, [])
+  return { locations, locationsExcludedFromConsumption, externalLocations }
 }

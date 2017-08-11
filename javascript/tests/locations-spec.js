@@ -4,6 +4,8 @@ import { parseLocations } from 'locations'
 
 const locationsResponse = {"rows":[
   {"key":["E","Normal Location",{}],"value":25},
+  {"key":["E","Normal Location",null],"value":3},
+  {"key":["I","Normal Internal Location",{}],"value":8},
   {"key":["EV","Expired Location",null],"value":22},
   {"key":["E","Excluded Location",{"excludeFromConsumption":true}],"value":2},
 ]}
@@ -25,6 +27,18 @@ export default {
       expect(locationsState.locations[0].name).eq('Normal Location')
       expect(locationsState.locations[0].type).eq('E')
     },
+    'should return unique locations' () {
+      let foundDuplicate = false
+      const locHash = {}
+      locationsState.locations.forEach(loc => {
+        if (locHash[loc.name]) {
+          foundDuplicate = true
+        } else {
+          locHash[loc.name] = true
+        }
+      })
+      expect(foundDuplicate).eq(false)
+    },
     'should return a hash of locations that are excluded from consumption' () {
       expect(typeof locationsState.locationsExcludedFromConsumption).eq('object')
     },
@@ -39,6 +53,12 @@ export default {
     },
     'should return locations from extension docs' () {
       expect(locationsState.locationsExcludedFromConsumption['Test Location Excluded Through Doc']).eq(true)
-    }
+    },
+    'should return externalLocations all with type "E"' () {
+      expect(locationsState.externalLocations.length).eq(3)
+      locationsState.externalLocations.forEach(location => {
+        expect(['E', 'EV'].indexOf(location.type)).not.eq(-1)
+      })
+    },
   },
 }

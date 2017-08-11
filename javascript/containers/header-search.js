@@ -16,7 +16,7 @@ const HeaderSearch = class extends React.Component {
   componentWillReceiveProps = (newProps) => {
     this.setState({
       itemResults: newProps.items.items.slice(0, this.state.limit)
-    });
+    })
   }
 
   runSearch = (e) => {
