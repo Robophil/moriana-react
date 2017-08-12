@@ -13,7 +13,7 @@ import LoginPage from 'login-page'
 import ShipmentPage from 'shipment-page'
 import StockCardPage from 'stockcard-page'
 import ReportsPage from 'reports-page'
-import EditReceivePage from 'edit-receive-page'
+import ReceivePage from 'receive-page'
 
 require('./styles/app.less')
 
@@ -24,7 +24,7 @@ const PAGES = {
   '/': { component: ShipmentsPage, paramKeys: ['offset'] },
   'login': { component: LoginPage, paramKeys: [] },
   'shipment': { component: ShipmentPage, paramKeys: ['id'] },
-  'shipment/edit-new/receive': { component: EditReceivePage, paramKeys: [] },
+  'shipment/edit-new/receive': { component: ReceivePage, paramKeys: [] },
   'stockcard': { component: StockCardPage, paramKeys: ['category', 'item', 'atBatch'] },
   'reports': { component: ReportsPage, paramKeys: ['reportType'] },
 }

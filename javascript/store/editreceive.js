@@ -17,8 +17,8 @@ export const UPDATE_TRANSACTIONS = 'UPDATE_TRANSACTIONS'
 
 export const UPDATE_ERROR = 'UPDATE_ERROR'
 
-export const startNewShipment = (currentLocationName, currentUsername) => {
-  return { type: START_NEW_SHIPMENT, currentLocationName, currentUsername }
+export const startNewShipment = (currentLocationName, currentUsername, shipmentType) => {
+  return { type: START_NEW_SHIPMENT, currentLocationName, currentUsername, shipmentType }
 }
 
 // thunkettes
@@ -38,13 +38,14 @@ const defaultEditReceive = {
   apiError: null,
   shipment: {},
   dateError: false,
+  type: null,
 }
 
 export default (state = defaultEditReceive, action) => {
   switch (action.type) {
     case START_NEW_SHIPMENT: {
       const shipment = createNewShipment(action.currentLocationName, action.currentUsername)
-      return { ...state, shipment }
+      return { ...state, shipment, type: action.shipmentType }
     }
 
     case UPDATE_DATE: {
@@ -71,7 +72,11 @@ export default (state = defaultEditReceive, action) => {
     case UPDATE_LOCATION: {
       const shipment = clone(state.shipment)
       shipment[action.key] = action.inputValue.name
-      shipment[`${action.key}Type`] = action.inputValue.type
+      if (action.inputValue.type) {
+        shipment[`${action.key}Type`] = action.inputValue.type
+      } else {
+        shipment[`${action.key}Type`] = getTargetType(state.type)
+      }
       shipment[`${action.key}Attributes`] = action.inputValue.attributes
       return { ...state, shipment }
     }
@@ -92,4 +97,14 @@ const createNewShipment = (currentLocationName, currentUsername) => {
     to: currentLocationName,
     toType: 'I',
   }
+}
+
+const getTargetType = (type) => {
+  const typeMap = {
+    'receive': 'E',
+    'transfer': 'I',
+    'transfer-out': 'E',
+    'dispense': 'P'
+  }
+  return typeMap[type]
 }

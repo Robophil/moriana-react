@@ -99,6 +99,12 @@ export default {
       link += `${expiration}__${lot}/`
     }
     return link
+  },
+
+  displayLocationName (location) {
+    const map = { E: 'external', EV: 'virtual', I: 'internal', P: 'patient' }
+    const excludedFromConsumption = location.attributes && location.attributes.excludeFromConsumption
+    return `${location.name} (${map[location.type]}) ${excludedFromConsumption ? '(excluded from consumption)' : ''}`
   }
 
 }

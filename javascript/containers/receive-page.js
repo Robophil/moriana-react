@@ -6,12 +6,21 @@ import StockcardLink from 'stockcard-link'
 import DateInput from 'date-input'
 import LocationsSearch from 'locations-search'
 import VendorIdInput from 'vendor-id-input'
+import NewLocationModal from 'new-location-modal'
 
-const EditReceivePage = class extends React.Component {
+const ReceivePage = class extends React.Component {
+  state = { showNewLocation: false, newLocationName: '' }
   componentWillReceiveProps = (newProps) => {
     if (!this.props.editReceive.shipment.username && newProps.user.name) {
-      this.props.startNewShipment(this.props.route.currentLocationName, newProps.user.name)
+      this.props.startNewShipment(this.props.route.currentLocationName, newProps.user.name, 'receive')
     }
+    if (newProps.editReceive.shipment.from) {
+      this.setState({ showNewLocation: false })
+    }
+  }
+
+  toggleNewReceiveLocation = (inputValue) => {
+    this.setState({ showNewLocation: !this.state.showNewLocation, newLocationName: inputValue })
   }
 
   render () {
@@ -48,6 +57,7 @@ const EditReceivePage = class extends React.Component {
                       value={{name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}}
                       valueKey={'from'}
                       valueUpdated={this.props.updateShipment}
+                      onNewSelected={this.toggleNewReceiveLocation}
                       label={'From Location'}
                     />
                     <div className='form-group field to-location text-capitalize'>
@@ -76,6 +86,13 @@ const EditReceivePage = class extends React.Component {
               </div>
             </div>
           </div>
+          {this.state.showNewLocation && (
+            <NewLocationModal
+              value={this.state.newLocationName}
+              valueKey={'from'}
+              valueUpdated={this.props.updateShipment}
+              closeClicked={this.toggleNewReceiveLocation}
+            />)}
         </div>
       )
   }
@@ -86,4 +103,4 @@ export default connect(
     return { editReceive: state.editreceive, user: state.user, locations: state.locations }
   },
   { startNewShipment, updateShipment }
-)(EditReceivePage)
+)(ReceivePage)

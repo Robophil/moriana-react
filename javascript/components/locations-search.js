@@ -14,54 +14,16 @@ export default class LocationsSearch extends React.Component {
   }
 
   componentWillReceiveProps = (newProps) => {
-    if (!newProps.value.name) {
-      this.setState({ showEdit: true })
-    }
+    this.setState({ showEdit: !newProps.value.name })
     if (newProps.locations) {
       this.setState({ visibleLocations: newProps.locations.slice(0, 25) })
     }
   }
 
-  onChange = (event) => {
-    const inputValue = event.currentTarget.value
-    const cleanedQuery = inputValue.toLowerCase().trim()
-    const visibleLocations = this.props.locations.filter(location =>
-      (location.name.toLowerCase().indexOf(cleanedQuery) != -1)
-    )
-    this.setState({inputValue, visibleLocations, localError: false, currIndex: 0 })
-  }
-
-  onBlur = (event) => {
-    const {inputValue} = this.state
-    // this.props.valueUpdated(this.props.valueKey, inputValue)
-  }
-
-  toggleEdit = (event) => {
-    if (event) event.preventDefault()
-    this.setState({ showEdit: !this.state.showEdit, showSearch: !this.state.showSearch })
-  }
-
-  showSearch = () => {
-    if (!this.state.showSearch) this.setState({ showSearch: true })
-  }
-
-  hideSearch = () => {
-    if (this.state.showSearch) this.setState({ showSearch: false })
-  }
-
-  onClick = (event) => {
-    this.locationSelected(Number(event.currentTarget.dataset.index))
-  }
-
-  locationSelected = (index) => {
-    this.props.valueUpdated(this.props.valueKey, this.state.visibleLocations[index])
-    this.toggleEdit()
-  }
-
   onKeyUp = (event) => {
     switch (h.keyMap(event.keyCode)) {
       case 'ENTER': {
-        this.locationSelected([this.state.currIndex])
+        this.locationSelected(this.state.currIndex)
         break
       }
       case 'ESCAPE': {
@@ -94,17 +56,60 @@ export default class LocationsSearch extends React.Component {
     }
   }
 
+  onChange = (event) => {
+    this.runSearch(event.currentTarget.value)
+  }
+
+  runSearch = (inputValue) => {
+    const cleanedQuery = inputValue.toLowerCase().trim()
+    const visibleLocations = this.props.locations.filter(location =>
+      (location.name.toLowerCase().indexOf(cleanedQuery) != -1)
+    )
+    this.setState({inputValue, visibleLocations, localError: false, currIndex: 0 })
+  }
+
+  onBlur = (event) => {
+    const {inputValue} = this.state
+    // this.props.valueUpdated(this.props.valueKey, inputValue)
+  }
+
   setCurrIndex = (event) => {
     this.setState({ currIndex: Number(event.target.dataset.index) })
   }
 
-  displayLocationName = (location) => {
-    const map = { E: 'external', EV: 'virtual', I: 'internal', P: 'patient' }
-    const excludedFromConsumption = location.attributes && location.attributes.excludeFromConsumption
-    return `${location.name} (${map[location.type]}) ${excludedFromConsumption ? '(excluded from consumption)' : ''}`
+  toggleEdit = (event) => {
+    if (event) event.preventDefault()
+    this.setState({ showEdit: !this.state.showEdit, showSearch: !this.state.showSearch })
+  }
+
+  showSearch = () => {
+    if (!this.state.showSearch) this.setState({ showSearch: true })
+    if (this.state.inputValue) {
+      this.runSearch(this.state.inputValue)
+    }
+  }
+
+  hideSearch = () => {
+    if (this.state.showSearch) this.setState({ showSearch: false })
+  }
+
+  onClick = (event) => {
+    this.locationSelected(Number(event.currentTarget.dataset.index))
+  }
+
+  locationSelected = (index) => {
+    if (index === this.state.visibleLocations.length) {
+      if (this.props.onNewSelected) {
+        this.props.onNewSelected(this.state.inputValue)
+        this.hideSearch()
+      }
+    } else {
+      this.props.valueUpdated(this.props.valueKey, this.state.visibleLocations[index])
+    }
   }
 
   render () {
+    const allowNew = this.props.onNewSelected ? true : false
     const { inputValue, localError, showEdit, currIndex, visibleLocations, showSearch } = this.state
     const { value, label, locations } = this.props
     return (
@@ -136,15 +141,17 @@ export default class LocationsSearch extends React.Component {
                           onMouseEnter={this.setCurrIndex}
                           onClick={this.onClick}
                         >
-                          {this.displayLocationName(location)}
+                          {h.displayLocationName(location)}
                         </a>
                       ))}
                       <a
                         data-index={visibleLocations.length}
                         onMouseEnter={this.setCurrIndex}
+                        onClick={this.onClick}
                         className={`list-group-item result ${currIndex === visibleLocations.length ? 'active' : ''}`}
                       >
-                        Locations: {visibleLocations.length} of {locations.length} | <strong>Add New Location</strong>
+                        Locations: {visibleLocations.length} of {locations.length}
+                        {allowNew && (<strong> | Add New Location</strong>)}
                       </a>
                     </div>
                   </div>
@@ -153,7 +160,7 @@ export default class LocationsSearch extends React.Component {
             ) : (
               <div className='col-sm-9'>
                 <div className='form-control-static '>
-                  <span className='static-value'>{`${value.name} -- ${value.type}`}</span>
+                  <span className='static-value'>{h.displayLocationName(value)}</span>
                   &nbsp;(<a onClick={this.toggleEdit}>edit</a>)
                 </div>
               </div>
@@ -165,10 +172,11 @@ export default class LocationsSearch extends React.Component {
 }
 
 LocationsSearch.propTypes = {
+  label: PropTypes.string.isRequired,
   locations: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
   value: PropTypes.object.isRequired,
   valueKey: PropTypes.string.isRequired,
   valueUpdated: PropTypes.func.isRequired,
-  label: PropTypes.string.isRequired,
+  onNewSelected: PropTypes.func,
 }
