@@ -9,7 +9,8 @@ import StockcardLink from 'stockcard-link'
 import DateInput from 'date-input'
 import SearchDrop from 'search-drop'
 import VendorIdInput from 'vendor-id-input'
-import NewLocationModal from 'new-location-modal'
+import NewLocation from 'new-location'
+import EditBatch from 'edit-batch'
 import StaticShipmentDetails from 'static-shipment-details'
 import EditTransactionsTable from 'edit-transactions-table'
 
@@ -20,6 +21,9 @@ const ReceivePage = class extends React.Component {
     newLocationName: '',
     showEditDetails: true,
     showEditTransactions: false,
+    showBatchEdit: false,
+    editingItem: '',
+    editingCategory: '',
   }
 
   componentDidMount = () => {
@@ -50,8 +54,12 @@ const ReceivePage = class extends React.Component {
     console.log(index)
   }
 
-  toggleNewBatch = () => {
-    console.log('new batch');
+  toggleNewBatch = (key, value) => {
+    this.setState({ editingItem: value.item, editingCategory: value.category, showBatchEdit: true })
+  }
+
+  hideEditBatch = () => {
+    this.setState({ editingItem: null, editingCategory: null, showBatchEdit: false })
   }
 
   toggleNewItem = (name) => {
@@ -143,11 +151,19 @@ const ReceivePage = class extends React.Component {
           )}
 
           {this.state.showNewLocation && (
-            <NewLocationModal
+            <NewLocation
               value={this.state.newLocationName}
               valueKey={'from'}
               valueUpdated={this.props.updateShipment}
               closeClicked={this.toggleNewReceiveLocation}
+            />)}
+
+          {this.state.showBatchEdit && (
+            <EditBatch
+              item={this.state.editingItem}
+              category={this.state.editingCategory}
+              valueUpdated={this.props.updateShipment}
+              closeClicked={this.hideEditBatch}
             />)}
 
         </div>

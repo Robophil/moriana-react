@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import h from 'helpers'
 
-export default class NewLocationModal extends React.Component {
+export default class NewLocation extends React.Component {
   state = { name: '', checked: false }
 
   componentDidMount = () => {
@@ -57,7 +57,7 @@ export default class NewLocationModal extends React.Component {
               <form className='form-horizontal edit-location-form'>
                 <fieldset>
                   <div className='edit-fields'>
-                    <div className='form-group name-group'>
+                    <div className='form-group'>
                       <label className='col-lg-2 control-label'>Name</label>
                       <div className='col-lg-10'>
                         <input
@@ -96,7 +96,7 @@ export default class NewLocationModal extends React.Component {
   }
 }
 
-NewLocationModal.propTypes = {
+NewLocation.propTypes = {
   value: PropTypes.string,
   valueKey: PropTypes.string.isRequired,
   valueUpdated: PropTypes.func.isRequired,

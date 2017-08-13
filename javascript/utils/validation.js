@@ -18,3 +18,17 @@ export const validateDateInput = (inputValue) => {
     return false
   }
 }
+
+
+export const validateExpirationInput = (input) => {
+  if (!input) return false
+  if (Moment(input, 'M/YY', true).isValid()
+  || Moment(input, 'MM/YY', true).isValid()
+  || Moment(input, 'M/YYYY', true).isValid()
+  || Moment(input, 'MM/YYYY', true).isValid()
+  || Moment(input, 'YYYY-M-D', true).isValid()) {
+    return null
+  } else {
+    return false
+  }
+}
