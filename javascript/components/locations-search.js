@@ -13,6 +13,10 @@ export default class LocationsSearch extends React.Component {
     showSearch: false,
   }
 
+  componentDidMount = () => {
+    this.setState({ visibleLocations: this.props.locations.slice(0, 25) })
+  }
+
   componentWillReceiveProps = (newProps) => {
     this.setState({ showEdit: !newProps.value.name })
     if (newProps.locations) {
@@ -66,11 +70,6 @@ export default class LocationsSearch extends React.Component {
       (location.name.toLowerCase().indexOf(cleanedQuery) != -1)
     )
     this.setState({inputValue, visibleLocations, localError: false, currIndex: 0 })
-  }
-
-  onBlur = (event) => {
-    const {inputValue} = this.state
-    // this.props.valueUpdated(this.props.valueKey, inputValue)
   }
 
   setCurrIndex = (event) => {

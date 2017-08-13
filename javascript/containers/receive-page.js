@@ -44,7 +44,7 @@ const ReceivePage = class extends React.Component {
     const { shipment, loadingInitialShipment, dateError } = this.props.editReceive
     const { locations, route } = this.props
     const { dbName } = route
-    console.log(JSON.stringify(shipment, null, 2))
+    // console.log(JSON.stringify(shipment, null, 2))
     return loadingInitialShipment ? (
         <div className='loader'></div>
       ) : (

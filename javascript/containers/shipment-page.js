@@ -28,7 +28,7 @@ const ShipmentPage = class extends React.Component {
             <div className='shipment-details'>
               <strong>{h.formatDate(ship.date)}</strong> ({h.dateFromNow(ship.date)})
               <strong> {ship.totalTransactions}</strong> transactions
-              total value <strong>{h.num(ship.totalValue)} </strong>
+              total value <strong>{h.currency(ship.totalValue)} </strong>
 
                | created by <strong>{ship.username} </strong>
                 latest edited <strong>{h.dateFromNow(ship.updated)} </strong>
@@ -62,8 +62,8 @@ const ShipmentPage = class extends React.Component {
                     <td>{t.lotNum}</td>
                     <td>{h.expiration(t.expiration)}</td>
                     <td>{t.quantity}</td>
-                    <td>{h.num(t.unitPrice)}</td>
-                    <td>{h.num(t.totalValue)}</td>
+                    <td>{h.currency(t.unitPrice)}</td>
+                    <td>{h.currency(t.totalValue)}</td>
                     <td>{t.username}</td>
                   </tr>
                 ))}

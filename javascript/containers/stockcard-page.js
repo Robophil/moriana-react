@@ -88,8 +88,8 @@ const StockCardPage = class extends React.Component {
                       </ShipmentLink>
                     </td>
                     <td className={`${atBatch ? 'alert-info' : ''}`}>{h.expiration(row.expiration)}</td>
-                    <td className={`${atBatch ? 'alert-info' : ''}`}>{h.num(row.unitPrice)}</td>
-                    <td className={`${atBatch ? 'alert-info' : ''}`}>{h.num(row.totalValue)}</td>
+                    <td className={`${atBatch ? 'alert-info' : ''}`}>{h.currency(row.unitPrice)}</td>
+                    <td className={`${atBatch ? 'alert-info' : ''}`}>{h.currency(row.totalValue)}</td>
                     <td className={`no-print ${atBatch ? 'alert-info' : ''}`}>
                       <StockCardLink
                         dbName={dbName}
