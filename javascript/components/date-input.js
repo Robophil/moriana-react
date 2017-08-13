@@ -32,7 +32,7 @@ export default class DateInput extends React.Component {
     const { inputValue, localError } = this.state
     const { value } = this.props
     return (
-      <div className={`form-group field date save-on-blur ${localError ? 'has-error' : ''}`}>
+      <div className={`form-group field ${localError ? 'has-error' : ''}`}>
         <label className='col-lg-2 control-label'>Date</label>
           {this.state.showEdit ? (
             <div className='col-sm-9'>

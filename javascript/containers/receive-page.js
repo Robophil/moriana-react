@@ -36,12 +36,12 @@ const ReceivePage = class extends React.Component {
           <hr />
           <div className='shipment-details'>
             <div className='edit-shipment-details'>
-              {/* <div className='shipment-details'>
+              <div className='shipment-details'>
                 <strong>August 10, 2017</strong> |
                 transactions: <strong></strong>
                 | total value: <strong>0.0</strong>
                 &nbsp; <a href='#' className='toggle-details'>edit details</a>
-              </div> */}
+              </div>
               <div>
                 <form className='form-horizontal edit-details-form'>
                   <fieldset>
@@ -62,7 +62,7 @@ const ReceivePage = class extends React.Component {
                     />
                     <div className='form-group field to-location text-capitalize'>
                       <label className='col-lg-2 control-label'>To Location</label>
-                      <div className='col-sm-9 input-group'>
+                      <div className='col-sm-9'>
                         <div className='form-control-static '>
                           <span className='static-value'>{shipment.to}</span>
                         </div>

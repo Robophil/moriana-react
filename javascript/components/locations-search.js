@@ -114,7 +114,7 @@ export default class LocationsSearch extends React.Component {
     const { value, label, locations } = this.props
     return (
       <ClickOutHandler onClickOut={this.hideSearch}>
-        <div className={`form-group field date save-on-blur ${localError ? 'has-error' : ''}`}>
+        <div className={`form-group field ${localError ? 'has-error' : ''}`}>
           <label className='col-lg-2 control-label'>{label}</label>
             {showEdit ? (
               <div className='col-sm-9'>
