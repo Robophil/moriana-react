@@ -72,3 +72,14 @@ export const stockCardLink = (dbName, transaction, atBatch=false) => {
   }
   return link
 }
+
+export const searchItems = (rows, input) => {
+  return rows.filter(item =>
+    item.item.toLowerCase().indexOf(input) != -1
+    || item.category.toLowerCase().indexOf(input) != -1
+  )
+}
+
+export const displayItemName = (row) => {
+  return `${row.item} ${row.category}`
+}

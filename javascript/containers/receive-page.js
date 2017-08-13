@@ -1,7 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { updateShipment, startNewShipment } from 'editreceive'
+import {getShipment} from 'shipments'
+import { updateShipment, startNewShipment } from 'editshipment'
 import {displayLocationName, searchLocations} from 'locations'
+import {displayItemName, searchItems} from 'items'
 import h from 'helpers'
 import StockcardLink from 'stockcard-link'
 import DateInput from 'date-input'
@@ -13,6 +15,7 @@ import EditTransactionsTable from 'edit-transactions-table'
 
 const ReceivePage = class extends React.Component {
   state = {
+    isNew: true,
     showNewLocation: false,
     newLocationName: '',
     showEditDetails: true,
@@ -20,11 +23,17 @@ const ReceivePage = class extends React.Component {
   }
 
   componentDidMount = () => {
-    this.props.startNewShipment(this.props.route.currentLocationName, 'receive')
+    const { dbName, params } = this.props.route
+    if (params.id) {
+      this.setState({ isNew: false, showEditDetails: false, showEditTransactions: true })
+      this.props.getShipment(dbName, params.id)
+    } else {
+      this.props.startNewShipment(this.props.route.currentLocationName, 'receive')
+    }
   }
 
   componentWillReceiveProps = (newProps) => {
-    if (newProps.editReceive.shipment.from) {
+    if (newProps.editshipment.shipment.from) {
       this.setState({ showNewLocation: false })
     }
   }
@@ -41,8 +50,17 @@ const ReceivePage = class extends React.Component {
     console.log(index)
   }
 
+  toggleNewBatch = () => {
+    console.log('new batch');
+  }
+
+  toggleNewItem = (name) => {
+    console.log('new item');
+  }
+
+
   render () {
-    const { shipment, loadingInitialShipment, dateError } = this.props.editReceive
+    const { shipment, loadingInitialShipment, dateError } = this.props.editshipment
     const { locations, route } = this.props
     const { dbName } = route
     // console.log(JSON.stringify(shipment, null, 2))
@@ -108,15 +126,18 @@ const ReceivePage = class extends React.Component {
 
           {this.state.showEditTransactions && (
             <div>
-              {/* <SearchDrop
-                locations={locations.externalLocations}
-                loading={locations.loading}
-                value={{name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}}
-                valueKey={'from'}
-                valueUpdated={this.props.updateShipment}
-                onNewSelected={this.toggleNewReceiveLocation}
-                label={'From Location'}
-              /> */}
+              <SearchDrop
+                rows={this.props.items.items}
+                loading={this.props.items.loading}
+                value={{}}
+                valueKey={'receive_transaction'}
+                valueUpdated={this.toggleNewBatch}
+                onNewSelected={this.toggleNewItem}
+                label={'Search Items'}
+                resourceName={'Item'}
+                displayFunction={displayItemName}
+                searchFilterFunction={searchItems}
+              />
               <EditTransactionsTable transactions={shipment.transactions} onEditClick={this.transactionEditClick} />
             </div>
           )}
@@ -136,7 +157,7 @@ const ReceivePage = class extends React.Component {
 
 export default connect(
   state => {
-    return { editReceive: state.editreceive, user: state.user, locations: state.locations }
+    return { editshipment: state.editshipment, user: state.user, locations: state.locations, items: state.items }
   },
-  { startNewShipment, updateShipment }
+  { startNewShipment, updateShipment, getShipment }
 )(ReceivePage)

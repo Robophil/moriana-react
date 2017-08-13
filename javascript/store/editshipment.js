@@ -7,6 +7,8 @@ import {getISODateFromInput} from 'input-transforms'
 
 // actions
 
+import { REQUEST_SHIPMENT, RECEIVED_SHIPMENT } from 'shipments'
+
 export const START_NEW_SHIPMENT = 'START_NEW_SHIPMENT'
 export const UPDATE_DATE = 'UPDATE_DATE'
 export const UPDATE_FROM = 'UPDATE_FROM'
@@ -32,7 +34,7 @@ export const updateShipment = (key, inputValue) => {
 
 // reducers
 
-const defaultEditReceive = {
+const defaultEditShipment = {
   loadingInitialShipment: false,
   savingShipment: false,
   apiError: null,
@@ -41,8 +43,15 @@ const defaultEditReceive = {
   type: null,
 }
 
-export default (state = defaultEditReceive, action) => {
+export default (state = defaultEditShipment, action) => {
   switch (action.type) {
+    case REQUEST_SHIPMENT: {
+      return { ...state, loadingInitialShipment: true }
+    }
+    case RECEIVED_SHIPMENT: {
+      const shipment = clone(action.shipment)
+      return { ...state, shipment, loadingInitialShipment: false }
+    }
     case START_NEW_SHIPMENT: {
       const shipment = createNewShipment(action.currentLocationName)
       return { ...state, shipment, type: action.shipmentType }

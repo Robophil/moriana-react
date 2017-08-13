@@ -24,7 +24,7 @@ const PAGES = {
   '/': { component: ShipmentsPage, paramKeys: ['offset'] },
   'login': { component: LoginPage, paramKeys: [] },
   'shipment': { component: ShipmentPage, paramKeys: ['id'] },
-  'shipment/edit-new/receive': { component: ReceivePage, paramKeys: [] },
+  'shipment/edit/receive': { component: ReceivePage, paramKeys: ['id'] },
   'stockcard': { component: StockCardPage, paramKeys: ['category', 'item', 'atBatch'] },
   'reports': { component: ReportsPage, paramKeys: ['reportType'] },
 }

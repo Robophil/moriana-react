@@ -5,7 +5,7 @@ import ClickOutHandler from 'react-onclickout'
 
 export default class SearchDrop extends React.Component {
   state = {
-    showEdit: false,
+    showEdit: true,
     inputValue: '',
     localError: false,
     visibleRows: [],

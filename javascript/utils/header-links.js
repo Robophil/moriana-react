@@ -20,9 +20,9 @@ export default {
         { title: 'Reports', url: `#d/${dbName}/reports/`, icon: 'icono-barChart' }
       ],
       create: [
-        { title: 'Receive', url: `#d/${dbName}/shipment/edit-new/receive`, icon: 'icon arrow-down' },
-        { title: 'Transfer', url: `#d/${dbName}/shipment/edit-new/transfer`, icon: 'icon arrow-right' },
-        { title: 'Transfer Out', url: `#d/${dbName}/shipment/edit-new/transfer-out`, icon: 'icon arrow-up' }
+        { title: 'Receive', url: `#d/${dbName}/shipment/edit/receive`, icon: 'icon arrow-down' },
+        { title: 'Transfer', url: `#d/${dbName}/shipment/edit/transfer`, icon: 'icon arrow-right' },
+        { title: 'Transfer Out', url: `#d/${dbName}/shipment/edit/transfer-out`, icon: 'icon arrow-up' }
       ],
       search: [],
       database: prettyRoles.map(db => { return { title: db.name, url: `#d/${db.dbName}/`, icon: 'icon focus' } })
@@ -35,7 +35,7 @@ export default {
     }
     if (dbName && dbName.toLowerCase().indexOf('dispensary') !== -1) {
       subLinks.create.push({
-        title: 'Dispense', url: `#d/${dbName}/shipment/edit-new/dispense`, icon: 'icon arrow-right'
+        title: 'Dispense', url: `#d/${dbName}/shipment/edit/dispense`, icon: 'icon arrow-right'
       })
     }
     return subLinks
