@@ -17,8 +17,8 @@ export const UPDATE_TRANSACTIONS = 'UPDATE_TRANSACTIONS'
 
 export const UPDATE_ERROR = 'UPDATE_ERROR'
 
-export const startNewShipment = (currentLocationName, currentUsername, shipmentType) => {
-  return { type: START_NEW_SHIPMENT, currentLocationName, currentUsername, shipmentType }
+export const startNewShipment = (currentLocationName, shipmentType) => {
+  return { type: START_NEW_SHIPMENT, currentLocationName, shipmentType }
 }
 
 // thunkettes
@@ -44,7 +44,7 @@ const defaultEditReceive = {
 export default (state = defaultEditReceive, action) => {
   switch (action.type) {
     case START_NEW_SHIPMENT: {
-      const shipment = createNewShipment(action.currentLocationName, action.currentUsername)
+      const shipment = createNewShipment(action.currentLocationName)
       return { ...state, shipment, type: action.shipmentType }
     }
 
@@ -87,15 +87,16 @@ export default (state = defaultEditReceive, action) => {
   }
 }
 
-const createNewShipment = (currentLocationName, currentUsername) => {
+const createNewShipment = (currentLocationName) => {
   const date = new Date().toISOString()
   return {
     date,
     created: date,
     updated: date,
-    username: currentUsername,
+    // username: currentUsername,
     to: currentLocationName,
     toType: 'I',
+    transactions: [],
   }
 }
 

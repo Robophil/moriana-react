@@ -4,15 +4,14 @@ import PropTypes from 'prop-types'
 export default class VendorIdInput extends React.Component {
   state = { inputValue: '' }
 
-  componentWillReceiveProps = (newProps) => {
-    if (newProps.value) {
-      this.setState({ inputValue: newProps.value })
+  componentDidMount = (newProps) => {
+    if (this.props.value) {
+      this.setState({ inputValue: this.props.value })
     }
   }
 
   onChange = (event) => {
-    const inputValue = event.currentTarget.value
-    this.setState({ inputValue })
+    this.setState({ inputValue: event.currentTarget.value })
   }
 
   onBlur = () => {

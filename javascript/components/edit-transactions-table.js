@@ -1,0 +1,49 @@
+import React from 'react'
+import h from 'helpers'
+import PropTypes from 'prop-types'
+
+export default class EditTransactionsTable extends React.Component {
+  onClick = (event) => {
+    this.props.onEditClick(event.currentTarget.dataset.index)
+  }
+
+  render () {
+    return (
+      <table className='table table-striped table-hover'>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Lot Number</th>
+            <th>Expiration</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total Value</th>
+            <th>User</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {this.props.transactions.map((t, i) => (
+            <tr key={i}>
+              <td>{t.item}</td>
+              <td>{t.category}</td>
+              <td>{t.lot}</td>
+              <td>{h.expiration(t.expiration)}</td>
+              <td>{h.num(t.quantity)}</td>
+              <td>{h.currency(t.unitPrice)}</td>
+              <td>{h.currency(t.unitPrice * t.quantity)}</td>
+              <td>{t.username}</td>
+              <td><button onClick={this.onClick} data-index={i} className='btn btn-sm btn-default'>edit</button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )
+  }
+}
+
+EditTransactionsTable.propTypes = {
+  transactions: PropTypes.array.isRequired,
+  onEditClick: PropTypes.func.isRequired,
+}

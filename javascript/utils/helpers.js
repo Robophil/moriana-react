@@ -49,6 +49,14 @@ export default {
     return Math.floor(first / second * 100) + '%'
   },
 
+  currency (amount) {
+    if ((amount) && Number(amount)) {
+      return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    } else {
+      return '0.0'
+    }
+  },
+
   first (list) {
     if (!list || !list.length) {
       return {}
