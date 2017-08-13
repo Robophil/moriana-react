@@ -1,10 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { updateShipment, startNewShipment } from 'editreceive'
+import {displayLocationName, searchLocations} from 'locations'
 import h from 'helpers'
 import StockcardLink from 'stockcard-link'
 import DateInput from 'date-input'
-import LocationsSearch from 'locations-search'
+import SearchDrop from 'search-drop'
 import VendorIdInput from 'vendor-id-input'
 import NewLocationModal from 'new-location-modal'
 import StaticShipmentDetails from 'static-shipment-details'
@@ -64,14 +65,17 @@ const ReceivePage = class extends React.Component {
                     value={shipment.date}
                     valueUpdated={this.props.updateShipment}
                   />
-                  <LocationsSearch
-                    locations={locations.externalLocations}
+                  <SearchDrop
+                    rows={locations.externalLocations}
                     loading={locations.loading}
                     value={{name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}}
                     valueKey={'from'}
                     valueUpdated={this.props.updateShipment}
                     onNewSelected={this.toggleNewReceiveLocation}
                     label={'From Location'}
+                    resourceName={'Location'}
+                    displayFunction={displayLocationName}
+                    searchFilterFunction={searchLocations}
                   />
                   <div className='form-group field to-location text-capitalize'>
                     <label className='col-lg-2 control-label'>To Location</label>
@@ -104,7 +108,7 @@ const ReceivePage = class extends React.Component {
 
           {this.state.showEditTransactions && (
             <div>
-              <LocationsSearch
+              {/* <SearchDrop
                 locations={locations.externalLocations}
                 loading={locations.loading}
                 value={{name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}}
@@ -112,7 +116,7 @@ const ReceivePage = class extends React.Component {
                 valueUpdated={this.props.updateShipment}
                 onNewSelected={this.toggleNewReceiveLocation}
                 label={'From Location'}
-              />
+              /> */}
               <EditTransactionsTable transactions={shipment.transactions} onEditClick={this.transactionEditClick} />
             </div>
           )}

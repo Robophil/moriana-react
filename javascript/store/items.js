@@ -60,3 +60,15 @@ export const getCategories = (items) => {
   .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
   .map(cat => { return { name: cat } })
 }
+
+export const stockCardLink = (dbName, transaction, atBatch=false) => {
+  const { item, category } = transaction
+  let link = `/#d/${dbName}/stockcard/${encodeURIComponent(category)}/${encodeURIComponent(item)}/`
+  if (atBatch) {
+    let { expiration, lot } = transaction
+    expiration = null ? '' : expiration
+    lot = null ? '' : lot
+    link += `${expiration}__${lot}/`
+  }
+  return link
+}

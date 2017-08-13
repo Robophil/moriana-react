@@ -3,31 +3,35 @@ import h from 'helpers'
 import PropTypes from 'prop-types'
 import ClickOutHandler from 'react-onclickout'
 
-export default class LocationsSearch extends React.Component {
+export default class SearchDrop extends React.Component {
   state = {
     showEdit: false,
     inputValue: '',
     localError: false,
-    visibleLocations: [],
+    visibleRows: [],
     currIndex: 0,
     showSearch: false,
   }
 
   componentDidMount = () => {
-    this.setState({ visibleLocations: this.props.locations.slice(0, 25) })
+    this.setState({ visibleRows: this.props.rows.slice(0, 25) })
   }
 
   componentWillReceiveProps = (newProps) => {
     this.setState({ showEdit: !newProps.value.name })
-    if (newProps.locations) {
-      this.setState({ visibleLocations: newProps.locations.slice(0, 25) })
+    if (newProps.rows) {
+      this.setState({ visibleRows: newProps.rows.slice(0, 25) })
     }
+  }
+
+  displayFunction = (value) => {
+    return this.props.displayFunction ? this.props.displayFunction(value) : value.name
   }
 
   onKeyUp = (event) => {
     switch (h.keyMap(event.keyCode)) {
       case 'ENTER': {
-        this.locationSelected(this.state.currIndex)
+        this.rowSelected(this.state.currIndex)
         break
       }
       case 'ESCAPE': {
@@ -39,7 +43,7 @@ export default class LocationsSearch extends React.Component {
         break
       }
       case 'ARROW_DOWN': {
-        if (this.state.currIndex === (this.state.visibleLocations.length - 1)) {
+        if (this.state.currIndex === (this.state.visibleRows.length - 1)) {
           this.setState({ currIndex: 0 })
         } else {
           this.setState({ currIndex: this.state.currIndex + 1 })
@@ -48,7 +52,7 @@ export default class LocationsSearch extends React.Component {
       }
       case 'ARROW_UP': {
         if (this.state.currIndex < 0) {
-          this.setState({ currIndex: this.state.visibleLocations.length - 1 })
+          this.setState({ currIndex: this.state.visibleRows.length - 1 })
         } else {
           this.setState({ currIndex: this.state.currIndex - 1 })
         }
@@ -66,10 +70,8 @@ export default class LocationsSearch extends React.Component {
 
   runSearch = (inputValue) => {
     const cleanedQuery = inputValue.toLowerCase().trim()
-    const visibleLocations = this.props.locations.filter(location =>
-      (location.name.toLowerCase().indexOf(cleanedQuery) != -1)
-    )
-    this.setState({inputValue, visibleLocations, localError: false, currIndex: 0 })
+    const visibleRows = this.props.searchFilterFunction(this.props.rows, cleanedQuery)
+    this.setState({inputValue, visibleRows, currIndex: 0 })
   }
 
   setCurrIndex = (event) => {
@@ -93,27 +95,27 @@ export default class LocationsSearch extends React.Component {
   }
 
   onClick = (event) => {
-    this.locationSelected(Number(event.currentTarget.dataset.index))
+    this.rowSelected(Number(event.currentTarget.dataset.index))
   }
 
-  locationSelected = (index) => {
-    if (index === this.state.visibleLocations.length) {
+  rowSelected = (index) => {
+    if (index === this.state.visibleRows.length) {
       if (this.props.onNewSelected) {
         this.props.onNewSelected(this.state.inputValue)
         this.hideSearch()
       }
     } else {
-      this.props.valueUpdated(this.props.valueKey, this.state.visibleLocations[index])
+      this.props.valueUpdated(this.props.valueKey, this.state.visibleRows[index])
     }
   }
 
   render () {
     const allowNew = this.props.onNewSelected ? true : false
-    const { inputValue, localError, showEdit, currIndex, visibleLocations, showSearch } = this.state
-    const { value, label, locations } = this.props
+    const { inputValue, showEdit, currIndex, visibleRows, showSearch } = this.state
+    const { value, label, resourceName, rows } = this.props
     return (
       <ClickOutHandler onClickOut={this.hideSearch}>
-        <div className={`form-group field ${localError ? 'has-error' : ''}`}>
+        <div className='form-group field'>
           <label className='col-lg-2 control-label'>{label}</label>
             {showEdit ? (
               <div className='col-sm-9'>
@@ -126,13 +128,10 @@ export default class LocationsSearch extends React.Component {
                   onFocus={this.showSearch}
                   autoFocus
                   type='text' />
-                {localError && (<p className='error help-block'>
-                   Location is required.
-                </p>)}
                 {showSearch && (
                   <div className='search-drop form-input'>
                     <div className='list-group'>
-                      {visibleLocations.map((location, i) => (
+                      {visibleRows.map((row, i) => (
                         <a
                           data-index={i}
                           className={`list-group-item result ${currIndex === i ? 'active' : ''}`}
@@ -140,17 +139,17 @@ export default class LocationsSearch extends React.Component {
                           onMouseEnter={this.setCurrIndex}
                           onClick={this.onClick}
                         >
-                          {h.displayLocationName(location)}
+                          {this.displayFunction(row)}
                         </a>
                       ))}
                       <a
-                        data-index={visibleLocations.length}
+                        data-index={visibleRows.length}
                         onMouseEnter={this.setCurrIndex}
                         onClick={this.onClick}
-                        className={`list-group-item result ${currIndex === visibleLocations.length ? 'active' : ''}`}
+                        className={`list-group-item result ${currIndex === visibleRows.length ? 'active' : ''}`}
                       >
-                        Locations: {visibleLocations.length} of {locations.length}
-                        {allowNew && (<strong> | Add New Location</strong>)}
+                        {resourceName}: {visibleRows.length} of {rows.length}
+                        {allowNew && (<strong> | Add New {resourceName}</strong>)}
                       </a>
                     </div>
                   </div>
@@ -159,7 +158,7 @@ export default class LocationsSearch extends React.Component {
             ) : (
               <div className='col-sm-9'>
                 <div className='form-control-static '>
-                  <span className='static-value'>{h.displayLocationName(value)}</span>
+                  <span className='static-value'>{this.displayFunction(value)}</span>
                   &nbsp;(<a onClick={this.toggleEdit}>edit</a>)
                 </div>
               </div>
@@ -170,12 +169,15 @@ export default class LocationsSearch extends React.Component {
   }
 }
 
-LocationsSearch.propTypes = {
+SearchDrop.propTypes = {
   label: PropTypes.string.isRequired,
-  locations: PropTypes.array.isRequired,
+  resourceName: PropTypes.string.isRequired,
+  rows: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
   value: PropTypes.object.isRequired,
   valueKey: PropTypes.string.isRequired,
   valueUpdated: PropTypes.func.isRequired,
+  searchFilterFunction: PropTypes.func.isRequired,
+  displayFunction: PropTypes.func,
   onNewSelected: PropTypes.func,
 }

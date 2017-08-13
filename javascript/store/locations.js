@@ -81,3 +81,14 @@ export const parseLocations = (locationsResponse, extensionsResponse) => {
   }, [])
   return { locations, locationsExcludedFromConsumption, externalLocations }
 }
+
+
+export const searchLocations = (rows, input) => {
+  return rows.filter(row => (row.name.toLowerCase().indexOf(input) != -1))
+}
+
+export const displayLocationName = (location) => {
+  const map = { E: 'external', EV: 'virtual', I: 'internal', P: 'patient' }
+  const excludedFromConsumption = location.attributes && location.attributes.excludeFromConsumption
+  return `${location.name} (${map[location.type]}) ${excludedFromConsumption ? '(excluded from consumption)' : ''}`
+}

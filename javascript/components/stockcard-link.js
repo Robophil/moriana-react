@@ -1,5 +1,5 @@
 import React from 'react'
-import h from 'helpers'
+import {stockCardLink} from 'items'
 
 export default class extends React.Component {
   render () {
@@ -9,7 +9,7 @@ export default class extends React.Component {
       onMouseEnter={this.props.onMouseEnter}
       data-index={this.props.dataIndex}
       onClick={this.props.onClick}
-      href={h.stockCardLink(dbName, transaction, this.props.atBatch)}>
+      href={stockCardLink(dbName, transaction, this.props.atBatch)}>
       {this.props.children}
     </a>)
   }

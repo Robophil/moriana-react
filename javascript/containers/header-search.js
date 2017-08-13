@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getItems } from 'items'
+import { getItems, stockCardLink } from 'items'
 import { getLocations } from 'locations'
 import h from 'helpers'
 import StockcardLink from 'stockcard-link'
@@ -33,7 +33,7 @@ const HeaderSearch = class extends React.Component {
     switch (h.keyMap(e.keyCode)) {
       case 'ENTER': {
         const item = this.state.itemResults[this.state.currIndex]
-        window.location.href = h.stockCardLink(this.props.dbName, item)
+        window.location.href = stockCardLink(this.props.dbName, item)
         this.props.closeClicked()
         break
       }

@@ -97,22 +97,4 @@ export default {
     return keys[keyCode]
   },
 
-  stockCardLink(dbName, transaction, atBatch=false) {
-    const { item, category } = transaction
-    let link = `/#d/${dbName}/stockcard/${encodeURIComponent(category)}/${encodeURIComponent(item)}/`
-    if (atBatch) {
-      let { expiration, lot } = transaction
-      expiration = null ? '' : expiration
-      lot = null ? '' : lot
-      link += `${expiration}__${lot}/`
-    }
-    return link
-  },
-
-  displayLocationName (location) {
-    const map = { E: 'external', EV: 'virtual', I: 'internal', P: 'patient' }
-    const excludedFromConsumption = location.attributes && location.attributes.excludeFromConsumption
-    return `${location.name} (${map[location.type]}) ${excludedFromConsumption ? '(excluded from consumption)' : ''}`
-  }
-
 }
