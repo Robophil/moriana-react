@@ -7,13 +7,11 @@ Web-based software for healthcare supply chain management. Designed for facilite
 * [Features](http://moriana.org/)
 * [Original Backbone App](https://github.com/kdoran/moriana)
 * [License](./LICENSE)
-* [Demo at demo.moriana.org](demo.moriana.org)
-
-username: `testuser` password: `pass`
+* [Demo at demo.moriana.org](demo.moriana.org) username: `testuser` password: `pass`
 
 ## Application Overview
 
-The app's aim is to have as few dependencies as possible, allowing for offline use and a light deployment. It uses Apache's CouchDB as its database, backend, and web server (in contrast to a more traditional but heavier web setup, i.e. a database server, a web server, backend and font-end logic).
+The app's aim is to have as few dependencies as possible, allowing for offline use and a light deployment. It uses Apache's CouchDB as its database, backend, and web server (in contrast to the usual but heavier web setup, i.e. a database server, a web server, backend and font-end logic).
 
 Because of that, an organization's deployment can be a single laptop in an offline setting (e.g. a remote clinic without internet access), with only CouchDB installed and this project's index.html & javascript file. A deployment can also be multiple online or offline laptops, a cloud-based server, a backup server, etc, all using CouchDB's peer to peer replication.
 
@@ -21,7 +19,7 @@ For example, a healthcare project in Lesotho has a main Ubuntu server running NG
 
 ## Databases Approach
 
-A deployment can have multiple CouchDB servers with replication (a server corresponds to a physical machine, so one Couch server per laptop or per rack/cloud server), but it can also have multiple "databases" per server for a project's user requirements.
+A deployment can have multiple CouchDB servers with replication (a server corresponds to a physical machine, so one Couch server per laptop or per rack/cloud server), but it can also have multiple databases per server for a project's user requirements.
 
 Databases are used to logically separate data. For example, a remote clinic might have two databases, a "Warehouse" which is the clinic's supply store, and a "Dispensary", where medical supplies are issued to patients. On one laptop, pharmacy staff can transfer items from their Warehouse database to their Dispensary database. An organization then can have multiple clinics each with two databases, and transfer stock between these databases. Staff then can have access only to specific databases.
 
