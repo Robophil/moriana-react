@@ -56,7 +56,7 @@ export default class NewLocation extends React.Component {
             <div className='modal-body'>
               <form className='form-horizontal edit-location-form'>
                 <fieldset>
-                  <div className='edit-fields'>
+                  <div>
                     <div className='form-group'>
                       <label className='col-lg-2 control-label'>Name</label>
                       <div className='col-lg-10'>

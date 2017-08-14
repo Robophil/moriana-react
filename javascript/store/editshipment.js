@@ -1,9 +1,10 @@
-// actions and reducer for edit receive
+// actions and reducer for editing a shipment
+
 import client from 'client'
 import {clone} from 'utils'
 
-import {validateDateInput} from 'validation'
-import {getISODateFromInput} from 'input-transforms'
+import {dateIsValid, transactionIsValid } from 'validation'
+import { getISODateFromInput, getTransactionFromInput } from 'input-transforms'
 
 // actions
 
@@ -15,7 +16,7 @@ export const UPDATE_FROM = 'UPDATE_FROM'
 export const UPDATE_TO = 'UPDATE_TO'
 export const UPDATE_LOCATION = 'UPDATE_LOCATION'
 export const UPDATE_VENDORID = 'UPDATE_VENDORID'
-export const UPDATE_TRANSACTIONS = 'UPDATE_TRANSACTIONS'
+export const UPDATE_RECEIVE_TRANSACTIONS = 'UPDATE_RECEIVE_TRANSACTIONS'
 
 export const UPDATE_ERROR = 'UPDATE_ERROR'
 
@@ -40,6 +41,7 @@ const defaultEditShipment = {
   apiError: null,
   shipment: {},
   dateError: false,
+  transactionIsInvalid: false,
   type: null,
 }
 
@@ -59,7 +61,7 @@ export default (state = defaultEditShipment, action) => {
 
     case UPDATE_DATE: {
       const newState = { ...state, shipment: clone(state.shipment) }
-      const error = validateDateInput(action.inputValue)
+      const error = dateIsValid(action.inputValue)
       if (error) {
         newState.dateError = true
         return newState
@@ -88,6 +90,20 @@ export default (state = defaultEditShipment, action) => {
       }
       shipment[`${action.key}Attributes`] = action.inputValue.attributes
       return { ...state, shipment }
+    }
+
+    case UPDATE_RECEIVE_TRANSACTIONS: {
+      const newState = { ...state, shipment: clone(state.shipment) }
+      const transactionInput = action.inputValue
+      const isValid = transactionIsValid(transactionInput)
+      if (isValid) {
+        const transaction = getTransactionFromInput(transactionInput)
+        newState.shipment.transactions.push(transaction)
+        newState.transactionIsInvalid = false
+      } else {
+        newState.transactionIsInvalid = true
+      }
+      return newState
     }
 
     default: {

@@ -33,13 +33,6 @@ export default {
     return (s === '')
   },
 
-  isValidateEmail (email) {
-    /* eslint-disable no-useless-escape */
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    /* eslint-enable no-useless-escape */
-    return re.test(email)
-  },
-
   num (num) {
     if (typeof num !== 'number') return num
     return ('' + (Math.round(num * 100) / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -54,14 +47,6 @@ export default {
       return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     } else {
       return '0.0'
-    }
-  },
-
-  first (list) {
-    if (!list || !list.length) {
-      return {}
-    } else {
-      return list[0]
     }
   },
 

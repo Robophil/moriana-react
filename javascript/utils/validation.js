@@ -1,7 +1,7 @@
 import {isNumeric} from 'utils'
 import Moment from 'moment'
 
-export const validateDateInput = (inputValue) => {
+export const dateIsValid = (inputValue) => {
   if (!inputValue) {
     return true
   } else if (inputValue[0].toLowerCase() === 't') {
@@ -19,16 +19,41 @@ export const validateDateInput = (inputValue) => {
   }
 }
 
-
-export const validateExpirationInput = (input) => {
-  if (!input) return false
-  if (Moment(input, 'M/YY', true).isValid()
+export const expirationIsValid = (input) => {
+  if (!input) {
+    return true
+  } else if (Moment(input, 'M/YY', true).isValid()
   || Moment(input, 'MM/YY', true).isValid()
   || Moment(input, 'M/YYYY', true).isValid()
   || Moment(input, 'MM/YYYY', true).isValid()
   || Moment(input, 'YYYY-M-D', true).isValid()) {
-    return null
+    return true
   } else {
     return false
   }
+}
+
+// '4', 4, and null are OK
+export const numberInputIsValid = (input) => {
+  if (!input) {
+    return true
+  } else {
+    return !isNaN(parseFloat(input)) && isFinite(input)
+  }
+}
+
+
+export const isPresent = (input) => {
+  return (input)
+}
+
+export const isPresentAndNumber = (input) => {
+  return isPresent(input) && numberInputIsValid(input)
+}
+
+export const transactionIsValid = (transaction) => {
+  // TODO: add username
+  const {item, category, quantity, exipration, unitPrice} = transaction
+  return (!item || !category || !quantity ||
+    !numberInputIsValid(quantity) || !numberInputIsValid(unitPrice) || expirationIsValid(exipration))
 }

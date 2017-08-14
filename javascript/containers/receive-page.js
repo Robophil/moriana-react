@@ -13,6 +13,7 @@ import NewLocation from 'new-location'
 import EditBatch from 'edit-batch'
 import StaticShipmentDetails from 'static-shipment-details'
 import EditTransactionsTable from 'edit-transactions-table'
+import StaticInput from 'static-input'
 
 const ReceivePage = class extends React.Component {
   state = {
@@ -103,14 +104,7 @@ const ReceivePage = class extends React.Component {
                     displayFunction={displayLocationName}
                     searchFilterFunction={searchLocations}
                   />
-                  <div className='form-group field to-location text-capitalize'>
-                    <label className='col-lg-2 control-label'>To Location</label>
-                    <div className='col-sm-9'>
-                      <div className='form-control-static '>
-                        <span className='static-value'>{shipment.to}</span>
-                      </div>
-                    </div>
-                  </div>
+                  <StaticInput className='text-capitalize' label='To Location' value={shipment.to} />
                   <VendorIdInput
                     valueKey={'vendorId'}
                     value={shipment.vendorId}
