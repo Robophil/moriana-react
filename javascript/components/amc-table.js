@@ -2,7 +2,8 @@ import React from 'react'
 import h from 'helpers'
 
 export default class extends React.Component {
-  state = { show: false  }
+  state = { show: false }
+
   toggleTable = (event) => {
     event.preventDefault()
     this.setState({ showTable: !this.state.showTable })

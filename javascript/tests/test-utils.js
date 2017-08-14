@@ -5,7 +5,7 @@ export const getRoute = (params = {}) => {
   return { route: { dbName: 'moriana_test_warehouse', currentLocationName: 'test warehouse', path: '/', params } }
 }
 
-export const getShipments = (n=10) => {
+export const getShipments = (n = 10) => {
   const shipment = {
     id: 'dummy_id',
     value: 0,
@@ -27,9 +27,9 @@ export const getElement = (component) => {
   return span
 }
 
-export const getTransactions = (n_batches=2, n_transactions=10) => {
+export const getTransactions = (numberBatches = 2, numberTransactions = 10) => {
   const items = ['a item', 'b item', 'c item', 'd item', 'e item', 'f item', 'g item']
-  const expirations = [...Array(n_batches).keys()].map(i => Moment().subtract(i, 'months').toISOString())
+  const expirations = [...Array(numberBatches).keys()].map(i => Moment().subtract(i, 'months').toISOString())
   const transaction = {
     category: 'test category',
     date: '2017-06-23T15:01:25.165Z',
@@ -45,9 +45,9 @@ export const getTransactions = (n_batches=2, n_transactions=10) => {
     value: 1,
     _id: 'test_transaction_id'
   }
-  return [...Array(n_transactions).keys()].map(i => {
-    const item = items[i % n_batches]
-    const expiration = expirations[i % n_batches]
+  return [...Array(numberTransactions).keys()].map(i => {
+    const item = items[i % numberBatches]
+    const expiration = expirations[i % numberBatches]
     return Object.assign({}, transaction, { item, expiration })
   })
 }

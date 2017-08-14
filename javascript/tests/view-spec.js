@@ -1,7 +1,8 @@
-import chai from 'chai'
-const expect = chai.expect
 import {getShipments, getRoute, getElement} from 'test-utils'
 import { ShipmentsPage } from 'shipments-page'
+
+import chai from 'chai'
+const expect = chai.expect
 
 export default {
   'Viewing all shipments': {

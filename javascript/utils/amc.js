@@ -12,7 +12,7 @@ export default {
       amcSixMonths,
       amcTwelveMonths,
       min,
-      max,
+      max
     }
   },
 
@@ -20,7 +20,7 @@ export default {
   getQuantitySumsByMonth (transactions) {
     const monthsHash = transactions.reduce((monthsHash, t) => {
       // don't count receive transactions (positive) or locations excluded from consumption, including Expired
-      if (t.toType === 'EV' || t.quantity > 0 ||  (t.toAttributes && t.toAttributes.excludeFromConsumption)) {
+      if (t.toType === 'EV' || t.quantity > 0 || (t.toAttributes && t.toAttributes.excludeFromConsumption)) {
         return monthsHash
       }
       const month = t.date.substring(0, [t.date.lastIndexOf('-')])
@@ -44,7 +44,7 @@ export default {
 
     // make our hash into a list & sort ascending
     return Object.keys(byYear).map(key => {
-      return { year: key, months: byYear[key]}
+      return { year: key, months: byYear[key] }
     })
     .sort(yearObject => yearObject.year)
   },
@@ -56,9 +56,9 @@ export default {
     const upUntilDateISO = upUntilDate.toISOString()
     const earliestMonthISO = earliestMonth.toISOString()
     const sum = transactions.reduce((memo, t) => {
-      if (t.quantity < 0
-      && (!t.toAttributes || !t.toAttributes.excludeFromConsumption)
-      && (t.date <= upUntilDateISO && t.date >= earliestMonthISO)) {
+      if (t.quantity < 0 &&
+      (!t.toAttributes || !t.toAttributes.excludeFromConsumption) &&
+      (t.date <= upUntilDateISO && t.date >= earliestMonthISO)) {
         memo += t.quantity
       }
       return memo
@@ -80,7 +80,7 @@ export default {
     })
     min = (min === null) ? 0 : min
     return { min, max }
-  },
+  }
 
   // getMonthsHash () {
   //   const startDate = Moment(config.startDate)

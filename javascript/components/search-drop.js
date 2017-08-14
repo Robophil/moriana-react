@@ -10,7 +10,7 @@ export default class SearchDrop extends React.Component {
     localError: false,
     visibleRows: [],
     currIndex: 0,
-    showSearch: false,
+    showSearch: false
   }
 
   componentDidMount = () => {
@@ -71,7 +71,7 @@ export default class SearchDrop extends React.Component {
   runSearch = (inputValue) => {
     const cleanedQuery = inputValue.toLowerCase().trim()
     const visibleRows = this.props.searchFilterFunction(this.props.rows, cleanedQuery)
-    this.setState({inputValue, visibleRows, currIndex: 0 })
+    this.setState({ inputValue, visibleRows, currIndex: 0 })
   }
 
   setCurrIndex = (event) => {
@@ -110,51 +110,50 @@ export default class SearchDrop extends React.Component {
   }
 
   render () {
-    const allowNew = this.props.onNewSelected ? true : false
     const { inputValue, showEdit, currIndex, visibleRows, showSearch } = this.state
-    const { value, label, resourceName, rows } = this.props
+    const { value, label, resourceName, rows, onNewSelected } = this.props
     return (
       <ClickOutHandler onClickOut={this.hideSearch}>
         <div className='form-group field'>
           <label className='col-lg-2 control-label'>{label}</label>
-            {showEdit ? (
-              <div className='col-sm-9'>
-                <input
-                  onBlur={this.onBlur}
-                  value={inputValue}
-                  onKeyUp={this.onKeyUp}
-                  onChange={this.onChange}
-                  className='form-control form-input'
-                  onFocus={this.showSearch}
-                  autoFocus
-                  type='text' />
-                {showSearch && (
-                  <div className='search-drop form-input'>
-                    <div className='list-group'>
-                      {visibleRows.map((row, i) => (
-                        <a
-                          data-index={i}
-                          className={`list-group-item result ${currIndex === i ? 'active' : ''}`}
-                          key={i}
-                          onMouseEnter={this.setCurrIndex}
-                          onClick={this.onClick}
-                        >
-                          {this.displayFunction(row)}
-                        </a>
-                      ))}
+          {showEdit ? (
+            <div className='col-sm-9'>
+              <input
+                onBlur={this.onBlur}
+                value={inputValue}
+                onKeyUp={this.onKeyUp}
+                onChange={this.onChange}
+                className='form-control form-input'
+                onFocus={this.showSearch}
+                autoFocus
+                type='text' />
+              {showSearch && (
+                <div className='search-drop form-input'>
+                  <div className='list-group'>
+                    {visibleRows.map((row, i) => (
                       <a
-                        data-index={visibleRows.length}
+                        data-index={i}
+                        className={`list-group-item result ${currIndex === i ? 'active' : ''}`}
+                        key={i}
                         onMouseEnter={this.setCurrIndex}
                         onClick={this.onClick}
-                        className={`list-group-item result ${currIndex === visibleRows.length ? 'active' : ''}`}
                       >
-                        {resourceName}: {visibleRows.length} of {rows.length}
-                        {allowNew && (<strong> | Add New {resourceName}</strong>)}
+                        {this.displayFunction(row)}
                       </a>
-                    </div>
+                    ))}
+                    <a
+                      data-index={visibleRows.length}
+                      onMouseEnter={this.setCurrIndex}
+                      onClick={this.onClick}
+                      className={`list-group-item result ${currIndex === visibleRows.length ? 'active' : ''}`}
+                    >
+                      {resourceName}: {visibleRows.length} of {rows.length}
+                      {onNewSelected && (<strong> | Add New {resourceName}</strong>)}
+                    </a>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+            </div>
             ) : (
               <div className='col-sm-9'>
                 <div className='form-control-static '>
@@ -179,5 +178,5 @@ SearchDrop.propTypes = {
   valueUpdated: PropTypes.func.isRequired,
   searchFilterFunction: PropTypes.func.isRequired,
   displayFunction: PropTypes.func,
-  onNewSelected: PropTypes.func,
+  onNewSelected: PropTypes.func
 }

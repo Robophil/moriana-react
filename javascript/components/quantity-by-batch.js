@@ -4,7 +4,7 @@ import StockCardLink from 'stockcard-link'
 
 export default class extends React.Component {
   render () {
-    const { batches, dbName} = this.props
+    const { batches, dbName } = this.props
     return (
       <div className='col-md-5 no-print'>
         <h4>Quantity by Batch</h4>

@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getReportInfo, runReport } from 'reports'
-import ShipmentsTable from 'shipments-table'
 import ReportFilters from 'report-filters'
 import ReportTable from 'report-table'
 import h from 'helpers'
@@ -24,17 +23,16 @@ export class ReportsPage extends React.Component {
     event.preventDefault(event)
     const locationSplit = window.location.href.split('/')
     locationSplit[locationSplit.length - 1] = event.target.dataset.type
-    history.replaceState(null, null, locationSplit.join('/'))
+    window.history.replaceState(null, null, locationSplit.join('/'))
     this.setState({ reportType: event.target.dataset.type })
   }
 
   render () {
-    const { allItemsFetched, loading, route, reportTypes, reportHeaders, reportRows } = this.props
-    const { dbName, currentLocationName, params } = route
+    const { allItemsFetched, reportTypes, reportHeaders, reportRows } = this.props
     return (
       <div className='reports'>
         {
-          !allItemsFetched ? ( <div className='loader' /> )
+          !allItemsFetched ? (<div className='loader' />)
           : (
             <div>
               <br />
@@ -51,7 +49,8 @@ export class ReportsPage extends React.Component {
                 <button className='btn btn-default btn-md pull-right'>Download</button>
               </ul>
               <hr />
-              {allItemsFetched ?
+              {allItemsFetched
+              ? (
                 <div>
                   <ReportFilters
                     allDateFilters={this.props.allDateFilters}
@@ -68,7 +67,8 @@ export class ReportsPage extends React.Component {
                     <ReportTable headers={reportHeaders} rows={reportRows} />
                   </div>
                 </div>
-              : ( <div className='loader' /> )}
+              )
+              : (<div className='loader' />)}
             </div>
           )
         }

@@ -1,5 +1,4 @@
 import React from 'react'
-import h from 'helpers'
 
 export default class extends React.Component {
   state = { openFilter: null }
@@ -48,24 +47,24 @@ export default class extends React.Component {
                 <label className='col-lg-2 control-label'>Start Date</label>
                 <div className='col-sm-9 input-group'>
                   <div className='form-control-static hidden'>
-                    <span className='static-value'></span>
+                    {/* <span className='static-value'></span> */}
                     (<a href='#' data-fieldname='start-date' className='edit-field text-no-transform'>
                       edit</a>)
                   </div>
                   <input className='form-control form-input ' type='text' data-fieldname='start-date' />
-                  <p className='error help-block hidden'></p>
+                  {/* <p className='error help-block hidden'></p> */}
                 </div>
               </div>
               <div className='form-group field end-date validate-on-blur text-left'>
                 <label className='col-lg-2 control-label'>End Date</label>
                 <div className='col-sm-9 input-group'>
                   <div className='form-control-static hidden'>
-                    <span className='static-value'></span>
+                    {/* <span className='static-value'></span> */}
                     (<a href='#' data-fieldname='end-date' className='edit-field text-no-transform'>
                       edit</a>)
                   </div>
                   <input className='form-control form-input ' type='text' data-fieldname='end-date' />
-                  <p className='error help-block hidden'></p>
+                  {/* <p className='error help-block hidden'></p> */}
                 </div>
               </div>
               <button className='btn btn-default date-range-select'>Run Dates</button>

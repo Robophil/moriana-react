@@ -1,5 +1,5 @@
 // actions and reducer for reports
-import Moment from 'moment';
+import Moment from 'moment'
 import client from 'client'
 import { getCategories } from 'items'
 
@@ -65,15 +65,15 @@ export const defaultReportsState = {
   allCategoryFilters: [],
   allBatchFilters: [
     { name: 'Filtering at Batch Level', itemLevel: false },
-    { name: 'Filtering at Item Level', itemLevel: true },
+    { name: 'Filtering at Item Level', itemLevel: true }
   ],
   reportTypes: {
     consumption: { name: 'Monthly Consumption', filters: ['dates', 'categories', 'batches'] },
-    quality: { name: 'Data Quality', },
-    expired: { name: 'Expired', filters: ['dates'], },
-    short: { name: 'Short Dated', },
-    out: { name: 'Out of Stock', },
-  },
+    quality: { name: 'Data Quality' },
+    expired: { name: 'Expired', filters: ['dates'] },
+    short: { name: 'Short Dated' },
+    out: { name: 'Out of Stock' }
+  }
 }
 
 export default (state = defaultReportsState, action) => {
@@ -114,7 +114,7 @@ export default (state = defaultReportsState, action) => {
         quality: buildQuality,
         expired: buildExpired,
         short: buildShortList,
-        out: buildOutOfStock,
+        out: buildOutOfStock
       }
       const reportBuilder = reportBuilders[reportType]
 
@@ -173,7 +173,6 @@ const getTransactionsFromShipments = (shipments, currentLocationName, locationsE
   return transactions
 }
 
-
 const getDateFilters = () => {
   return [...Array(12).keys()].map(i => {
     const beginningOfMonth = Moment.utc().startOf('month').subtract(i + 1, 'month').startOf('day')
@@ -197,14 +196,14 @@ const buildItemsHash = (transactions) => {
 const getItemHeaders = (itemLevel) => {
   const itemLevelHeaders = [
     { key: 'item', name: 'Item' },
-    { key: 'category', name: 'Category' },
+    { key: 'category', name: 'Category' }
   ]
   if (itemLevel) {
     return itemLevelHeaders
   } else {
     return itemLevelHeaders.concat([
       { key: 'expiration', name: 'Expiration' },
-      { key: 'lot', name: 'Lot Num' },
+      { key: 'lot', name: 'Lot Num' }
     ])
   }
 }
@@ -219,7 +218,7 @@ const reportHeaders = [
   { key: 'lost', name: 'Damaged/Lost' },
   { key: 'miscount', name: 'Miscount' },
   { key: 'positiveAdjustments', name: 'Positive Adjustments' },
-  { key: 'negativeAdjustments', name: 'Negative Adjustments' },
+  { key: 'negativeAdjustments', name: 'Negative Adjustments' }
 ]
 
 const getItemFromkey = (itemKey) => {
@@ -295,25 +294,19 @@ const addTransactionsConsumption = (row, t, startDate, endDate) => {
     row.opening += t.quantity
   }
   if (t.date > startDate && t.date <= endDate) {
-    if (t.to == 'Expired') {
+    if (t.to === 'Expired') {
       row.expired += t.quantity
-    }
-    else if (t.to == 'Lost' || t.to == 'Damaged') {
+    } else if (t.to === 'Lost' || t.to === 'Damaged') {
       row.lost += t.quantity
-    }
-    else if (t.to == 'Miscount') {
+    } else if (t.to === 'Miscount') {
       row.miscount += t.quantity
-    }
-    else if (t.to == 'Miscount') {
+    } else if (t.to === 'Miscount') {
       row.miscount += t.quantity
-    }
-    else if (t.fromAttributes && t.fromAttributes.excludeFromConsumption) {
+    } else if (t.fromAttributes && t.fromAttributes.excludeFromConsumption) {
       row.positiveAdjustments += t.quantity
-    }
-    else if (t.toAttributes && t.toAttributes.excludeFromConsumption) {
+    } else if (t.toAttributes && t.toAttributes.excludeFromConsumption) {
       row.negativeAdjustments += t.quantity
-    }
-    else if (t.quantity > 0) {
+    } else if (t.quantity > 0) {
       row.received += t.quantity
     } else {
       row.consumed += t.quantity

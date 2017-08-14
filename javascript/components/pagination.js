@@ -5,8 +5,7 @@ import h from 'helpers'
 export default class Pagination extends React.Component {
   render () {
     const { count, dbName, displayedCount, limit } = this.props
-    let offset = Number(this.props.offset)
-    offset = offset ? offset : 0
+    const offset = Number(this.props.offset) || 0
     const startingNumber = 1 + offset
     const previousNumber = offset ? offset - limit : ''
     const nextNumber = offset + displayedCount < count ? offset + limit : ''

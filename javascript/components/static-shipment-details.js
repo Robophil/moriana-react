@@ -27,5 +27,5 @@ export default class StaticShipmentDetails extends React.Component {
 }
 
 StaticShipmentDetails.propTypes = {
-  shipment: PropTypes.object.isRequired,
+  shipment: PropTypes.object.isRequired
 }

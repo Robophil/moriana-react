@@ -1,6 +1,6 @@
 // actions and reducer for viewing shipments
 import client from 'client'
-import decorateShipment from 'decorate-shipment';
+import decorateShipment from 'decorate-shipment'
 import {objectFromKeys} from 'utils'
 
 export const REQUEST_SHIPMENT = 'REQUEST_SHIPMENT'
@@ -53,7 +53,7 @@ const defaultShipments = {
   apiError: null,
   currentShipment: null,
   shipmentsCount: 0,
-  offsetLoaded: null,
+  offsetLoaded: null
 }
 
 export default (state = defaultShipments, action) => {

@@ -18,11 +18,11 @@ const ShipmentPage = class extends React.Component {
     return (
       <div className='shipment-page'>
         {this.props.loading ? (
-          <div className='loader'></div>
+          <div className='loader' />
         ) : (
           <div>
             <h5 className='text-capitalize'>
-              <i className='icon mail-solid'></i>{ship.prettyType}: {ship.from} to {ship.to}
+              <i className='icon mail-solid' />{ship.prettyType}: {ship.from} to {ship.to}
             </h5>
             <hr />
             <div className='shipment-details'>

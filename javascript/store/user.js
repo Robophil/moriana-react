@@ -84,7 +84,7 @@ export default (state = defaultAuth, action) => {
   }
 }
 
-function parseUser(response) {
+function parseUser (response) {
   return {
     ...response,
     isAdmin: response.roles.indexOf('_admin') !== -1,

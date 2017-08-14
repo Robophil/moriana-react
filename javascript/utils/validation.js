@@ -22,11 +22,11 @@ export const dateIsValid = (inputValue) => {
 export const expirationIsValid = (input) => {
   if (!input) {
     return true
-  } else if (Moment(input, 'M/YY', true).isValid()
-  || Moment(input, 'MM/YY', true).isValid()
-  || Moment(input, 'M/YYYY', true).isValid()
-  || Moment(input, 'MM/YYYY', true).isValid()
-  || Moment(input, 'YYYY-M-D', true).isValid()) {
+  } else if (Moment(input, 'M/YY', true).isValid() ||
+    Moment(input, 'MM/YY', true).isValid() ||
+    Moment(input, 'M/YYYY', true).isValid() ||
+    Moment(input, 'MM/YYYY', true).isValid() ||
+    Moment(input, 'YYYY-M-D', true).isValid()) {
     return true
   } else {
     return false
@@ -41,7 +41,6 @@ export const numberInputIsValid = (input) => {
     return !isNaN(parseFloat(input)) && isFinite(input)
   }
 }
-
 
 export const isPresent = (input) => {
   return (input)

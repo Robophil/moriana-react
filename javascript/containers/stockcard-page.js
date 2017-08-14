@@ -29,7 +29,7 @@ const StockCardPage = class extends React.Component {
   render () {
     const { totalTransactions, batches, atBatch, amcDetails, item, category, expiration, lot } = this.props
     const { dbName } = this.props.route
-    const { showAll} = this.state
+    const { showAll } = this.state
     let transactions = this.props.transactions || []
     if (!showAll) transactions = transactions.slice(0, 100)
     return (
@@ -49,7 +49,7 @@ const StockCardPage = class extends React.Component {
                   <StockCardLink
                     dbName={dbName}
                     className='pull-right'
-                    transaction={{ item, category, expiration, lot}}
+                    transaction={{ item, category, expiration, lot }}
                     >
                     remove filter
                   </StockCardLink>
@@ -112,8 +112,9 @@ const StockCardPage = class extends React.Component {
             <div className='text-center show-all'>
               Showing {h.num(transactions.length)} of {h.num(totalTransactions)} transaction
               {h.soronos(totalTransactions)}. &nbsp;
-              {!showAll && transactions.length === totalTransactions ? <span /> :
-              !showAll ? (<button onClick={this.showAllRows} className='btn btn-default btn-lg'>Show All</button>) : (
+              {!showAll && transactions.length === totalTransactions
+              ? (<span />)
+              : !showAll ? (<button onClick={this.showAllRows} className='btn btn-default btn-lg'>Show All</button>) : (
                 <div className='text-center scroll-to-top'>
                   <button onClick={this.scrollToTop} className='btn btn-default btn-lg'>Scroll To Top</button>
                 </div>

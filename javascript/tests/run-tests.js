@@ -25,5 +25,5 @@ export default function () {
       })
     })
   })
-  console.log(`%c ${testsPassed} of ${testsCount} tests passed. (${Math.floor( testsPassed / testsCount * 100 )}%)`, 'color: blue;');
+  console.log(`%c ${testsPassed} of ${testsCount} tests passed. (${Math.floor(testsPassed / testsCount * 100)}%)`, 'color: blue;')
 }

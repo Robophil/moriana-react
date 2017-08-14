@@ -12,10 +12,10 @@ export const getItems = (dbName, currentLocationName) => {
     const endkey = JSON.stringify([...key])
     return client.getDesignDoc(dbName, 'stock', { reduce: true, startkey: startkey, endkey: endkey, group_level: 3 })
     .then(response => {
-        const { body } = response
-        dispatch({
-          type: RECEIVED_ITEMS,
-          response: { ...parseResponse(body) }
+      const { body } = response
+      dispatch({
+        type: RECEIVED_ITEMS,
+        response: { ...parseResponse(body) }
       })
     })
   }
@@ -44,7 +44,7 @@ export default (state = defaultItems, action) => {
 function parseResponse (body) {
   const headers = ['from', 'item', 'category']
   const items = body.rows.map(row => {
-    headers.map((header, i) => row[header] = row.key[i])
+    headers.forEach((header, i) => { row[header] = row.key[i] })
     return row
   }).sort((a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase()))
   return { items }
@@ -61,13 +61,13 @@ export const getCategories = (items) => {
   .map(cat => { return { name: cat } })
 }
 
-export const stockCardLink = (dbName, transaction, atBatch=false) => {
+export const stockCardLink = (dbName, transaction, atBatch = false) => {
   const { item, category } = transaction
   let link = `/#d/${dbName}/stockcard/${encodeURIComponent(category)}/${encodeURIComponent(item)}/`
   if (atBatch) {
     let { expiration, lot } = transaction
-    expiration = null ? '' : expiration
-    lot = null ? '' : lot
+    expiration = expiration === null ? '' : expiration
+    lot = lot === null ? '' : lot
     link += `${expiration}__${lot}/`
   }
   return link
@@ -75,8 +75,8 @@ export const stockCardLink = (dbName, transaction, atBatch=false) => {
 
 export const searchItems = (rows, input) => {
   return rows.filter(item =>
-    item.item.toLowerCase().indexOf(input) != -1
-    || item.category.toLowerCase().indexOf(input) != -1
+    item.item.toLowerCase().indexOf(input) !== -1 ||
+    item.category.toLowerCase().indexOf(input) !== -1
   )
 }
 

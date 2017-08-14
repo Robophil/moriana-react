@@ -23,8 +23,8 @@ const HeaderSearch = class extends React.Component {
     const query = e.currentTarget.value
     const cleanedQuery = query.toLowerCase().trim()
     const itemResults = this.props.items.items.filter(item =>
-      item.item.toLowerCase().indexOf(cleanedQuery) != -1
-      || item.category.toLowerCase().indexOf(cleanedQuery) != -1
+      item.item.toLowerCase().indexOf(cleanedQuery) !== -1 ||
+      item.category.toLowerCase().indexOf(cleanedQuery) !== -1
     )
     this.setState({ query, itemResults, currIndex: 0 })
   }
@@ -71,7 +71,7 @@ const HeaderSearch = class extends React.Component {
     return (
       <div className='search-view'>
         {items.length === 0 && loading ? (
-          <div className='loader'></div>
+          <div className='loader' />
         ) : (
           <div className='search-view-container'>
             <h5>Search<button type='button' onClick={this.props.closeClicked} className='close'><span>×</span></button></h5>
@@ -97,7 +97,7 @@ const HeaderSearch = class extends React.Component {
                     {item.item} {item.category}
                   </StockcardLink>
                 ))}
-                <a  href='javascript:void(0)' className='list-group-item result'>
+                <a href='javascript:void(0)' className='list-group-item result'>
                   items: {query ? `${query} found ` : ''} {itemResults.length} of {h.num(items.length)}
                 </a>
               </div>

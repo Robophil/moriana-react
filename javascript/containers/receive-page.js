@@ -4,8 +4,6 @@ import {getShipment} from 'shipments'
 import { updateShipment, startNewShipment } from 'editshipment'
 import {displayLocationName, searchLocations} from 'locations'
 import {displayItemName, searchItems} from 'items'
-import h from 'helpers'
-import StockcardLink from 'stockcard-link'
 import DateInput from 'date-input'
 import SearchDrop from 'search-drop'
 import VendorIdInput from 'vendor-id-input'
@@ -24,7 +22,7 @@ const ReceivePage = class extends React.Component {
     showEditTransactions: false,
     showBatchEdit: false,
     editingItem: '',
-    editingCategory: '',
+    editingCategory: ''
   }
 
   componentDidMount = () => {
@@ -64,17 +62,15 @@ const ReceivePage = class extends React.Component {
   }
 
   toggleNewItem = (name) => {
-    console.log('new item');
+    console.log('new item')
   }
-
 
   render () {
     const { shipment, loadingInitialShipment, dateError } = this.props.editshipment
-    const { locations, route } = this.props
-    const { dbName } = route
+    const { locations } = this.props
     // console.log(JSON.stringify(shipment, null, 2))
     return loadingInitialShipment ? (
-        <div className='loader'></div>
+      <div className='loader' />
       ) : (
         <div>
           <h5 className='text-capitalize title'>
@@ -114,7 +110,6 @@ const ReceivePage = class extends React.Component {
               </form>
               <br />
               <div className='row'>
-                <label className='col-lg-2 control-label'></label>
                 <div className='col-sm-10'>
                   <button onClick={this.toggleShowEditDetails} className='btn btn-primary'>Save Details</button>
                 </div>

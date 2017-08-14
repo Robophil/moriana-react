@@ -20,28 +20,21 @@ export class ShipmentsPage extends React.Component {
       <div className='home-page'>
         {loading ? (
           <div className='loader' />
-        ) :
-        dbName ? (
-          <div className='shipments'>
-
-           <h5 className='title'>
-             <i className='icon mail-solid'></i>
-             Shipments: <span className='text-capitalize'>{currentLocationName}</span>
-           </h5>
-
-           <button className='download-button btn btn-default btn-md pull-right'>Download</button>
-
-           <Pagination
-             offset={offset}
-             count={this.props.shipmentsCount}
-             dbName={dbName}
-             limit={this.state.limit}
-             displayedCount={shipments.length} />
-
-           <ShipmentsTable dbName={dbName} shipments={shipments} />
-
-         </div>
-       ) : (<div />)
+        ) : dbName ? (<div className='shipments'>
+          <h5 className='title'>
+            <i className='icon mail-solid' />
+            Shipments: <span className='text-capitalize'>{currentLocationName}</span>
+          </h5>
+          <button className='download-button btn btn-default btn-md pull-right'>Download</button>
+          <Pagination
+            offset={offset}
+            count={this.props.shipmentsCount}
+            dbName={dbName}
+            limit={this.state.limit}
+            displayedCount={shipments.length} />
+          <ShipmentsTable dbName={dbName} shipments={shipments} />
+        </div>
+        ) : (<div />)
       }
       </div>
     )

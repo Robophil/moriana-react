@@ -11,7 +11,7 @@ if (window.location.href.indexOf('localhost:9000') !== -1) {
   setupDevelopment()
 }
 
-function setupDevelopment() {
+function setupDevelopment () {
   config.deploymentDomainCount = 1
   config.backendUrl = 'http://localhost:5984/'
   // show tests in console at all times

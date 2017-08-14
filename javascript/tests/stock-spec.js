@@ -1,14 +1,20 @@
-import chai from 'chai';
-const expect = chai.expect;
 import {getTransactions} from 'test-utils'
 import { getBatches, parseResponse } from 'stock'
 
+import chai from 'chai'
+const expect = chai.expect
+
 // Our headers are: ['from', 'item', 'category', 'expiration', 'lot', 'unitPrice', 'date', '_id', 'from', 'to', 'username']
-const stockResponse = {'total_rows':104778,'offset':91915,'rows':[
-  {key:['test warehouse','test item','test category','2015-09-01T00:00:00.000Z',null,0,'2015-07-21T00:00:00.000Z','testid','test warehouse','test dispensary','testuser'],'value':-1},
-  {key:['test warehouse','test item','test category','','test lot',0,'2015-07-16T00:00:00.000Z','testid','test warehouse','test dispensary','testuser'],'value':-5},
-  {key:['test warehouse','test item','test category','2015-10-01T00:00:00.000Z',null,0,'2015-07-15T00:00:00.000Z','testid','test warehouse','test dispensary','testuser'],'value':-1}
-]}
+const stockResponse = {
+  'total_rows': 104778,
+  'offset': 91915,
+  'rows':
+  [
+    {key: ['test warehouse', 'test item', 'test category', '2015-09-01T00:00:00.000Z', null, 0, '2015-07-21T00:00:00.000Z', 'testid', 'test warehouse', 'test dispensary', 'testuser'], 'value': -1},
+    {key: ['test warehouse', 'test item', 'test category', '', 'test lot', 0, '2015-07-16T00:00:00.000Z', 'testid', 'test warehouse', 'test dispensary', 'testuser'], 'value': -5},
+    {key: ['test warehouse', 'test item', 'test category', '2015-10-01T00:00:00.000Z', null, 0, '2015-07-15T00:00:00.000Z', 'testid', 'test warehouse', 'test dispensary', 'testuser'], 'value': -1}
+  ]
+}
 
 export default {
   'getBatches reducer': {
@@ -35,6 +41,6 @@ export default {
       expect(parsed.transactions.length).eq(1)
       expect(parsed.totalTransactions).eq(1)
       expect(parsed.transactions[0].lot).eq('test lot')
-    },
+    }
   }
 }

@@ -8,7 +8,9 @@ export default {
   formatDate (date) {
     if (!date) return date
     // awful: http://stackoverflow.com/questions/7556591/javascript-date-object-always-one-day-off
+    /* eslint-disable */
     return Moment(new Date(date.replace(/-/g, '\/').replace(/T.+/, ''))).format('LL')
+    /* eslint-enable */
   },
 
   soronos (number) {
@@ -51,7 +53,7 @@ export default {
   },
 
   capitalize (name) {
-    if (!name || typeof(name) !== 'string') return name
+    if (!name || typeof (name) !== 'string') return name
     const words = name.split(' ').map(word => {
       const letters = word.split('')
       letters[0] = letters[0].toUpperCase()
@@ -61,7 +63,7 @@ export default {
   },
 
   expiration (exp) {
-    if (!exp) return '';
+    if (!exp) return ''
     const momentDate = Moment(exp)
     if (momentDate.isValid()) {
       momentDate.add('15', 'days')
@@ -80,6 +82,6 @@ export default {
       191: 'FORWARD_SLASH'
     }
     return keys[keyCode]
-  },
+  }
 
 }

@@ -39,5 +39,5 @@ export default class VendorIdInput extends React.Component {
 VendorIdInput.propTypes = {
   value: PropTypes.string,
   valueKey: PropTypes.string.isRequired,
-  valueUpdated: PropTypes.func.isRequired,
+  valueUpdated: PropTypes.func.isRequired
 }

@@ -100,5 +100,5 @@ NewLocation.propTypes = {
   value: PropTypes.string,
   valueKey: PropTypes.string.isRequired,
   valueUpdated: PropTypes.func.isRequired,
-  closeClicked: PropTypes.func.isRequired,
+  closeClicked: PropTypes.func.isRequired
 }

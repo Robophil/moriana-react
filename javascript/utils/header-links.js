@@ -1,6 +1,6 @@
 export default {
 
-  getSublinks(prettyRoles, isLocal, dbName) {
+  getSublinks (prettyRoles, isLocal, dbName) {
     const subLinks = {
       account: [
         { title: 'Account', url: '/account', icon: 'icon profile' },
@@ -41,7 +41,7 @@ export default {
     return subLinks
   },
 
-  getLinks(user, isLocal, currentLocationName) {
+  getLinks (user, isLocal, currentLocationName) {
     if (!user.name) return { leftLinks: [], rightLinks: [] }
     const server = isLocal ? ' [local]' : ' [online]'
     const leftLinks = []
@@ -56,7 +56,7 @@ export default {
       leftLinks.push({
         section: 'database',
         icon: 'focus',
-        linkName: (currentLocationName ? currentLocationName : 'Select Location') + server
+        linkName: (currentLocationName || 'Select Location') + server
       })
       if (currentLocationName) {
         rightLinks.unshift(

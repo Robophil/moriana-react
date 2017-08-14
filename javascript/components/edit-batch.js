@@ -189,5 +189,5 @@ EditBatch.propTypes = {
   item: PropTypes.string.isRequired,
   category: PropTypes.string.isRequired,
   valueUpdated: PropTypes.func.isRequired,
-  closeClicked: PropTypes.func.isRequired,
+  closeClicked: PropTypes.func.isRequired
 }

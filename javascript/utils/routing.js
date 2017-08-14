@@ -14,7 +14,8 @@ export const parseHash = (hash, PAGES) => {
   }
   // if our path is /shipment/edit-new/receive and there's a route for it,
   // we want to use that route before /shipment/ or /shipment/edit-new/
-  let tempPath, paramValues = []
+  let tempPath
+  let paramValues = []
   const dirsLength = hashSplit.length
   for (let i = 0; i < dirsLength; i++) {
     const dir = hashSplit.shift()
@@ -31,7 +32,7 @@ export const parseHash = (hash, PAGES) => {
   return route
 }
 
-function buildParams(paramKeys, paramValues) {
+function buildParams (paramKeys, paramValues) {
   const paramsMapped = {}
   paramKeys.forEach((paramName, i) => {
     let paramValue = paramValues[i]

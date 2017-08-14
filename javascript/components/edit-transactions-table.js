@@ -45,5 +45,5 @@ export default class EditTransactionsTable extends React.Component {
 
 EditTransactionsTable.propTypes = {
   transactions: PropTypes.array.isRequired,
-  onEditClick: PropTypes.func.isRequired,
+  onEditClick: PropTypes.func.isRequired
 }

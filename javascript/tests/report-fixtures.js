@@ -7,14 +7,14 @@ const receiveTransactions = [
   { item: 'bcd', category: 'catA', expiration: '', lot: 'abc', quantity: 1, unitPrice: 10 },
   { item: 'bcd', category: 'catA', expiration: null, lot: 'abc', quantity: 1, unitPrice: 10 },
   { item: 'bcd', category: 'catA', expiration: testExpiration, lot: 'abc', quantity: 1, unitPrice: 10 },
-  { item: 'efg', category: 'catA', expiration: testExpiration, lot: 'abc', quantity: 1, unitPrice: 10 },
+  { item: 'efg', category: 'catA', expiration: testExpiration, lot: 'abc', quantity: 1, unitPrice: 10 }
 ]
 
 const transferTransactions = [
   { item: 'def', category: 'catC', expiration: '', lot: 'abc', quantity: 1, unitPrice: 10 },
   { item: 'def', category: 'catC', expiration: null, lot: 'abc', quantity: 1, unitPrice: 10 },
   { item: 'cde', category: 'catB', expiration: testExpiration, lot: '', quantity: 1, unitPrice: 10 },
-  { item: 'cde', category: 'catB', expiration: null, lot: null, quantity: 1, unitPrice: 10 },
+  { item: 'cde', category: 'catB', expiration: null, lot: null, quantity: 1, unitPrice: 10 }
 ]
 
 export const shipmentsFixtures = [

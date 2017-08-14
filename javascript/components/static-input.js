@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export default class StaticInput extends React.Component {
-
   render () {
     const { label, value, onEditClick, className } = this.props
     let classes = className || ''
@@ -23,5 +22,5 @@ export default class StaticInput extends React.Component {
 StaticInput.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string,
-  onEditClick: PropTypes.func,
+  onEditClick: PropTypes.func
 }

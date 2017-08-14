@@ -1,5 +1,5 @@
 export default {
-  decorate(ship, currentLocation) {
+  decorate (ship, currentLocation) {
     // ship.isNew = type ? true : false
     ship.type = this.getType(ship, currentLocation)
     ship.prettyType = ship.type.split('-').join(' ')
@@ -7,7 +7,7 @@ export default {
     return ship
   },
 
-  getType(ship, currentLocation) {
+  getType (ship, currentLocation) {
     if (ship.from === currentLocation) {
       if (ship.toType === 'I') return 'transfer'
       if (ship.toType === 'P') return 'dispense'
@@ -20,8 +20,8 @@ export default {
   },
 
   // if an internal transfer to this location, don't allow edit
-  isReceiveFromInternal(ship, currentLocation) {
-    return ship.type === 'transfer' && ship.to
-      && ship.to.toLowerCase() === currentLocation
+  isReceiveFromInternal (ship, currentLocation) {
+    return ship.type === 'transfer' && ship.to &&
+      ship.to.toLowerCase() === currentLocation
   }
 }

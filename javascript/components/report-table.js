@@ -12,8 +12,8 @@ export default class extends React.Component {
         <tbody>
           {rows.map((row, i) => (
             <tr key={i}>{headers.map((header, j) => (<td key={j}>{
-              (header.key === 'expiration') ?
-              h.expiration(row[header.key])
+              (header.key === 'expiration')
+              ? h.expiration(row[header.key])
               : h.num(row[header.key])
             }</td>))}</tr>
           ))}

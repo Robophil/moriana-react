@@ -1,28 +1,35 @@
-import chai from 'chai';
-const expect = chai.expect;
 import { parseLocations } from 'locations'
 
-const locationsResponse = {"rows":[
-  {"key":["E","Normal Location",{}],"value":25},
-  {"key":["E","Normal Location",null],"value":3},
-  {"key":["I","Normal Internal Location",{}],"value":8},
-  {"key":["EV","Expired Location",null],"value":22},
-  {"key":["E","Excluded Location",{"excludeFromConsumption":true}],"value":2},
-  {"key":["E","Location later excluded through extension",{"excludeFromConsumption":false}],"value":2},
+import chai from 'chai'
+const expect = chai.expect
+
+const locationsResponse = {'rows': [
+  {'key': ['E', 'Normal Location', {}], 'value': 25},
+  {'key': ['E', 'Normal Location', null], 'value': 3},
+  {'key': ['I', 'Normal Internal Location', {}], 'value': 8},
+  {'key': ['EV', 'Expired Location', null], 'value': 22},
+  {'key': ['E', 'Excluded Location', {'excludeFromConsumption': true}], 'value': 2},
+  {'key': ['E', 'Location later excluded through extension', {'excludeFromConsumption': false}], 'value': 2}
 ]}
 
-const extensionsResponse = {"total_rows":100,"offset":0,"rows":[
-  {
-    "id":"00__2016-11-03T07:08:23.634Z__test__extension","key":"extension","value":1,
-    "doc":{"_id":"00__2016-11-03T07:08:23.634Z__test__extension","_rev":"1-e3ab8b60c3b8aedc947f865ccc28d941","created":"2016-11-03T07:08:23.634Z","username":"kdoran","docType":"extension","subjectType":"location",
-    "subject":"Test Location Excluded Through Doc","attributes":{"excludeFromConsumption":true},"updated":"2016-11-03T07:08:23.635Z"}
-  },
-  {
-    "id":"00__2016-11-03T07:08:23.634Z__test__extension","key":"extension","value":1,
-    "doc":{"_id":"00__2016-11-03T07:08:23.634Z__test__extension","_rev":"1-e3ab8b60c3b8aedc947f865ccc28d941","created":"2016-11-03T07:08:23.634Z","username":"kdoran","docType":"extension","subjectType":"location",
-    "subject":"Location later excluded through extension", "attributes":{"excludeFromConsumption":true},"updated":"2016-11-03T07:08:23.635Z"}
-  },
-]}
+const extensionsResponse = {
+  'total_rows': 100,
+  'offset': 0,
+  'rows': [
+    {
+      'id': '00__2016-11-03T07:08:23.634Z__test__extension',
+      'key': 'extension',
+      'value': 1,
+      'doc': {'_id': '00__2016-11-03T07:08:23.634Z__test__extension', '_rev': '1-e3ab8b60c3b8aedc947f865ccc28d941', 'created': '2016-11-03T07:08:23.634Z', 'username': 'kdoran', 'docType': 'extension', 'subjectType': 'location', 'subject': 'Test Location Excluded Through Doc', 'attributes': {'excludeFromConsumption': true}, 'updated': '2016-11-03T07:08:23.635Z'}
+    },
+    {
+      'id': '00__2016-11-03T07:08:23.634Z__test__extension',
+      'key': 'extension',
+      'value': 1,
+      'doc': {'_id': '00__2016-11-03T07:08:23.634Z__test__extension', '_rev': '1-e3ab8b60c3b8aedc947f865ccc28d941', 'created': '2016-11-03T07:08:23.634Z', 'username': 'kdoran', 'docType': 'extension', 'subjectType': 'location', 'subject': 'Location later excluded through extension', 'attributes': {'excludeFromConsumption': true}, 'updated': '2016-11-03T07:08:23.635Z'}
+    }
+  ]
+}
 
 const locationsState = parseLocations(locationsResponse, extensionsResponse)
 
@@ -70,6 +77,6 @@ export default {
       locationsState.externalLocations.forEach(location => {
         expect(['E', 'EV'].indexOf(location.type)).not.eq(-1)
       })
-    },
-  },
+    }
+  }
 }

@@ -29,7 +29,7 @@ const defaultLocations = {
   apiError: false,
   locations: [],
   locationsExcludedFromConsumption: {},
-  externalLocations: [],
+  externalLocations: []
 }
 
 export default (state = defaultLocations, action) => {
@@ -55,14 +55,14 @@ export const parseLocations = (locationsResponse, extensionsResponse) => {
     }, {})
   const locationsExcludedFromConsumption = Object.keys(locationsHash).reduce((memo, locationKey) => {
     const location = locationsHash[locationKey]
-    if (location.type === 'EV' || location.attributes && location.attributes.excludeFromConsumption) {
+    if (location.type === 'EV' || (location.attributes && location.attributes.excludeFromConsumption)) {
       memo[location.name] = true
     }
     return memo
   }, {})
   extensionsResponse.rows.map(row => row.doc).reduce((memo, doc) => {
-    if (doc.docType === 'extension' && doc.subjectType === 'location'
-      && doc.attributes && doc.attributes.excludeFromConsumption) {
+    if (doc.docType === 'extension' && doc.subjectType === 'location' &&
+      doc.attributes && doc.attributes.excludeFromConsumption) {
       memo[doc.subject] = true
       const locationKey = Object.keys(locationsHash).find(key => (key.indexOf(doc.subject) === 0))
       if (locationKey) {
@@ -82,9 +82,8 @@ export const parseLocations = (locationsResponse, extensionsResponse) => {
   return { locations, locationsExcludedFromConsumption, externalLocations }
 }
 
-
 export const searchLocations = (rows, input) => {
-  return rows.filter(row => (row.name.toLowerCase().indexOf(input) != -1))
+  return rows.filter(row => (row.name.toLowerCase().indexOf(input) !== -1))
 }
 
 export const displayLocationName = (location) => {

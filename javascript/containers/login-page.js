@@ -16,32 +16,32 @@ const LoginPage = class extends React.Component {
       window.location.href = '/#/'
     }
     return (
-      <div className="login">
-        <h5 className="text-capitalize header">Login</h5>
+      <div className='login'>
+        <h5 className='text-capitalize header'>Login</h5>
         <hr />
-        <form className="form-horizontal" onSubmit={this.onSubmit}>
+        <form className='form-horizontal' onSubmit={this.onSubmit}>
           <fieldset>
             <div className='form-group'>
-              <label className="col-lg-2 control-label">Username</label>
-              <div className="col-sm-9 input-group">
-                <input className="form-control" type="text" ref='username' autoFocus />
-                <p className="help-block error hide-lite">Username required</p>
+              <label className='col-lg-2 control-label'>Username</label>
+              <div className='col-sm-9 input-group'>
+                <input className='form-control' type='text' ref='username' autoFocus />
+                <p className='help-block error hide-lite'>Username required</p>
               </div>
             </div>
-            <div className="form-group">
-              <label className="col-lg-2 control-label">Password</label>
-              <div className="col-sm-9 input-group">
-                <input className="form-control" type="password" ref='password' />
+            <div className='form-group'>
+              <label className='col-lg-2 control-label'>Password</label>
+              <div className='col-sm-9 input-group'>
+                <input className='form-control' type='password' ref='password' />
               </div>
             </div>
           </fieldset>
-          <div className="text-center">
-            <button type='submit' className="btn btn-primary submit">Submit</button>
+          <div className='text-center'>
+            <button type='submit' className='btn btn-primary submit'>Submit</button>
           </div>
         </form>
         <br />
         {this.props.authError && (
-          <div className="alert alert-danger center-block text-center">Incorrect username or password.</div>
+          <div className='alert alert-danger center-block text-center'>Incorrect username or password.</div>
         )}
       </div>
     )

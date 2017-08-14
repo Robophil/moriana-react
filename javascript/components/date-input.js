@@ -34,20 +34,20 @@ export default class DateInput extends React.Component {
     return (
       <div className={`form-group field ${localError ? 'has-error' : ''}`}>
         <label className='col-lg-2 control-label'>Date</label>
-          {this.state.showEdit ? (
-            <div className='col-sm-9'>
-              <input
-                onBlur={this.onBlur}
-                value={inputValue}
-                onKeyUp={this.onKeyUp}
-                onChange={this.onChange}
-                className='form-control form-input'
-                autoFocus
-                type='text' />
-              {localError && (<p className='error help-block'>
-                Date must be format "YYYY-MM-DD or "t-1" or "t+1" (e.g. today - 1, today + 1)"
-              </p>)}
-            </div>
+        {this.state.showEdit ? (
+          <div className='col-sm-9'>
+            <input
+              onBlur={this.onBlur}
+              value={inputValue}
+              onKeyUp={this.onKeyUp}
+              onChange={this.onChange}
+              className='form-control form-input'
+              autoFocus
+              type='text' />
+            {localError && (<p className='error help-block'>
+              Date must be format "YYYY-MM-DD or "t-1" or "t+1" (e.g. today - 1, today + 1)"
+            </p>)}
+          </div>
           ) : (
             <div className='col-sm-9'>
               <div className='form-control-static '>
@@ -65,5 +65,5 @@ DateInput.propTypes = {
   value: PropTypes.string,
   error: PropTypes.bool.isRequired,
   valueKey: PropTypes.string.isRequired,
-  valueUpdated: PropTypes.func.isRequired,
+  valueUpdated: PropTypes.func.isRequired
 }

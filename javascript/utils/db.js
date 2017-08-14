@@ -22,7 +22,7 @@ export default {
     return input.replace(deploymentName + '_', '')
   },
 
-  isDBSafeName(input) {
+  isDBSafeName (input) {
     if (!input) return false
     // regex from http://docs.couchdb.org/en/1.6.1/api/database/common.html
     // without '/', because that broke things...

@@ -1,9 +1,9 @@
 // actions and reducer for editing a shipment
 
-import client from 'client'
+// import client from 'client'
 import {clone} from 'utils'
 
-import {dateIsValid, transactionIsValid } from 'validation'
+import { dateIsValid, transactionIsValid } from 'validation'
 import { getISODateFromInput, getTransactionFromInput } from 'input-transforms'
 
 // actions
@@ -42,7 +42,7 @@ const defaultEditShipment = {
   shipment: {},
   dateError: false,
   transactionIsInvalid: false,
-  type: null,
+  type: null
 }
 
 export default (state = defaultEditShipment, action) => {
@@ -77,10 +77,11 @@ export default (state = defaultEditShipment, action) => {
       shipment.vendorId = action.inputValue
       return { ...state, shipment }
     }
-
+    /* eslint-disable */
     case UPDATE_FROM: { /* continue to UPDATE_LOCATION */ }
     case UPDATE_TO: { /* continue to UPDATE_LOCATION */ }
     case UPDATE_LOCATION: {
+      /* eslint-enable */
       const shipment = clone(state.shipment)
       shipment[action.key] = action.inputValue.name
       if (action.inputValue.type) {
@@ -121,7 +122,7 @@ const createNewShipment = (currentLocationName) => {
     // username: currentUsername,
     to: currentLocationName,
     toType: 'I',
-    transactions: [],
+    transactions: []
   }
 }
 

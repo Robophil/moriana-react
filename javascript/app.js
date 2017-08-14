@@ -26,18 +26,17 @@ const PAGES = {
   'shipment': { component: ShipmentPage, paramKeys: ['id'] },
   'shipment/edit/receive': { component: ReceivePage, paramKeys: ['id'] },
   'stockcard': { component: StockCardPage, paramKeys: ['category', 'item', 'atBatch'] },
-  'reports': { component: ReportsPage, paramKeys: ['reportType'] },
+  'reports': { component: ReportsPage, paramKeys: ['reportType'] }
 }
 
 class App extends React.Component {
   state = {
-    route: parseHash(location.hash, PAGES),
-
+    route: parseHash(window.location.hash, PAGES)
   }
   componentDidMount = () => {
     window.addEventListener('hashchange', (event) => {
       // reset state on db change
-      const newRoute = parseHash(location.hash, PAGES)
+      const newRoute = parseHash(window.location.hash, PAGES)
       const { dbName } = this.state.route
       if (newRoute.dbName !== dbName && dbName !== null) {
         // reload page instead of clear store; for occassional application updates.
@@ -46,7 +45,7 @@ class App extends React.Component {
       this.setState({ route: newRoute })
     })
   }
-  render() {
+  render () {
     const pageName = this.state.route.path
     const page = PAGES[pageName]
     const Handler = page ? page.component : ShipmentsPage
@@ -56,7 +55,7 @@ class App extends React.Component {
       <div>
         <SiteHeader route={this.state.route} />
         <div className={classes}>
-          <Handler key={location.hash} route={this.state.route} />
+          <Handler key={window.location.hash} route={this.state.route} />
         </div>
         <SiteFooter />
       </div>

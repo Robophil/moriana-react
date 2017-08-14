@@ -12,9 +12,9 @@ export const getStock = (dbName, currentLocationName, category, item, filter = n
     const endkey = JSON.stringify([...key])
     return client.getDesignDoc(dbName, 'stock', { startkey: startkey, endkey: endkey })
     .then(response => {
-        dispatch({
-          type: RECEIVED_STOCK,
-          response: { ...parseResponse(response.body, filter) }
+      dispatch({
+        type: RECEIVED_STOCK,
+        response: { ...parseResponse(response.body, filter) }
       })
     })
   }
@@ -32,7 +32,7 @@ const defaultStock = {
   batches: [],
   transactions: [],
   totalTransactions: 0,
-  amcDetails: {},
+  amcDetails: {}
 }
 
 export default (state = defaultStock, action) => {
@@ -52,9 +52,11 @@ export default (state = defaultStock, action) => {
 export function parseResponse (body, filter) {
   const parsedResponse = {}
   const headers = ['from', 'item', 'category', 'expiration',
-   'lot', 'unitPrice', 'date', '_id', 'from', 'to', 'username']
+    'lot', 'unitPrice', 'date', '_id', 'from', 'to', 'username']
   let rows = body.rows.map(row => {
-    headers.map((header, i) => row[header] = row.key[i])
+    headers.forEach((header, i) => {
+      row[header] = row.key[i]
+    })
     row.quantity = row.value
     row.totalValue = Math.abs(row.quantity * row.unitPrice)
     return cleanTransaction(row)
@@ -73,7 +75,7 @@ export function parseResponse (body, filter) {
   return parsedResponse
 }
 
-function cleanTransaction(transaction) {
+function cleanTransaction (transaction) {
   transaction.expiration = !transaction.expiration ? null : transaction.expiration
   transaction.lot = !transaction.lot ? null : transaction.lot
   return transaction
@@ -88,7 +90,7 @@ function parseBatchFilter (filter) {
   return { expiration, lot }
 }
 
-function batchFilter(rows, expiration, lot) {
+function batchFilter (rows, expiration, lot) {
   return rows.filter(row => row.expiration === expiration && row.lot === lot)
 }
 
@@ -100,10 +102,6 @@ export function getBatches (transactions, batchLevel = true, inputBatches = {}) 
   return sortByFEFO(batches)
 }
 
-function getBatchesOnDate(transactions, date) {
-  return getBatches(_.filter(transactions, t => t.date < date))
-}
-
 function batchReduce (inputBatches, transactions, batchLevel = true) {
   transactions.reverse()
   let batches = transactions.reduce((batchCacheMemeo, transaction) => {
@@ -112,7 +110,7 @@ function batchReduce (inputBatches, transactions, batchLevel = true) {
       batchCacheMemeo[batchKey] = {
         count: 1,
         sum: transaction.quantity,
-        unitPrice: transaction.unitPrice,
+        unitPrice: transaction.unitPrice
       }
     } else {
       batchCacheMemeo[batchKey].count += 1
@@ -129,7 +127,12 @@ function batchReduce (inputBatches, transactions, batchLevel = true) {
   return batches
 }
 
-function getBatchKey(transaction, batchLevel = true) {
+function sortByFEFO (inputBatches) {
+  return inputBatches.sort((a, b) => a.item.toLowerCase() > b.item.toLowerCase())
+  .sort((a, b) => a.expiration > b.expiration)
+}
+
+function getBatchKey (transaction, batchLevel = true) {
   const keys = ['item', 'category']
   if (batchLevel) {
     keys.push('expiration', 'lot')
@@ -138,153 +141,152 @@ function getBatchKey(transaction, batchLevel = true) {
   return transactionValuesList.join('__')
 }
 
-function makeTransactionFromBatchKey(batchKey) {
+function makeTransactionFromBatchKey (batchKey) {
   const transaction = {}
   const transactionKeys = ['item', 'category', 'expiration', 'lot']
-  let batchValues = batchKey.split('__')
-  batchValues = batchValues.forEach((key, i) => {
+  batchKey.split('__').forEach((key, i) => {
     transaction[transactionKeys[i]] = key === 'null' ? null : key
   })
   transaction.unitPrice = Number(transaction.unitPrice) || 0
   return transaction
 }
 
-function sortByFEFO (inputBatches) {
-  return inputBatches.sort((a, b) => a.item.toLowerCase() > b.item.toLowerCase())
-  .sort((a, b) => a.expiration > b.expiration)
-}
+// function getBatchesOnDate (transactions, date) {
+//   return getBatches(_.filter(transactions, t => t.date < date))
+// }
+//
 
-function getCategories (items) {
-  const allCategories = _.pluck(items, 'category')
-  const categories = _.map(_.uniq(allCategories), (category) => {
-    return { category: category }
-  })
-  return categories
-}
+//
+// function getCategories (items) {
+//   const allCategories = _.pluck(items, 'category')
+//   const categories = _.map(_.uniq(allCategories), (category) => {
+//     return { category: category }
+//   })
+//   return categories
+// }
 
-function makeTransactionsFromSOHBatches (batches, desiredTransaction) {
+// function makeTransactionsFromSOHBatches (batches, desiredTransaction) {
+//   if (!batches || batches.length == 0) return [desiredTransaction]
+//   const startingTransaction = _.clone(desiredTransaction)
+//
+//   const transactionsFromSOHBatches = _.reduce(batches, (transactionsFromSOHBatches, batch) => {
+//     let leftoverTransaction = transactionsFromSOHBatches[0]
+//     let newTransaction = makeTransactionFromBatch(batch)
+//
+//     if (leftoverTransaction.quantity == 0) {
+//       transactionsFromSOHBatches.push(batch)
+//       return transactionsFromSOHBatches
+//     }
+//
+//     if (leftoverTransaction.quantity >= batch.sum) {
+//       newTransaction.quantity = batch.sum
+//       newTransaction.sum = 0
+//     } else {
+//       newTransaction.quantity = leftoverTransaction.quantity
+//       newTransaction.sum = batch.sum - leftoverTransaction.quantity
+//     }
+//
+//     leftoverTransaction.quantity -= newTransaction.quantity
+//     transactionsFromSOHBatches.push(newTransaction)
+//
+//     return transactionsFromSOHBatches
+//   }, [startingTransaction])
+//
+//   // move leftover to last position if it has quantity
+//   let leftoverTransaction = transactionsFromSOHBatches.shift()
+//   if (leftoverTransaction.quantity > 0) {
+//     transactionsFromSOHBatches.push(leftoverTransaction)
+//   }
+//
+//   return transactionsFromSOHBatches
+// }
 
-  if (!batches || batches.length == 0) return [desiredTransaction]
-  const startingTransaction = _.clone(desiredTransaction)
+// function makeTransactionFromBatch (batch) {
+//   const transaction = _.pick(batch, ['item', 'category', 'expiration', 'lot', 'unitPrice'])
+//   return transaction
+// }
+//
+// function byPositiveAndZero (batches) {
+//   const positiveBatches = byPositive(batches)
+//   const zeroItems = byZero(batches)
+//   return positiveBatches.concat(zeroItems)
+// }
 
-  const transactionsFromSOHBatches = _.reduce(batches, (transactionsFromSOHBatches, batch) => {
-
-    let leftoverTransaction = transactionsFromSOHBatches[0]
-    let newTransaction = makeTransactionFromBatch(batch)
-
-    if (leftoverTransaction.quantity == 0) {
-      transactionsFromSOHBatches.push(batch)
-      return transactionsFromSOHBatches
-    }
-
-    if (leftoverTransaction.quantity >= batch.sum) {
-      newTransaction.quantity = batch.sum
-      newTransaction.sum = 0
-    } else {
-      newTransaction.quantity = leftoverTransaction.quantity
-      newTransaction.sum = batch.sum - leftoverTransaction.quantity
-    }
-
-    leftoverTransaction.quantity -= newTransaction.quantity
-    transactionsFromSOHBatches.push(newTransaction)
-
-    return transactionsFromSOHBatches
-
-  }, [startingTransaction])
-
-  // move leftover to last position if it has quantity
-  let leftoverTransaction = transactionsFromSOHBatches.shift()
-  if (leftoverTransaction.quantity > 0) {
-    transactionsFromSOHBatches.push(leftoverTransaction)
-  }
-
-  return transactionsFromSOHBatches
-
-}
-
-function makeTransactionFromBatch (batch) {
-  const transaction = _.pick(batch, ['item', 'category', 'expiration', 'lot', 'unitPrice'])
-  return transaction
-}
-
-function byPositiveAndZero (batches) {
-  const positiveBatches = byPositive(batches)
-  const zeroItems = byZero(batches)
-  return positiveBatches.concat(zeroItems)
-}
-
-function byPositive (batches) {
-  return batches.filter(b => b.sum > 0)
-  // const positiveBatches = _.filter(batches, batch => batch.sum > 0)
-  // return positiveBatches
-}
-
-function byZero (batches) {
-  const byItems = byItems(batches)
-  const zeroBalances = _.filter(byItems, batch => batch.sum == 0)
-  return zeroBalances
-}
-
-function byPositiveQuantity (batches) {
-  const positiveQuantityBatches = _.filter(batches, batch => batch.quantity > 0)
-  return positiveQuantityBatches
-}
-
-function byNegative (batches) {
-  const negativeBatches = _.filter(batches, batch => batch.sum < 0)
-  return negativeBatches
-}
-
-function byItems (batches) {
-  const byItemsHash = _.reduce(batches, (byItemsHash, batch) => {
-    if (!byItemsHash[batch.item + batch.category]) {
-      byItemsHash[batch.item + batch.category] = {
-        item: batch.item,
-        category: batch.category,
-        sum: batch.sum,
-      }
-    } else {
-      byItemsHash[batch.item + batch.category].sum += batch.sum
-    }
-    return byItemsHash
-  }, {})
-  const byItems = _.map(byItemsHash, itemHash => itemHash)
-  return byItems
-}
-
-function byItem (batches, item, category) {
-  const filteredOnItem = _.where(batches, { item: item })
-  const filteredOnCategory = _.where(filteredOnItem, { category: category })
-  return filteredOnCategory
-}
-
-function byExpiring (batches, startDate, endDate) {
-  const expiringBatches = _.filter(batches, batch => batch.expiration >= startDate && batch.expiration < endDate)
-  const sortedExpiringBatches = _.sortBy(expiringBatches, 'expiration')
-  const sortedExpiringBatchesByPositive = byPositive(sortedExpiringBatches)
-  return sortedExpiringBatchesByPositive
-}
-
-function getBatchesWithTransferQuantity(batches, quantity) {
-  let remainingQuantity = quantity
-  return _.map(batches, inputBatch => {
-    const batch = _.extend({}, inputBatch)
-    if (remainingQuantity) {
-      if (batch.sum > remainingQuantity) {
-        batch.quantity = remainingQuantity
-        remainingQuantity = 0
-      } else {
-        batch.quantity = batch.sum
-        remainingQuantity -= batch.sum
-      }
-      batch.resultingQuantity = batch.sum - batch.quantity
-    }
-    return batch
-  })
-}
+// function byPositive (batches) {
+//   return batches.filter(b => b.sum > 0)
+//   // const positiveBatches = _.filter(batches, batch => batch.sum > 0)
+//   // return positiveBatches
+// }
+//
+// function byZero (batches) {
+//   const byItems = byItems(batches)
+//   const zeroBalances = _.filter(byItems, batch => batch.sum == 0)
+//   return zeroBalances
+// }
+//
+// function byPositiveQuantity (batches) {
+//   const positiveQuantityBatches = _.filter(batches, batch => batch.quantity > 0)
+//   return positiveQuantityBatches
+// }
+//
+// function byNegative (batches) {
+//   const negativeBatches = _.filter(batches, batch => batch.sum < 0)
+//   return negativeBatches
+// }
+//
+// function byItems (batches) {
+//   const byItemsHash = _.reduce(batches, (byItemsHash, batch) => {
+//     if (!byItemsHash[batch.item + batch.category]) {
+//       byItemsHash[batch.item + batch.category] = {
+//         item: batch.item,
+//         category: batch.category,
+//         sum: batch.sum
+//       }
+//     } else {
+//       byItemsHash[batch.item + batch.category].sum += batch.sum
+//     }
+//     return byItemsHash
+//   }, {})
+//   const byItems = _.map(byItemsHash, itemHash => itemHash)
+//   return byItems
+// }
+//
+// function byItem (batches, item, category) {
+//   const filteredOnItem = _.where(batches, { item: item })
+//   const filteredOnCategory = _.where(filteredOnItem, { category: category })
+//   return filteredOnCategory
+// }
+//
+// function byExpiring (batches, startDate, endDate) {
+//   const expiringBatches = _.filter(batches, batch => batch.expiration >= startDate && batch.expiration < endDate)
+//   const sortedExpiringBatches = _.sortBy(expiringBatches, 'expiration')
+//   const sortedExpiringBatchesByPositive = byPositive(sortedExpiringBatches)
+//   return sortedExpiringBatchesByPositive
+// }
+//
+// function getBatchesWithTransferQuantity (batches, quantity) {
+//   let remainingQuantity = quantity
+//   return _.map(batches, inputBatch => {
+//     const batch = _.extend({}, inputBatch)
+//     if (remainingQuantity) {
+//       if (batch.sum > remainingQuantity) {
+//         batch.quantity = remainingQuantity
+//         remainingQuantity = 0
+//       } else {
+//         batch.quantity = batch.sum
+//         remainingQuantity -= batch.sum
+//       }
+//       batch.resultingQuantity = batch.sum - batch.quantity
+//     }
+//     return batch
+//   })
+// }
 
 function addResultingQuantities (rows) {
-  const sum = rows.reduce((sum, t) => sum += t.quantity, 0)
+  const sum = rows.reduce((sum, t) => {
+    sum += t.quantity
+    return sum
+  }, 0)
   const rowsByDate = rows.sort((a, b) => b.date.localeCompare(a.date))
   return rowsByDate.map((t, i) => {
     t.result = (i === 0) ? sum : rowsByDate[i - 1].result - rowsByDate[i - 1].quantity

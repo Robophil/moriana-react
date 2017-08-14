@@ -1,11 +1,12 @@
-import chai from 'chai';
-const expect = chai.expect;
 import {parseHash} from 'routing'
+
+import chai from 'chai'
+const expect = chai.expect
 
 const PAGES = {
   '/': { paramKeys: ['offset'] },
   'test': { paramKeys: [] },
-  'test/shipment': { paramKeys: ['abc'] },
+  'test/shipment': { paramKeys: ['abc'] }
 }
 
 export default {
@@ -43,6 +44,6 @@ export default {
     'should return route = test on test' () {
       const route = parseHash('#d/moriana_loc/test', PAGES)
       expect(route.path).eq('test')
-    },
-  },
+    }
+  }
 }

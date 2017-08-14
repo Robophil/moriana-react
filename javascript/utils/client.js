@@ -10,7 +10,7 @@ export default {
     .catch(parseError)
   },
 
-  getDesignDoc(dbName, designDocName, options = {}) {
+  getDesignDoc (dbName, designDocName, options = {}) {
     const searchParams = getParams({
       reduce: false,
       descending: true,
@@ -19,7 +19,7 @@ export default {
     return this.get(`${dbName}/_design/${designDocName}/_view/${designDocName}?${searchParams}`)
   },
 
-  getDoc(dbName, id) {
+  getDoc (dbName, id) {
     return this.get(`${dbName}/${id}`)
   },
 
@@ -65,5 +65,5 @@ function parseError (error) {
 }
 
 function getParams (data) {
-  return Object.keys(data).map(key => [key, data[key]].map(encodeURIComponent).join("=")).join("&")
+  return Object.keys(data).map(key => [key, data[key]].map(encodeURIComponent).join('=')).join('&')
 }
