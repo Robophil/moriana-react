@@ -37,6 +37,7 @@ export const getISOExpirationFromInput = (input) => {
 export const getTransactionFromInput = (input, username = null) => {
   // TODO: add username
   let { item, category, quantity, expiration, lot, unitPrice } = input
+  quantity = Number(quantity)
   expiration = getISOExpirationFromInput(expiration) || null
   lot = lot || null
   let totalValue = 0
@@ -46,5 +47,5 @@ export const getTransactionFromInput = (input, username = null) => {
   } else {
     unitPrice = null
   }
-  return { item, category, expiration, lot, unitPrice, totalValue, username }
+  return { item, category, quantity, expiration, lot, unitPrice, totalValue, username }
 }

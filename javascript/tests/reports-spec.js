@@ -1,5 +1,4 @@
 import Moment from 'moment'
-// import reportsReducer from 'reports'
 import reportsReducer, { defaultReportsState, receivedAllAction, runReportAction } from 'reports'
 import { shipmentsFixtures, testExpiration } from 'report-fixtures'
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import {getShipment} from 'shipments'
-import { updateShipment, startNewShipment } from 'editshipment'
+import { updateShipment, startNewShipmentAction } from 'editshipment'
 import { displayLocationName, searchLocations, getLocations } from 'locations'
 import { displayItemName, searchItems, getItems } from 'items'
 import DateInput from 'date-input'
@@ -31,7 +31,7 @@ const ReceivePage = class extends React.Component {
       this.setState({ isNew: false, showEditDetails: false, showEditTransactions: true })
       this.props.getShipment(dbName, params.id)
     } else {
-      this.props.startNewShipment(currentLocationName, 'receive')
+      this.props.startNewShipmentAction(currentLocationName, 'receive')
     }
     this.props.getItems(dbName, currentLocationName)
     this.props.getLocations(dbName, currentLocationName)
@@ -70,7 +70,6 @@ const ReceivePage = class extends React.Component {
   render () {
     const { shipment, loadingInitialShipment, dateError } = this.props.editshipment
     const { locations, items } = this.props
-    // console.log(JSON.stringify(shipment, null, 2))
     return loadingInitialShipment ? (
       <div className='loader' />
       ) : (
@@ -167,5 +166,5 @@ export default connect(
   state => {
     return { editshipment: state.editshipment, user: state.user, locations: state.locations, items: state.items }
   },
-  { startNewShipment, updateShipment, getShipment, getItems, getLocations }
+  { startNewShipmentAction, updateShipment, getShipment, getItems, getLocations }
 )(ReceivePage)

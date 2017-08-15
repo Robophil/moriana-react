@@ -20,16 +20,20 @@ export const UPDATE_RECEIVE_TRANSACTIONS = 'UPDATE_RECEIVE_TRANSACTIONS'
 
 export const UPDATE_ERROR = 'UPDATE_ERROR'
 
-export const startNewShipment = (currentLocationName, shipmentType) => {
+export const startNewShipmentAction = (currentLocationName, shipmentType) => {
   return { type: START_NEW_SHIPMENT, currentLocationName, shipmentType }
+}
+
+export const updateShipmentAction = (key, inputValue) => {
+  const type = key.toUpperCase()
+  return { type: `UPDATE_${type}`, key, inputValue }
 }
 
 // thunkettes
 
 export const updateShipment = (key, inputValue) => {
   return dispatch => {
-    const type = key.toUpperCase()
-    dispatch({ type: `UPDATE_${type}`, key, inputValue })
+    dispatch(updateShipmentAction(key, inputValue))
   }
 }
 
@@ -99,11 +103,16 @@ export default (state = defaultEditShipment, action) => {
       const isValid = transactionIsValid(transactionInput)
       if (isValid) {
         const transaction = getTransactionFromInput(transactionInput)
-        newState.shipment.transactions.push(transaction)
+        if (transactionInput.editIndex !== undefined) {
+          newState.shipment.transactions.splice(transactionInput.editIndex, 1, transaction)
+        } else {
+          newState.shipment.transactions.unshift(transaction)
+        }
         newState.transactionIsInvalid = false
       } else {
         newState.transactionIsInvalid = true
       }
+      Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
       return newState
     }
 
@@ -134,4 +143,12 @@ const getTargetType = (type) => {
     'dispense': 'P'
   }
   return typeMap[type]
+}
+
+const getTransactionTotals = (shipment) => {
+  return shipment.transactions.reduce((memo, t) => {
+    memo.totalValue += t.totalValue
+    memo.totalTransactions ++
+    return memo
+  }, { totalValue: 0, totalTransactions: 0 })
 }
