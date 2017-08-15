@@ -28,7 +28,16 @@ export default class extends React.Component {
               <td>{row.totalTransactions}</td>
               <td>{h.num(row.value)}</td>
               <td><ShipmentLink id={row.id} dbName={this.props.dbName} >view</ShipmentLink></td>
-              <td />
+              <td>
+                <ShipmentLink
+                  id={row.id}
+                  linkType='edit-generic'
+                  className='btn btn-sm btn-default'
+                  dbName={this.props.dbName}
+                >
+                  edit
+                </ShipmentLink>
+              </td>
               <td><small>{h.dateFromNow(row.updated)}</small></td>
               <td>{row.username}</td>
             </tr>

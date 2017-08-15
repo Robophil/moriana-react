@@ -87,7 +87,7 @@ export default class EditBatch extends React.Component {
   }
 
   render () {
-    const { item, category, closeClicked } = this.props
+    const { item, category, closeClicked, deleteClicked } = this.props
     const { quantity, quantityError, expiration, expirationError, lot, unitPrice, unitPriceError, expirationDisplay } = this.state
     return (
       <div className='modal fade in'>
@@ -187,5 +187,6 @@ EditBatch.propTypes = {
   item: PropTypes.string.isRequired,
   category: PropTypes.string.isRequired,
   valueUpdated: PropTypes.func.isRequired,
-  closeClicked: PropTypes.func.isRequired
+  closeClicked: PropTypes.func.isRequired,
+  deleteClicked: PropTypes.func.isRequired
 }

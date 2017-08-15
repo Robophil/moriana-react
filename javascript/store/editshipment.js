@@ -17,6 +17,7 @@ export const UPDATE_TO = 'UPDATE_TO'
 export const UPDATE_LOCATION = 'UPDATE_LOCATION'
 export const UPDATE_VENDORID = 'UPDATE_VENDORID'
 export const UPDATE_RECEIVE_TRANSACTIONS = 'UPDATE_RECEIVE_TRANSACTIONS'
+export const DELETE_RECEIVE_TRANSACTION = 'DELETE_RECEIVE_TRANSACTION'
 
 export const UPDATE_ERROR = 'UPDATE_ERROR'
 
@@ -29,11 +30,21 @@ export const updateShipmentAction = (key, inputValue) => {
   return { type: `UPDATE_${type}`, key, inputValue }
 }
 
+export const deleteTransactionAction = (index) => {
+  return { type: DELETE_RECEIVE_TRANSACTION, index }
+}
+
 // thunkettes
 
 export const updateShipment = (key, inputValue) => {
   return dispatch => {
     dispatch(updateShipmentAction(key, inputValue))
+  }
+}
+
+export const deleteTransaction = (index) => {
+  return dispatch => {
+    dispatch(deleteTransactionAction(index))
   }
 }
 
@@ -104,6 +115,7 @@ export default (state = defaultEditShipment, action) => {
       if (isValid) {
         const transaction = getTransactionFromInput(transactionInput)
         if (transactionInput.editIndex !== undefined) {
+          // splice is (indexToStartFingWith, numberOfListItems, [optionalReplacewithThing])
           newState.shipment.transactions.splice(transactionInput.editIndex, 1, transaction)
         } else {
           newState.shipment.transactions.unshift(transaction)
@@ -112,6 +124,15 @@ export default (state = defaultEditShipment, action) => {
       } else {
         newState.transactionIsInvalid = true
       }
+      Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
+      return newState
+    }
+
+    case DELETE_RECEIVE_TRANSACTION: {
+      const shipment = clone(state.shipment)
+      const newState = { ...state, shipment }
+      // at this index, remove one thing
+      newState.shipment.transactions.splice(action.index, 1)
       Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
       return newState
     }

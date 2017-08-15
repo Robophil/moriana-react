@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 
 export default class ShipmentLink extends React.Component {
   render () {
-    const { linkType, id, shipmentType, dbName, children } = this.props
+    const { linkType, id, shipmentType, dbName, children, className } = this.props
+    const classes = className || ''
     let details = ''
     if (linkType) {
       details += linkType + '/'
@@ -11,7 +12,7 @@ export default class ShipmentLink extends React.Component {
         details += shipmentType + '/'
       }
     }
-    return (<a href={`/#d/${dbName}/shipment/${details}${id}`}>{children}</a>)
+    return (<a className={classes} href={`/#d/${dbName}/shipment/${details}${id}`}>{children}</a>)
   }
 }
 

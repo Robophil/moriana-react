@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import {getShipment} from 'shipments'
-import { updateShipment, startNewShipmentAction } from 'editshipment'
+import { updateShipment, startNewShipmentAction, deleteTransaction } from 'editshipment'
 import { displayLocationName, searchLocations, getLocations } from 'locations'
 import { displayItemName, searchItems, getItems } from 'items'
 import DateInput from 'date-input'
@@ -69,7 +69,7 @@ const ReceivePage = class extends React.Component {
 
   render () {
     const { shipment, loadingInitialShipment, dateError } = this.props.editshipment
-    const { locations, items } = this.props
+    const { locations, items, updateShipment, deleteTransaction } = this.props
     return loadingInitialShipment ? (
       <div className='loader' />
       ) : (
@@ -87,14 +87,14 @@ const ReceivePage = class extends React.Component {
                     valueKey={'date'}
                     error={dateError}
                     value={shipment.date}
-                    valueUpdated={this.props.updateShipment}
+                    valueUpdated={updateShipment}
                   />
                   <SearchDrop
                     rows={locations.externalLocations}
                     loading={locations.firstRequest}
                     value={{name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}}
                     valueKey={'from'}
-                    valueSelected={this.props.updateShipment}
+                    valueSelected={updateShipment}
                     onNewSelected={this.toggleNewReceiveLocation}
                     label={'From Location'}
                     resourceName={'Location'}
@@ -105,7 +105,7 @@ const ReceivePage = class extends React.Component {
                   <VendorIdInput
                     valueKey={'vendorId'}
                     value={shipment.vendorId}
-                    valueUpdated={this.props.updateShipment}
+                    valueUpdated={updateShipment}
                   />
                 </fieldset>
               </form>
@@ -145,7 +145,7 @@ const ReceivePage = class extends React.Component {
             <NewLocation
               value={this.state.newLocationName}
               valueKey={'from'}
-              valueUpdated={this.props.updateShipment}
+              valueUpdated={updateShipment}
               closeClicked={this.toggleNewReceiveLocation}
             />)}
 
@@ -153,8 +153,9 @@ const ReceivePage = class extends React.Component {
             <EditBatch
               item={this.state.editingItem}
               category={this.state.editingCategory}
-              valueUpdated={this.props.updateShipment}
+              valueUpdated={updateShipment}
               closeClicked={this.hideEditBatch}
+              deleteClicked={deleteTransaction}
             />)}
 
         </div>
@@ -166,5 +167,5 @@ export default connect(
   state => {
     return { editshipment: state.editshipment, user: state.user, locations: state.locations, items: state.items }
   },
-  { startNewShipmentAction, updateShipment, getShipment, getItems, getLocations }
+  { startNewShipmentAction, updateShipment, deleteTransaction, getShipment, getItems, getLocations }
 )(ReceivePage)

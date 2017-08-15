@@ -1,5 +1,9 @@
 import Moment from 'moment'
-import editshipmentReducer, {startNewShipmentAction, updateShipmentAction} from 'editshipment'
+import editshipmentReducer, {
+  startNewShipmentAction,
+  updateShipmentAction,
+  deleteTransactionAction
+} from 'editshipment'
 
 import chai from 'chai'
 const expect = chai.expect
@@ -59,7 +63,27 @@ export default {
         'receive_transactions', { editIndex: 0, item: 'ABC Item', category: 'test category', quantity: '2', unitPrice: '5' }))
       expect(newState2.shipment.totalTransactions).eq(2)
       expect(newState2.shipment.totalValue).eq(10)
-    }
+    },
+
+    'deleting a receive transaction should remove it from the shipment' () {
+      const newState = editshipmentReducer(editedState, updateShipmentAction(
+        'receive_transactions', { item: 'ABC Item', category: 'test category', quantity: '1', unitPrice: '5' }))
+      const newState2 = editshipmentReducer(newState, deleteTransactionAction(0))
+      expect(newState2.shipment.transactions.length).eq(1)
+      expect(newState2.shipment.transactions[0].item).eq('Test item')
+    },
+
+    'deleting a receive transaction should update totalValue and totalTransactions' () {
+      const newState = editshipmentReducer(editedState, updateShipmentAction(
+        'receive_transactions', { item: 'ABC Item', category: 'test category', quantity: '1', unitPrice: '5' }))
+      const newState2 = editshipmentReducer(newState, deleteTransactionAction(1))
+      expect(newState2.shipment.totalTransactions).eq(1)
+      expect(newState2.shipment.totalValue).eq(5)
+      const newState3 = editshipmentReducer(newState2, deleteTransactionAction(0))
+      expect(newState3.shipment.totalTransactions).eq(0)
+      expect(newState3.shipment.totalValue).eq(0)
+    },
+
   }
 
 }
