@@ -24,7 +24,8 @@ export const getItems = (dbName, currentLocationName) => {
 const defaultItems = {
   loading: false,
   items: [],
-  apiError: null
+  apiError: null,
+  firstRequest: true
 }
 
 export default (state = defaultItems, action) => {
@@ -33,7 +34,7 @@ export default (state = defaultItems, action) => {
       return { ...state, loading: true, apiError: null }
     }
     case RECEIVED_ITEMS: {
-      return { ...state, loading: false, ...action.response }
+      return { ...state, loading: false, firstRequest: false, ...action.response }
     }
     default: {
       return state

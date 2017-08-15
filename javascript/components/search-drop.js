@@ -111,7 +111,7 @@ export default class SearchDrop extends React.Component {
 
   render () {
     const { inputValue, showEdit, currIndex, visibleRows, showSearch } = this.state
-    const { value, label, resourceName, rows, onNewSelected } = this.props
+    const { value, label, resourceName, rows, onNewSelected, loading } = this.props
     return (
       <ClickOutHandler onClickOut={this.hideSearch}>
         <div className='form-group field'>
@@ -129,28 +129,37 @@ export default class SearchDrop extends React.Component {
                 type='text' />
               {showSearch && (
                 <div className='search-drop form-input'>
-                  <div className='list-group'>
-                    {visibleRows.map((row, i) => (
+                  {loading
+                  ? (
+                    <div className='list-group list-group-item'>
+                      <div className='loader' />
+                    </div>
+                  )
+                  : (
+                    <div className='list-group'>
+                      {visibleRows.map((row, i) => (
+                        <a
+                          data-index={i}
+                          className={`list-group-item result ${currIndex === i ? 'active' : ''}`}
+                          key={i}
+                          onMouseEnter={this.setCurrIndex}
+                          onClick={this.onClick}
+                        >
+                          {this.displayFunction(row)}
+                        </a>
+                      ))}
                       <a
-                        data-index={i}
-                        className={`list-group-item result ${currIndex === i ? 'active' : ''}`}
-                        key={i}
+                        data-index={visibleRows.length}
                         onMouseEnter={this.setCurrIndex}
                         onClick={this.onClick}
+                        className={`list-group-item result ${currIndex === visibleRows.length ? 'active' : ''}`}
                       >
-                        {this.displayFunction(row)}
+                        {resourceName}: {visibleRows.length} of {rows.length}
+                        {onNewSelected && (<strong> | Add New {resourceName}</strong>)}
                       </a>
-                    ))}
-                    <a
-                      data-index={visibleRows.length}
-                      onMouseEnter={this.setCurrIndex}
-                      onClick={this.onClick}
-                      className={`list-group-item result ${currIndex === visibleRows.length ? 'active' : ''}`}
-                    >
-                      {resourceName}: {visibleRows.length} of {rows.length}
-                      {onNewSelected && (<strong> | Add New {resourceName}</strong>)}
-                    </a>
-                  </div>
+                    </div>
+                  )
+                  }
                 </div>
               )}
             </div>

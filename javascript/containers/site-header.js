@@ -3,8 +3,6 @@ import { connect } from 'react-redux'
 import ClickOutHandler from 'react-onclickout'
 
 import { getUser, logout } from 'user'
-import { getItems } from 'items'
-import { getLocations } from 'locations'
 
 import hl from 'header-links'
 import HeaderSearch from 'header-search'
@@ -18,13 +16,9 @@ const SiteHeader = class extends React.Component {
 
   componentDidMount = () => {
     this.props.getUser()
-    const { dbName, path, currentLocationName } = this.props.route
+    const { dbName, path } = this.props.route
     if (!dbName && path === '/') {
       this.setState({ openSection: 'database' })
-    } else {
-      // cache locations and items for reports, header search
-      this.props.getItems(dbName, currentLocationName)
-      this.props.getLocations(dbName, currentLocationName)
     }
     document.addEventListener('keyup', (event) => {
       if (event.target.nodeName === 'BODY' && h.keyMap(event.keyCode) === 'FORWARD_SLASH') {
@@ -116,5 +110,5 @@ export default connect(
   state => {
     return { user: state.user }
   },
-  { getUser, logout, getItems, getLocations }
+  { getUser, logout }
 )(SiteHeader)

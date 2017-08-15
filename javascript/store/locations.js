@@ -29,7 +29,8 @@ const defaultLocations = {
   apiError: false,
   locations: [],
   locationsExcludedFromConsumption: {},
-  externalLocations: []
+  externalLocations: [],
+  firstRequest: true
 }
 
 export default (state = defaultLocations, action) => {
@@ -38,7 +39,7 @@ export default (state = defaultLocations, action) => {
       return { ...state, loading: true, apiError: null }
     }
     case RECEIVED_LOCATIONS: {
-      return { ...state, loading: false, ...action.response }
+      return { ...state, loading: false, firstRequest: false, ...action.response }
     }
     default: {
       return state

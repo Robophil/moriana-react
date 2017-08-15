@@ -2,8 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import {getShipment} from 'shipments'
 import { updateShipment, startNewShipment } from 'editshipment'
-import {displayLocationName, searchLocations} from 'locations'
-import {displayItemName, searchItems} from 'items'
+import { displayLocationName, searchLocations, getLocations } from 'locations'
+import { displayItemName, searchItems, getItems } from 'items'
 import DateInput from 'date-input'
 import SearchDrop from 'search-drop'
 import VendorIdInput from 'vendor-id-input'
@@ -26,13 +26,15 @@ const ReceivePage = class extends React.Component {
   }
 
   componentDidMount = () => {
-    const { dbName, params } = this.props.route
+    const { dbName, currentLocationName, params } = this.props.route
     if (params.id) {
       this.setState({ isNew: false, showEditDetails: false, showEditTransactions: true })
       this.props.getShipment(dbName, params.id)
     } else {
-      this.props.startNewShipment(this.props.route.currentLocationName, 'receive')
+      this.props.startNewShipment(currentLocationName, 'receive')
     }
+    this.props.getItems(dbName, currentLocationName)
+    this.props.getLocations(dbName, currentLocationName)
   }
 
   componentWillReceiveProps = (newProps) => {
@@ -67,7 +69,7 @@ const ReceivePage = class extends React.Component {
 
   render () {
     const { shipment, loadingInitialShipment, dateError } = this.props.editshipment
-    const { locations } = this.props
+    const { locations, items } = this.props
     // console.log(JSON.stringify(shipment, null, 2))
     return loadingInitialShipment ? (
       <div className='loader' />
@@ -90,7 +92,7 @@ const ReceivePage = class extends React.Component {
                   />
                   <SearchDrop
                     rows={locations.externalLocations}
-                    loading={locations.loading}
+                    loading={locations.firstRequest}
                     value={{name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}}
                     valueKey={'from'}
                     valueUpdated={this.props.updateShipment}
@@ -124,8 +126,8 @@ const ReceivePage = class extends React.Component {
           {this.state.showEditTransactions && (
             <div>
               <SearchDrop
-                rows={this.props.items.items}
-                loading={this.props.items.loading}
+                rows={items.items}
+                loading={items.firstRequest}
                 value={{}}
                 valueKey={'receive_transaction'}
                 valueUpdated={this.toggleNewBatch}
@@ -164,5 +166,5 @@ export default connect(
   state => {
     return { editshipment: state.editshipment, user: state.user, locations: state.locations, items: state.items }
   },
-  { startNewShipment, updateShipment, getShipment }
+  { startNewShipment, updateShipment, getShipment, getItems, getLocations }
 )(ReceivePage)
