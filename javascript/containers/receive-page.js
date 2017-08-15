@@ -95,7 +95,7 @@ const ReceivePage = class extends React.Component {
                     loading={locations.firstRequest}
                     value={{name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}}
                     valueKey={'from'}
-                    valueUpdated={this.props.updateShipment}
+                    valueSelected={this.props.updateShipment}
                     onNewSelected={this.toggleNewReceiveLocation}
                     label={'From Location'}
                     resourceName={'Location'}
@@ -125,12 +125,13 @@ const ReceivePage = class extends React.Component {
 
           {this.state.showEditTransactions && (
             <div>
+              <br />
               <SearchDrop
                 rows={items.items}
                 loading={items.firstRequest}
                 value={{}}
                 valueKey={'receive_transaction'}
-                valueUpdated={this.toggleNewBatch}
+                valueSelected={this.toggleNewBatch}
                 onNewSelected={this.toggleNewItem}
                 label={'Search Items'}
                 resourceName={'Item'}

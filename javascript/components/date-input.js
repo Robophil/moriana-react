@@ -1,6 +1,7 @@
 import React from 'react'
 import h from 'helpers'
 import PropTypes from 'prop-types'
+import StaticInput from 'static-input'
 
 export default class DateInput extends React.Component {
   state = { showEdit: false, inputValue: '', localError: false }
@@ -29,13 +30,13 @@ export default class DateInput extends React.Component {
   }
 
   render () {
-    const { inputValue, localError } = this.state
+    const { inputValue, localError, showEdit } = this.state
     const { value } = this.props
-    return (
-      <div className={`form-group field ${localError ? 'has-error' : ''}`}>
-        <label className='col-lg-2 control-label'>Date</label>
-        {this.state.showEdit ? (
-          <div className='col-sm-9'>
+    if (showEdit) {
+      return (
+        <div className={`form-group field ${localError ? 'has-error' : ''}`}>
+          <label className='col-lg-2 control-label'>Date</label>
+          <div className='col-sm-9 input-group'>
             <input
               onBlur={this.onBlur}
               value={inputValue}
@@ -48,16 +49,11 @@ export default class DateInput extends React.Component {
               Date must be format "YYYY-MM-DD or "t-1" or "t+1" (e.g. today - 1, today + 1)"
             </p>)}
           </div>
-          ) : (
-            <div className='col-sm-9'>
-              <div className='form-control-static '>
-                <span className='static-value'>{h.formatDate(value)}</span>
-                &nbsp;(<a onClick={this.toggleEdit}>edit</a>)
-              </div>
-            </div>
-          )}
-      </div>
-    )
+        </div>
+      )
+    } else {
+      return (<StaticInput label={'Date'} value={h.formatDate(value)} onEditClick={this.toggleEdit} />)
+    }
   }
 }
 

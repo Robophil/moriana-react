@@ -2,6 +2,7 @@ import React from 'react'
 import h from 'helpers'
 import PropTypes from 'prop-types'
 import ClickOutHandler from 'react-onclickout'
+import StaticInput from 'static-input'
 
 export default class SearchDrop extends React.Component {
   state = {
@@ -102,11 +103,11 @@ export default class SearchDrop extends React.Component {
     if (index === this.state.visibleRows.length) {
       if (this.props.onNewSelected) {
         this.props.onNewSelected(this.state.inputValue)
-        this.hideSearch()
       }
     } else {
-      this.props.valueUpdated(this.props.valueKey, this.state.visibleRows[index])
+      this.props.valueSelected(this.props.valueKey, this.state.visibleRows[index])
     }
+    this.hideSearch()
   }
 
   render () {
@@ -114,10 +115,10 @@ export default class SearchDrop extends React.Component {
     const { value, label, resourceName, rows, onNewSelected, loading } = this.props
     return (
       <ClickOutHandler onClickOut={this.hideSearch}>
-        <div className='form-group field'>
-          <label className='col-lg-2 control-label'>{label}</label>
-          {showEdit ? (
-            <div className='col-sm-9'>
+        {showEdit ? (
+          <div className='form-group field'>
+            <label className='col-lg-2 control-label'>{label}</label>
+            <div className='col-sm-9 input-group'>
               <input
                 onBlur={this.onBlur}
                 value={inputValue}
@@ -163,15 +164,9 @@ export default class SearchDrop extends React.Component {
                 </div>
               )}
             </div>
-            ) : (
-              <div className='col-sm-9'>
-                <div className='form-control-static '>
-                  <span className='static-value'>{this.displayFunction(value)}</span>
-                  &nbsp;(<a onClick={this.toggleEdit}>edit</a>)
-                </div>
-              </div>
-            )}
-        </div>
+          </div>
+        ) : (<StaticInput label={label} value={this.displayFunction(value)} onEditClick={this.toggleEdit} />)
+        }
       </ClickOutHandler>
     )
   }
@@ -184,7 +179,7 @@ SearchDrop.propTypes = {
   loading: PropTypes.bool.isRequired,
   value: PropTypes.object.isRequired,
   valueKey: PropTypes.string.isRequired,
-  valueUpdated: PropTypes.func.isRequired,
+  valueSelected: PropTypes.func.isRequired,
   searchFilterFunction: PropTypes.func.isRequired,
   displayFunction: PropTypes.func,
   onNewSelected: PropTypes.func

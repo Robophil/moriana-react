@@ -23,7 +23,7 @@ export default class VendorIdInput extends React.Component {
     return (
       <div className='form-group field'>
         <label className='col-lg-2 control-label'>Vendor Id</label>
-        <div className='col-sm-9'>
+        <div className='col-sm-9 input-group'>
           <input
             value={inputValue}
             onChange={this.onChange}

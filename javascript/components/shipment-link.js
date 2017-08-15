@@ -1,8 +1,23 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
-export default class extends React.Component {
+export default class ShipmentLink extends React.Component {
   render () {
-    const type = this.props.type ? this.props.type + '/' : ''
-    return (<a href={`/#d/${this.props.dbName}/shipment/${type}${this.props.id}`}>{this.props.children}</a>)
+    const { linkType, id, shipmentType, dbName, children } = this.props
+    let details = ''
+    if (linkType) {
+      details += linkType + '/'
+      if (shipmentType) {
+        details += shipmentType + '/'
+      }
+    }
+    return (<a href={`/#d/${dbName}/shipment/${details}${id}`}>{children}</a>)
   }
+}
+
+ShipmentLink.propTypes = {
+  dbName: PropTypes.string.isRequired,
+  id: PropTypes.string,
+  linkType: PropTypes.string,
+  shipmentType:  PropTypes.string
 }

@@ -32,9 +32,9 @@ const ShipmentPage = class extends React.Component {
 
                | created by <strong>{ship.username} </strong>
                 latest edited <strong>{h.dateFromNow(ship.updated)} </strong>
-                | <ShipmentLink type='edit' id={ship._id} dbName={dbName} > edit </ShipmentLink>
-                | <ShipmentLink type='print' id={ship._id} dbName={dbName} > print </ShipmentLink>
-                | <ShipmentLink type='print' id={`${ship._id}/reversed`} dbName={dbName} > print reversed </ShipmentLink>
+                | <ShipmentLink linkType='edit' shipmentType={ship.type} id={ship._id} dbName={dbName} > edit </ShipmentLink>
+                | <ShipmentLink linkType='print' id={ship._id} dbName={dbName} > print </ShipmentLink>
+                | <ShipmentLink linkType='print' id={`${ship._id}/reversed`} dbName={dbName} > print reversed </ShipmentLink>
             </div>
             <hr />
             <table className='table table-striped table-hover'>
