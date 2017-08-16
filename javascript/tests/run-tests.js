@@ -5,7 +5,6 @@
 // { 'section of tests name': { 'individual test name': () => { //expect goes here } }}
 
 export default function () {
-  console.log('%c Running tests in local dev environment...', 'color: blue;')
   let testsCount = 0
   let testsPassed = 0
   // const testFiles = {viewSpecs, stockSpecs, locationsSpec}
@@ -25,5 +24,7 @@ export default function () {
       })
     })
   })
-  console.log(`%c ${testsPassed} of ${testsCount} tests passed. (${Math.floor(testsPassed / testsCount * 100)}%)`, 'color: blue;')
+  const percent = Math.floor(testsPassed / testsCount * 100)
+  console.log(`%c Running tests in dev environment: ${testsPassed} of ${testsCount} tests passed. (${percent}%)`,
+    'color: blue;')
 }

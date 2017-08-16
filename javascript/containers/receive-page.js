@@ -22,7 +22,8 @@ const ReceivePage = class extends React.Component {
     showEditTransactions: false,
     showBatchEdit: false,
     editingItem: '',
-    editingCategory: ''
+    editingCategory: '',
+    editingBatch: null
   }
 
   componentDidMount = () => {
@@ -51,16 +52,30 @@ const ReceivePage = class extends React.Component {
     this.setState({ showNewLocation: !this.state.showNewLocation, newLocationName: inputValue })
   }
 
-  transactionEditClick = (index) => {
-    console.log(index)
-  }
-
   toggleNewBatch = (key, value) => {
     this.setState({ editingItem: value.item, editingCategory: value.category, showBatchEdit: true })
   }
 
   hideEditBatch = () => {
-    this.setState({ editingItem: null, editingCategory: null, showBatchEdit: false })
+    this.setState({
+      editingItem: null,
+      editingCategory: null,
+      editingBatch: null,
+      editingIndex: null,
+      showBatchEdit: false
+    })
+  }
+
+  transactionEditClick = (index) => {
+    const {shipment} = this.props.editshipment
+    const {item, category, quantity, expiration, lot, unitPrice} = shipment.transactions[index]
+    this.setState({
+      editingItem: item,
+      editingCategory: category,
+      editingBatch: {quantity, expiration, lot, unitPrice},
+      editingIndex: Number(index),
+      showBatchEdit: true
+    })
   }
 
   toggleNewItem = (name) => {
@@ -75,7 +90,6 @@ const ReceivePage = class extends React.Component {
       ) : (
         <div>
           <h5 className='text-capitalize title'>
-            {/* <i className='icon arrow-down'></i> */}
             {shipment.from ? (<span>Receive: {shipment.from} to {shipment.to}</span>) : (<span>Create receive</span>)}
           </h5>
           <hr />
@@ -153,6 +167,8 @@ const ReceivePage = class extends React.Component {
             <EditBatch
               item={this.state.editingItem}
               category={this.state.editingCategory}
+              batch={this.state.editingBatch}
+              index={this.state.editingIndex}
               valueUpdated={updateShipment}
               closeClicked={this.hideEditBatch}
               deleteClicked={deleteTransaction}

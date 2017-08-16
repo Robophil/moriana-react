@@ -1,9 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import h from 'helpers'
+import Moment from 'moment'
 import { isPresentAndNumber, numberInputIsValid, expirationIsValid } from 'validation'
 import { getISOExpirationFromInput } from 'input-transforms'
 import StaticInput from 'static-input'
+import ClickOutHandler from 'react-onclickout'
 
 export default class EditBatch extends React.Component {
   state = {
@@ -18,6 +20,23 @@ export default class EditBatch extends React.Component {
     unitPriceError: false,
     unitPriceValidationFunction: numberInputIsValid,
     expirationDisplay: null
+  }
+
+  componentDidMount = () => {
+    if (this.props.batch) {
+      const {quantity, expiration, lot, unitPrice} = this.props.batch
+      const newState = {
+        quantity,
+        expiration: expiration || '',
+        lot: lot || '',
+        unitPrice: unitPrice || ''
+      }
+      if (expiration) {
+        newState.expiration = h.expiration(expiration)
+        newState.expirationDisplay = h.expiration(expiration)
+      }
+      this.setState(newState)
+    }
   }
 
   onKeyDown = (event) => {
@@ -81,104 +100,127 @@ export default class EditBatch extends React.Component {
       }
     })
     if (!formHasError) {
-      this.props.valueUpdated('receive_transactions', { item, category, quantity, expiration, lot, unitPrice })
+      const inputValue = { item, category, quantity, expiration, lot, unitPrice }
+      if (this.props.batch) {
+        inputValue.editIndex = this.props.index
+      }
+      this.props.valueUpdated('receive_transactions', inputValue)
       this.props.closeClicked()
     }
   }
 
+  deleteClicked = () => {
+    this.props.deleteClicked(this.props.index)
+    this.props.closeClicked()
+  }
+
   render () {
-    const { item, category, closeClicked, deleteClicked } = this.props
-    const { quantity, quantityError, expiration, expirationError, lot, unitPrice, unitPriceError, expirationDisplay } = this.state
+    const { item, category, closeClicked, deleteClicked, batch, index } = this.props
+    const {
+      quantity,
+      quantityError,
+      expiration,
+      expirationError,
+      lot,
+      unitPrice,
+      unitPriceError,
+      expirationDisplay
+    } = this.state
     return (
-      <div className='modal fade in'>
-        <div className='modal-dialog modal-lg'>
-          <div className='modal-content'>
-            <div className='modal-header'>
-              {/* use onmousedown to beat out race with input blur events */}
-              <button type='button' className='close' onMouseDown={closeClicked}>
-                <span>×</span>
-              </button>
-              <h4 className='modal-title'>{item} {category}</h4>
-            </div>
-            <div className='modal-body'>
-              <div>
-                <div className={`form-group ${quantityError ? 'has-error' : ''}`}>
-                  <label className='col-lg-2 control-label'>Quantity</label>
-                  <div className='col-lg-9 input-group'>
-                    <input
-                      type='text'
-                      className='form-control form-input'
-                      value={quantity}
-                      data-key='quantity'
-                      onChange={this.valueChanged}
-                      onKeyDown={this.onKeyDown}
-                      onBlur={this.onBlur}
-                      autoFocus
-                    />
-                    {quantityError && (<p className='error help-block'>
-                      Quantity is required and must be numeric.
-                    </p>)}
-                  </div>
-                </div>
-                {expirationDisplay ? (
-                  <StaticInput label={'Expiration'} value={expirationDisplay} onEditClick={this.onExpirationEditClick} />
-                ) : (
-                  <div className={`form-group ${expirationError ? 'has-error' : ''}`}>
-                    <label className='col-lg-2 control-label'>Expiration</label>
+      <ClickOutHandler onClickOut={closeClicked}>
+        <div className='modal fade in'>
+          <div className='modal-dialog modal-lg'>
+            <div className='modal-content'>
+              <div className='modal-header'>
+                {/* use onmousedown to beat out race with input blur events */}
+                <button type='button' className='close' onMouseDown={closeClicked}>
+                  <span>×</span>
+                </button>
+                <h4 className='modal-title'>{item} {category}</h4>
+              </div>
+              <div className='modal-body'>
+                <div>
+                  <div className={`form-group ${quantityError ? 'has-error' : ''}`}>
+                    <label className='col-lg-2 control-label'>Quantity</label>
                     <div className='col-lg-9 input-group'>
                       <input
                         type='text'
                         className='form-control form-input'
-                        value={expiration}
-                        data-key='expiration'
+                        value={quantity}
+                        data-key='quantity'
+                        onChange={this.valueChanged}
+                        onKeyDown={this.onKeyDown}
+                        onBlur={this.onBlur}
+                        autoFocus
+                      />
+                      {quantityError && (<p className='error help-block'>
+                        Quantity is required and must be numeric.
+                      </p>)}
+                    </div>
+                  </div>
+                  {expirationDisplay ? (
+                    <StaticInput label={'Expiration'} value={expirationDisplay} onEditClick={this.onExpirationEditClick} />
+                  ) : (
+                    <div className={`form-group ${expirationError ? 'has-error' : ''}`}>
+                      <label className='col-lg-2 control-label'>Expiration</label>
+                      <div className='col-lg-9 input-group'>
+                        <input
+                          type='text'
+                          className='form-control form-input'
+                          value={expiration}
+                          data-key='expiration'
+                          onChange={this.valueChanged}
+                          onBlur={this.onBlur}
+                          onKeyDown={this.onKeyDown}
+                        />
+                        {expirationError && (<p className='error help-block'>
+                          Expiration must be format "MM/YY", "MM/YYYY" or "YYYY-MM-DD".
+                        </p>)}
+                      </div>
+                    </div>
+                  )}
+                  <div className='form-group'>
+                    <label className='col-lg-2 control-label'>Lot</label>
+                    <div className='col-lg-9 input-group'>
+                      <input
+                        type='text'
+                        className='form-control form-input'
+                        value={lot}
+                        data-key='lot'
+                        onChange={this.valueChanged}
+                        onKeyDown={this.onKeyDown}
+                      />
+                    </div>
+                  </div>
+                  <div className={`form-group ${unitPriceError ? 'has-error' : ''}`}>
+                    <label className='col-lg-2 control-label'>Unit Price</label>
+                    <div className='col-lg-9 input-group'>
+                      <input
+                        type='text'
+                        className='form-control form-input'
+                        value={unitPrice}
+                        data-key='unitPrice'
                         onChange={this.valueChanged}
                         onBlur={this.onBlur}
                         onKeyDown={this.onKeyDown}
                       />
-                      {expirationError && (<p className='error help-block'>
-                        Expiration must be format "MM/YY", "MM/YYYY" or "YYYY-MM-DD".
+                      {unitPriceError && (<p className='error help-block'>
+                        Unit price must be a number.
                       </p>)}
                     </div>
                   </div>
-                )}
-                <div className='form-group'>
-                  <label className='col-lg-2 control-label'>Lot</label>
-                  <div className='col-lg-9 input-group'>
-                    <input
-                      type='text'
-                      className='form-control form-input'
-                      value={lot}
-                      data-key='lot'
-                      onChange={this.valueChanged}
-                      onKeyDown={this.onKeyDown}
-                    />
-                  </div>
+                  <button onMouseDown={closeClicked} style={{marginRight: '5px'}} className='btn btn-default'>Cancel</button>
+                  <button onClick={this.onSubmit} className='btn btn-primary'>Done</button>
+                  {batch && (
+                    <button onMouseDown={this.deleteClicked} className='btn btn-default pull-right'>delete</button>
+                  )}
+                  <br /><br />
                 </div>
-                <div className={`form-group ${unitPriceError ? 'has-error' : ''}`}>
-                  <label className='col-lg-2 control-label'>Unit Price</label>
-                  <div className='col-lg-9 input-group'>
-                    <input
-                      type='text'
-                      className='form-control form-input'
-                      value={unitPrice}
-                      data-key='unitPrice'
-                      onChange={this.valueChanged}
-                      onBlur={this.onBlur}
-                      onKeyDown={this.onKeyDown}
-                    />
-                    {unitPriceError && (<p className='error help-block'>
-                      Unit price must be a number.
-                    </p>)}
-                  </div>
-                </div>
-                <button onMouseDown={closeClicked} style={{marginRight: '5px'}} className='btn btn-default'>Cancel</button>
-                <button onClick={this.onSubmit} className='btn btn-primary'>Done</button>
-                <br /><br />
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </ClickOutHandler>
     )
   }
 }
@@ -188,5 +230,7 @@ EditBatch.propTypes = {
   category: PropTypes.string.isRequired,
   valueUpdated: PropTypes.func.isRequired,
   closeClicked: PropTypes.func.isRequired,
-  deleteClicked: PropTypes.func.isRequired
+  deleteClicked: PropTypes.func.isRequired,
+  batch: PropTypes.object,
+  index: PropTypes.number,
 }
