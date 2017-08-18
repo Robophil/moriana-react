@@ -9,7 +9,7 @@ export default class StaticShipmentDetails extends React.Component {
       <div>
         <strong>{h.formatDate(date)}</strong> |
         transactions: <strong>{h.num(totalTransactions)}</strong>
-        | total value: <strong>{h.currency(totalValue)}</strong>
+        &nbsp;| total value: <strong>{h.currency(totalValue)}</strong>
         {vendorId && (<span> | vendor ID: <strong>{vendorId}</strong></span>)}
         &nbsp; &nbsp; {this.props.children}
         {patient && (

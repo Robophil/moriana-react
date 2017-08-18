@@ -152,7 +152,9 @@ const createNewShipment = (currentLocationName) => {
     // username: currentUsername,
     to: currentLocationName,
     toType: 'I',
-    transactions: []
+    transactions: [],
+    totalValue: 0,
+    totalTransactions: 0
   }
 }
 

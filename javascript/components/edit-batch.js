@@ -136,83 +136,81 @@ export default class EditBatch extends React.Component {
             </button>
             <h4 className='modal-title'>{item} {category}</h4>
           </div>
-          <div className=''>
-            <div>
-              <div className={`form-group ${quantityError ? 'has-error' : ''}`}>
-                <label className='col-lg-2 control-label'>Quantity</label>
-                <div className='col-lg-9 input-group'>
-                  <input
-                    type='text'
-                    className='form-control form-input'
-                    value={quantity}
-                    data-key='quantity'
-                    onChange={this.valueChanged}
-                    onKeyDown={this.onKeyDown}
-                    onBlur={this.onBlur}
-                    autoFocus
-                  />
-                  {quantityError && (<p className='error help-block'>
-                    Quantity is required and must be numeric.
-                  </p>)}
-                </div>
+          <div>
+            <div className={`form-group ${quantityError ? 'has-error' : ''}`}>
+              <label className='col-lg-2 control-label'>Quantity</label>
+              <div className='col-lg-9 input-group'>
+                <input
+                  type='text'
+                  className='form-control form-input'
+                  value={quantity}
+                  data-key='quantity'
+                  onChange={this.valueChanged}
+                  onKeyDown={this.onKeyDown}
+                  onBlur={this.onBlur}
+                  autoFocus
+                />
+                {quantityError && (<p className='error help-block'>
+                  Quantity is required and must be numeric.
+                </p>)}
               </div>
-              {expirationDisplay ? (
-                <StaticInput label={'Expiration'} value={expirationDisplay} onEditClick={this.onExpirationEditClick} />
-              ) : (
-                <div className={`form-group ${expirationError ? 'has-error' : ''}`}>
-                  <label className='col-lg-2 control-label'>Expiration</label>
-                  <div className='col-lg-9 input-group'>
-                    <input
-                      type='text'
-                      className='form-control form-input'
-                      value={expiration}
-                      data-key='expiration'
-                      onChange={this.valueChanged}
-                      onBlur={this.onBlur}
-                      onKeyDown={this.onKeyDown}
-                    />
-                    {expirationError && (<p className='error help-block'>
-                      Expiration must be format "MM/YY", "MM/YYYY" or "YYYY-MM-DD".
-                    </p>)}
-                  </div>
-                </div>
-              )}
-              <div className='form-group'>
-                <label className='col-lg-2 control-label'>Lot</label>
-                <div className='col-lg-9 input-group'>
-                  <input
-                    type='text'
-                    className='form-control form-input'
-                    value={lot}
-                    data-key='lot'
-                    onChange={this.valueChanged}
-                    onKeyDown={this.onKeyDown}
-                  />
-                </div>
-              </div>
-              <div className={`form-group ${unitPriceError ? 'has-error' : ''}`}>
-                <label className='col-lg-2 control-label'>Unit Price</label>
-                <div className='col-lg-9 input-group'>
-                  <input
-                    type='text'
-                    className='form-control form-input'
-                    value={unitPrice}
-                    data-key='unitPrice'
-                    onChange={this.valueChanged}
-                    onBlur={this.onBlur}
-                    onKeyDown={this.onKeyDown}
-                  />
-                  {unitPriceError && (<p className='error help-block'>
-                    Unit price must be a number.
-                  </p>)}
-                </div>
-              </div>
-              <button onMouseDown={closeClicked} style={{marginRight: '5px'}} className='btn btn-default'>Cancel</button>
-              <button onClick={this.onSubmit} className='btn btn-primary'>Done</button>
-              {batch && (
-                <button onMouseDown={this.deleteClicked} className='btn btn-default pull-right'>delete</button>
-              )}
             </div>
+            {expirationDisplay ? (
+              <StaticInput label={'Expiration'} value={expirationDisplay} onEditClick={this.onExpirationEditClick} />
+            ) : (
+              <div className={`form-group ${expirationError ? 'has-error' : ''}`}>
+                <label className='col-lg-2 control-label'>Expiration</label>
+                <div className='col-lg-9 input-group'>
+                  <input
+                    type='text'
+                    className='form-control form-input'
+                    value={expiration}
+                    data-key='expiration'
+                    onChange={this.valueChanged}
+                    onBlur={this.onBlur}
+                    onKeyDown={this.onKeyDown}
+                  />
+                  {expirationError && (<p className='error help-block'>
+                    Expiration must be format "MM/YY", "MM/YYYY" or "YYYY-MM-DD".
+                  </p>)}
+                </div>
+              </div>
+            )}
+            <div className='form-group'>
+              <label className='col-lg-2 control-label'>Lot</label>
+              <div className='col-lg-9 input-group'>
+                <input
+                  type='text'
+                  className='form-control form-input'
+                  value={lot}
+                  data-key='lot'
+                  onChange={this.valueChanged}
+                  onKeyDown={this.onKeyDown}
+                />
+              </div>
+            </div>
+            <div className={`form-group ${unitPriceError ? 'has-error' : ''}`}>
+              <label className='col-lg-2 control-label'>Unit Price</label>
+              <div className='col-lg-9 input-group'>
+                <input
+                  type='text'
+                  className='form-control form-input'
+                  value={unitPrice}
+                  data-key='unitPrice'
+                  onChange={this.valueChanged}
+                  onBlur={this.onBlur}
+                  onKeyDown={this.onKeyDown}
+                />
+                {unitPriceError && (<p className='error help-block'>
+                  Unit price must be a number.
+                </p>)}
+              </div>
+            </div>
+            <button onMouseDown={closeClicked} style={{marginRight: '5px'}} className='btn btn-default'>Cancel</button>
+            <button onClick={this.onSubmit} className='btn btn-primary'>Done</button>
+            {batch && (
+              <button onMouseDown={this.deleteClicked} className='btn btn-default pull-right'>delete</button>
+            )}
           </div>
         </div>
       </ClickOutHandler>
