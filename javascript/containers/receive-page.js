@@ -93,7 +93,7 @@ const ReceivePage = class extends React.Component {
   }
 
   render () {
-    const { shipment, loadingInitialShipment, dateError, isNew } = this.props.editshipment
+    const { shipment, loadingInitialShipment, isNew } = this.props.editshipment
     const { locations, items, updateShipment, deleteTransaction, route } = this.props
     const {dbName} = route
     return loadingInitialShipment ? (
@@ -110,7 +110,6 @@ const ReceivePage = class extends React.Component {
                 <fieldset>
                   <DateInput
                     valueKey={'date'}
-                    error={dateError}
                     value={shipment.date}
                     valueUpdated={updateShipment}
                   />

@@ -16,3 +16,12 @@ export const clone = (obj) => {
 export const isNumeric = (inputValue) => {
   return !isNaN(parseFloat(inputValue)) && isFinite(inputValue)
 }
+
+export const empty = (input) => {
+  if (!input) return true
+  return (removeExtraWhiteSpace(input) === '')
+}
+
+const removeExtraWhiteSpace = (input) => {
+  return input ? input.replace(/\s+/g, ' ').trim() : ''
+}

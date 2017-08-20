@@ -1,10 +1,10 @@
 // actions and reducer for editing a shipment
 
-// import client from 'client'
+import client from 'client'
 import {clone} from 'utils'
 
-import { dateIsValid, transactionIsValid } from 'validation'
-import { getISODateFromInput, getTransactionFromInput } from 'input-transforms'
+import { transactionIsValid, validateShipment } from 'validation'
+import { getTransactionFromInput } from 'input-transforms'
 
 // actions
 
@@ -37,8 +37,14 @@ export const deleteTransactionAction = (index) => {
 // thunkettes
 
 export const updateShipment = (key, inputValue) => {
-  return dispatch => {
+  return (dispatch, getState) => {
     dispatch(updateShipmentAction(key, inputValue))
+    const state = getState().editshipment
+    if (state.isValid) {
+      // UPDATING_ACTION
+      client.post(`${state.dbName}/${state.shipment.id}`, state.shipment)
+      // UPDATED_ACTION :) :)
+    }
   }
 }
 
@@ -55,9 +61,10 @@ const defaultEditShipment = {
   savingShipment: false,
   apiError: null,
   shipment: {},
-  dateError: false,
   transactionIsInvalid: false,
-  type: null
+  type: null,
+  isNew: true,
+  isValid: false
 }
 
 export default (state = defaultEditShipment, action) => {
@@ -67,7 +74,7 @@ export default (state = defaultEditShipment, action) => {
     }
     case RECEIVED_SHIPMENT: {
       const shipment = clone(action.shipment)
-      return { ...state, shipment, loadingInitialShipment: false }
+      return { ...state, shipment, loadingInitialShipment: false, isNew: false }
     }
     case START_NEW_SHIPMENT: {
       const shipment = createNewShipment(action.currentLocationName)
@@ -76,14 +83,8 @@ export default (state = defaultEditShipment, action) => {
 
     case UPDATE_DATE: {
       const newState = { ...state, shipment: clone(state.shipment) }
-      const error = dateIsValid(action.inputValue)
-      if (error) {
-        newState.dateError = true
-        return newState
-      } else {
-        newState.shipment.date = getISODateFromInput(action.inputValue)
-        newState.dateError = false
-      }
+      newState.shipment.date = action.inputValue
+      Object.assign(newState, validateShipment(newState.shipment))
       return newState
     }
 

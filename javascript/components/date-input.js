@@ -2,9 +2,11 @@ import React from 'react'
 import h from 'helpers'
 import PropTypes from 'prop-types'
 import StaticInput from 'static-input'
+import {dateIsValid} from 'validation'
+import {getISODateFromInput} from 'input-transforms'
 
 export default class DateInput extends React.Component {
-  state = { showEdit: false, inputValue: '', localError: false }
+  state = { showEdit: false, inputValue: '', error: false }
 
   toggleEdit = (event) => {
     if (event) event.preventDefault()
@@ -12,29 +14,33 @@ export default class DateInput extends React.Component {
   }
 
   componentWillReceiveProps = (newProps) => {
-    if (newProps.error) {
-      this.setState({ localError: newProps.error })
-    } else {
+    if (newProps.value) {
       this.setState({ showEdit: false })
     }
   }
 
   onChange = (event) => {
     const inputValue = event.currentTarget.value
-    this.setState({inputValue, localError: false})
+    this.setState({inputValue, error: false})
   }
 
   onBlur = (event) => {
     const {inputValue} = this.state
-    this.props.valueUpdated(this.props.valueKey, inputValue)
+    const isValid = dateIsValid(this.state.inputValue)
+    if (isValid) {
+      const isoDate = getISODateFromInput(inputValue)
+      this.props.valueUpdated(this.props.valueKey, isoDate)
+    } else {
+      this.setState({ error: true })
+    }
   }
 
   render () {
-    const { inputValue, localError, showEdit } = this.state
+    const { inputValue, error, showEdit } = this.state
     const { value } = this.props
     if (showEdit) {
       return (
-        <div className={`form-group field ${localError ? 'has-error' : ''}`}>
+        <div className={`form-group field ${error ? 'has-error' : ''}`}>
           <label className='col-lg-2 control-label'>Date</label>
           <div className='col-sm-9 input-group'>
             <input
@@ -45,7 +51,7 @@ export default class DateInput extends React.Component {
               className='form-control form-input'
               autoFocus
               type='text' />
-            {localError && (<p className='error help-block'>
+            {error && (<p className='error help-block'>
               Date must be format "YYYY-MM-DD or "t-1" or "t+1" (e.g. today - 1, today + 1)"
             </p>)}
           </div>
@@ -59,7 +65,6 @@ export default class DateInput extends React.Component {
 
 DateInput.propTypes = {
   value: PropTypes.string,
-  error: PropTypes.bool.isRequired,
   valueKey: PropTypes.string.isRequired,
   valueUpdated: PropTypes.func.isRequired
 }

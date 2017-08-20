@@ -1,21 +1,33 @@
-import {isNumeric} from 'utils'
+import {isNumeric, empty} from 'utils'
 import Moment from 'moment'
+
+export const isISODate = (d) => {
+  if (!d) {
+    return false
+  } else {
+    const isoDateSplit = d.split('.')
+    return ((isoDateSplit.length === 2) && Moment(isoDateSplit[0], 'YYYY-MM-DDTHH:mm:ss', true).isValid())
+  }
+}
 
 export const dateIsValid = (inputValue) => {
   if (!inputValue) {
-    return true
+    return false
   } else if (inputValue[0].toLowerCase() === 't') {
-    if (inputValue.length !== 1) {
-      if (inputValue[1] !== '-' && inputValue[1] !== '+') {
-        return true
-      } else if (!isNumeric(inputValue[2])) {
-        return true
+    if (inputValue.length === 1) {
+      return true
+    }
+    else if (inputValue.length !== 1) {
+      if (inputValue[1] === '-') {
+        return (inputValue.split('-').length === 2 && isNumeric(inputValue.split('-')[1]))
+      } else if (inputValue[1] === '+') {
+        return (inputValue.split('+').length === 2 && isNumeric(inputValue.split('+')[1]))
+      } else {
+        return false
       }
     }
-  } else if (!Moment(inputValue, 'YYYY-M-D', true).isValid()) {
-    return true
   } else {
-    return false
+    return (Moment(inputValue, 'YYYY-M-D', true).isValid())
   }
 }
 
@@ -55,4 +67,56 @@ export const transactionIsValid = (transaction) => {
   const {item, category, quantity, exipration, unitPrice} = transaction
   return (!item || !category || !quantity ||
     !numberInputIsValid(quantity) || !numberInputIsValid(unitPrice) || expirationIsValid(exipration))
+}
+
+export const validateShipment = (shipment) => {
+  let isValid = true
+  const validationErrors = []
+  const validLocationTypes = ['E', 'EV', 'I', 'P']
+
+  if (!shipment.date || empty(shipment.from)
+  || empty(shipment.to) || empty(shipment.fromType)
+  || empty(shipment.toType)) {
+    isValid = false
+    validationErrors.push('Invalid shipment: missing properties')
+  }
+
+  if (validLocationTypes.indexOf(shipment.fromType) === -1 || validLocationTypes.indexOf(shipment.toType) === -1) {
+    isValid = false
+    validationErrors.push('Invalid shipment: location type is not one of "E" "EV" "I" or "I"')
+  }
+
+  if (shipment.to === shipment.from) {
+    isValid = false
+    validationErrors.push('Invalid shipment: to location cannot be the same as from')
+  }
+
+  if (!isISODate(shipment.date)) {
+    isValid = false
+    validationErrors.push('Invalid shipment: date must be an ISO string')
+  }
+
+  if (shipment.toType === 'I' && shipment.to[0] !==  shipment.to[0].toLowerCase()) {
+    isValid = false
+    validationErrors.push('Invalid shipment: internal locations must be lower case, to location is not lower case')
+  }
+
+  if (shipment.fromType === 'I' && shipment.from[0] !==  shipment.from[0].toLowerCase()) {
+    isValid = false
+    validationErrors.push('Invalid shipment: internal locations must be lower case, from location is not lower case')
+  }
+
+  // let transactionError = null
+  // const errorTransaction = _.find(shipment.transactions, transaction => {
+  //   transactionError = validateTransactionUtil(transaction)
+  //   return transactionError
+  // })
+  //
+  // if (errorTransaction) {
+  //   isValid = false
+  //   validationErrors.push(transactionError)
+  // }
+
+  return {isValid, validationErrors}
+
 }
