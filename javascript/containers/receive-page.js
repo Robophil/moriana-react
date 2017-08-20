@@ -12,10 +12,11 @@ import EditBatch from 'edit-batch'
 import StaticShipmentDetails from 'static-shipment-details'
 import EditTransactionsTable from 'edit-transactions-table'
 import StaticInput from 'static-input'
+import ShipmentLink from 'shipment-link'
+import DeleteShipmentModal from 'delete-shipment-modal'
 
 const ReceivePage = class extends React.Component {
   state = {
-    isNew: true,
     showNewLocation: false,
     newLocationName: '',
     showEditDetails: true,
@@ -23,13 +24,14 @@ const ReceivePage = class extends React.Component {
     showBatchEdit: false,
     editingItem: '',
     editingCategory: '',
-    editingBatch: null
+    editingBatch: null,
+    showDeleteModal: false
   }
 
   componentDidMount = () => {
     const { dbName, currentLocationName, params } = this.props.route
     if (params.id) {
-      this.setState({ isNew: false, showEditDetails: false, showEditTransactions: true })
+      this.setState({ showEditDetails: false, showEditTransactions: true })
       this.props.getShipment(dbName, params.id)
     } else {
       this.props.startNewShipmentAction(currentLocationName, 'receive')
@@ -82,13 +84,22 @@ const ReceivePage = class extends React.Component {
     console.log('new item')
   }
 
+  toggleDeleteModal = () => {
+    this.setState({ showDeleteModal: !this.state.showDeleteModal })
+  }
+
+  deleteShipment = () => {
+    this.props.updateShipment('delete_shipment', 'asdf')
+  }
+
   render () {
-    const { shipment, loadingInitialShipment, dateError } = this.props.editshipment
-    const { locations, items, updateShipment, deleteTransaction } = this.props
+    const { shipment, loadingInitialShipment, dateError, isNew } = this.props.editshipment
+    const { locations, items, updateShipment, deleteTransaction, route } = this.props
+    const {dbName} = route
     return loadingInitialShipment ? (
       <div className='loader' />
       ) : (
-        <div>
+        <div className='receive-page'>
           <h5 className='text-capitalize title'>
             {shipment.from ? (<span>Receive: {shipment.from} to {shipment.to}</span>) : (<span>Create receive</span>)}
           </h5>
@@ -114,6 +125,7 @@ const ReceivePage = class extends React.Component {
                     resourceName={'Location'}
                     displayFunction={displayLocationName}
                     searchFilterFunction={searchLocations}
+                    autoFocus
                   />
                   <StaticInput className='text-capitalize' label='To Location' value={shipment.to} />
                   <VendorIdInput
@@ -150,6 +162,7 @@ const ReceivePage = class extends React.Component {
                 resourceName={'Item'}
                 displayFunction={displayItemName}
                 searchFilterFunction={searchItems}
+                autoFocus={isNew}
               />
               <EditTransactionsTable transactions={shipment.transactions} onEditClick={this.transactionEditClick} />
             </div>
@@ -173,7 +186,25 @@ const ReceivePage = class extends React.Component {
               closeClicked={this.hideEditBatch}
               deleteClicked={deleteTransaction}
             />)}
-
+        {!isNew && (
+            <div>
+              <ShipmentLink
+                dbName={dbName}
+                id={shipment._id}
+                className='btn btn-primary'
+                shipmentType='receive'>
+                Done
+              </ShipmentLink>
+              <button onClick={this.toggleDeleteModal} className='btn btn-default pull-right'>delete</button>
+            </div>
+          )}
+        {this.state.showDeleteModal && (
+          <DeleteShipmentModal
+            onConfirm={this.deleteShipment}
+            shipmentName={shipment.prettyName}
+            onClose={this.toggleDeleteModal}
+          />
+        )}
         </div>
       )
   }

@@ -112,7 +112,7 @@ export default class SearchDrop extends React.Component {
 
   render () {
     const { inputValue, showEdit, currIndex, visibleRows, showSearch } = this.state
-    const { value, label, resourceName, rows, onNewSelected, loading } = this.props
+    const { value, label, resourceName, rows, onNewSelected, loading, autoFocus } = this.props
     return (
       <ClickOutHandler onClickOut={this.hideSearch}>
         {showEdit ? (
@@ -126,7 +126,7 @@ export default class SearchDrop extends React.Component {
                 onChange={this.onChange}
                 className='form-control form-input'
                 onFocus={this.showSearch}
-                autoFocus
+                autoFocus={autoFocus}
                 type='text' />
               {showSearch && (
                 <div className='search-drop form-input'>
@@ -182,5 +182,6 @@ SearchDrop.propTypes = {
   valueSelected: PropTypes.func.isRequired,
   searchFilterFunction: PropTypes.func.isRequired,
   displayFunction: PropTypes.func,
-  onNewSelected: PropTypes.func
+  onNewSelected: PropTypes.func,
+  autoFocus: PropTypes.bool
 }
