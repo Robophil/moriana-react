@@ -100,22 +100,19 @@ export default class EditBatch extends React.Component {
       }
     })
     if (!formHasError) {
-      const inputValue = { item, category, quantity, expiration, lot, unitPrice }
-      if (this.props.batch) {
-        inputValue.editIndex = this.props.index
-      }
-      this.props.valueUpdated('receive_transactions', inputValue)
+      const value = { item, category, quantity, expiration, lot, unitPrice }
+      this.props.valueUpdated(value)
       this.props.closeClicked()
     }
   }
 
   deleteClicked = () => {
-    this.props.deleteClicked(this.props.index)
+    this.props.deleteClicked()
     this.props.closeClicked()
   }
 
   render () {
-    const { item, category, closeClicked, deleteClicked, batch, index } = this.props
+    const { item, category, closeClicked, deleteClicked, batch } = this.props
     const {
       quantity,
       quantityError,
@@ -224,6 +221,5 @@ EditBatch.propTypes = {
   valueUpdated: PropTypes.func.isRequired,
   closeClicked: PropTypes.func.isRequired,
   deleteClicked: PropTypes.func.isRequired,
-  batch: PropTypes.object,
-  index: PropTypes.number,
+  batch: PropTypes.object
 }

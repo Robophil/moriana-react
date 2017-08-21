@@ -105,7 +105,7 @@ export default class SearchDrop extends React.Component {
         this.props.onNewSelected(this.state.inputValue)
       }
     } else {
-      this.props.valueSelected(this.props.valueKey, this.state.visibleRows[index])
+      this.props.valueSelected(this.state.visibleRows[index])
     }
     this.hideSearch()
   }
@@ -178,7 +178,6 @@ SearchDrop.propTypes = {
   rows: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
   value: PropTypes.object.isRequired,
-  valueKey: PropTypes.string.isRequired,
   valueSelected: PropTypes.func.isRequired,
   searchFilterFunction: PropTypes.func.isRequired,
   displayFunction: PropTypes.func,

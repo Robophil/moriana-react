@@ -1,4 +1,4 @@
-import {isNumeric, empty} from 'utils'
+import {isNumeric, empty, isNumber} from 'utils'
 import Moment from 'moment'
 
 export const isISODate = (d) => {
@@ -106,17 +106,36 @@ export const validateShipment = (shipment) => {
     validationErrors.push('Invalid shipment: internal locations must be lower case, from location is not lower case')
   }
 
-  // let transactionError = null
-  // const errorTransaction = _.find(shipment.transactions, transaction => {
-  //   transactionError = validateTransactionUtil(transaction)
-  //   return transactionError
-  // })
-  //
-  // if (errorTransaction) {
-  //   isValid = false
-  //   validationErrors.push(transactionError)
-  // }
+  let transactionError = null
+  shipment.transactions.forEach(transaction => {
+    transactionError = validateTransaction(transaction)
+    if (transactionError) {
+      isValid = false
+      validationErrors.push(transactionError)
+    }
+  })
 
   return {isValid, validationErrors}
 
+}
+
+export const validateTransaction = (transaction) => {
+  if (!transaction.item || !transaction.category) {
+    return 'Invalid transaction: missing properties'
+  }
+  if (!isNumber(transaction.quantity)) {
+    return 'Invalid transaction: quantity must be a number'
+  }
+  if (!isNumeric(transaction.quantity)) {
+    return 'Quantity must be numeric'
+  }
+  if (transaction.quantity < 1) {
+    return 'Quantity must be positive'
+  }
+  if (transaction.unitPrice && !isNumber(transaction.unitPrice)) {
+    return 'Invalid transaction: unit price must be a number'
+  }
+  if (transaction.expiration && !isISODate(transaction.expiration)) {
+    return 'Invalid transaction: expiration must be in ISO format'
+  }
 }

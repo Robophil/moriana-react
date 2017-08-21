@@ -3,7 +3,7 @@
 import client from 'client'
 import {clone} from 'utils'
 
-import { transactionIsValid, validateShipment } from 'validation'
+import { validateShipment } from 'validation'
 import { getTransactionFromInput } from 'input-transforms'
 
 // actions
@@ -11,13 +11,7 @@ import { getTransactionFromInput } from 'input-transforms'
 import { REQUEST_SHIPMENT, RECEIVED_SHIPMENT } from 'shipments'
 
 export const START_NEW_SHIPMENT = 'START_NEW_SHIPMENT'
-export const UPDATE_DATE = 'UPDATE_DATE'
-export const UPDATE_FROM = 'UPDATE_FROM'
-export const UPDATE_TO = 'UPDATE_TO'
-export const UPDATE_LOCATION = 'UPDATE_LOCATION'
-export const UPDATE_VENDORID = 'UPDATE_VENDORID'
-export const UPDATE_RECEIVE_TRANSACTIONS = 'UPDATE_RECEIVE_TRANSACTIONS'
-export const DELETE_RECEIVE_TRANSACTION = 'DELETE_RECEIVE_TRANSACTION'
+export const UPDATE_SHIPMENT = 'UPDATE_SHIPMENT'
 
 export const UPDATE_ERROR = 'UPDATE_ERROR'
 
@@ -25,32 +19,21 @@ export const startNewShipmentAction = (currentLocationName, shipmentType) => {
   return { type: START_NEW_SHIPMENT, currentLocationName, shipmentType }
 }
 
-export const updateShipmentAction = (key, inputValue) => {
-  const type = key.toUpperCase()
-  return { type: `UPDATE_${type}`, key, inputValue }
-}
-
-export const deleteTransactionAction = (index) => {
-  return { type: DELETE_RECEIVE_TRANSACTION, index }
+export const updateShipmentAction = (key, value) => {
+  return { type: UPDATE_SHIPMENT, key, value }
 }
 
 // thunkettes
 
-export const updateShipment = (key, inputValue) => {
+export const updateShipment = (key, value) => {
   return (dispatch, getState) => {
-    dispatch(updateShipmentAction(key, inputValue))
+    dispatch(updateShipmentAction(key, value))
     const state = getState().editshipment
     if (state.isValid) {
       // UPDATING_ACTION
       client.post(`${state.dbName}/${state.shipment.id}`, state.shipment)
       // UPDATED_ACTION :) :)
     }
-  }
-}
-
-export const deleteTransaction = (index) => {
-  return dispatch => {
-    dispatch(deleteTransactionAction(index))
   }
 }
 
@@ -61,7 +44,6 @@ const defaultEditShipment = {
   savingShipment: false,
   apiError: null,
   shipment: {},
-  transactionIsInvalid: false,
   type: null,
   isNew: true,
   isValid: false
@@ -70,71 +52,48 @@ const defaultEditShipment = {
 export default (state = defaultEditShipment, action) => {
   switch (action.type) {
     case REQUEST_SHIPMENT: {
-      return { ...state, loadingInitialShipment: true }
+      return { ...defaultEditShipment, loadingInitialShipment: true }
     }
+
     case RECEIVED_SHIPMENT: {
       const shipment = clone(action.shipment)
       return { ...state, shipment, loadingInitialShipment: false, isNew: false }
     }
+
     case START_NEW_SHIPMENT: {
       const shipment = createNewShipment(action.currentLocationName)
-      return { ...state, shipment, type: action.shipmentType }
+      return { ...defaultEditShipment, shipment, type: action.shipmentType }
     }
 
-    case UPDATE_DATE: {
-      const newState = { ...state, shipment: clone(state.shipment) }
-      newState.shipment.date = action.inputValue
-      Object.assign(newState, validateShipment(newState.shipment))
-      return newState
-    }
-
-    case UPDATE_VENDORID: {
-      const shipment = clone(state.shipment)
-      shipment.vendorId = action.inputValue
-      return { ...state, shipment }
-    }
-    /* eslint-disable */
-    case UPDATE_FROM: { /* continue to UPDATE_LOCATION */ }
-    case UPDATE_TO: { /* continue to UPDATE_LOCATION */ }
-    case UPDATE_LOCATION: {
-      /* eslint-enable */
-      const shipment = clone(state.shipment)
-      shipment[action.key] = action.inputValue.name
-      if (action.inputValue.type) {
-        shipment[`${action.key}Type`] = action.inputValue.type
-      } else {
-        shipment[`${action.key}Type`] = getTargetType(state.type)
-      }
-      shipment[`${action.key}Attributes`] = action.inputValue.attributes
-      return { ...state, shipment }
-    }
-
-    case UPDATE_RECEIVE_TRANSACTIONS: {
-      const newState = { ...state, shipment: clone(state.shipment) }
-      const transactionInput = action.inputValue
-      const isValid = transactionIsValid(transactionInput)
-      if (isValid) {
-        const transaction = getTransactionFromInput(transactionInput)
-        if (transactionInput.editIndex !== undefined) {
-          // splice is (indexToStartFingWith, numberOfListItems, [optionalReplacewithThing])
-          newState.shipment.transactions.splice(transactionInput.editIndex, 1, transaction)
-        } else {
-          newState.shipment.transactions.unshift(transaction)
+    case UPDATE_SHIPMENT: {
+      const newState = clone(state)
+      const {key, value} = action
+      switch (action.key) {
+        case 'date': {
+          newState.shipment.date = value
+          break
         }
-        newState.transactionIsInvalid = false
-      } else {
-        newState.transactionIsInvalid = true
+        case 'from': {
+          Object.assign(newState.shipment, getTargetDetails('from', value, state.type))
+          break
+        }
+        case 'to': {
+          Object.assign(newState.shipment, getTargetDetails('to', value, state.type))
+          break
+        }
+        case 'vendorId': {
+          newState.shipment.vendorId = value
+          break
+        }
+        case 'transaction': {
+          if (state.type === 'receive') {
+            editReceiveTransaction(newState.shipment, value)
+          }
+          Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
+          break
+        }
       }
-      Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
-      return newState
-    }
-
-    case DELETE_RECEIVE_TRANSACTION: {
-      const shipment = clone(state.shipment)
-      const newState = { ...state, shipment }
-      // at this index, remove one thing
-      newState.shipment.transactions.splice(action.index, 1)
-      Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
+      Object.assign(newState, validateShipment(newState.shipment))
       return newState
     }
 
@@ -159,6 +118,14 @@ const createNewShipment = (currentLocationName) => {
   }
 }
 
+const getTargetDetails = (fromOrTo, value, type) => {
+  const details = {}
+  details[fromOrTo] = value.name
+  details[`${fromOrTo}Type`] = value.type || getTargetType(type)
+  details[`${fromOrTo}Attributes`] = value.attributes
+  return details
+}
+
 const getTargetType = (type) => {
   const typeMap = {
     'receive': 'E',
@@ -169,10 +136,26 @@ const getTargetType = (type) => {
   return typeMap[type]
 }
 
+
 const getTransactionTotals = (shipment) => {
   return shipment.transactions.reduce((memo, t) => {
     memo.totalValue += t.totalValue
     memo.totalTransactions ++
     return memo
   }, { totalValue: 0, totalTransactions: 0 })
+}
+
+// reminder: splice is (start index, # of things to remove/replace, [optional things to replace them with])
+const editReceiveTransaction = (shipment, value) => {
+  if (value.delete) {
+    shipment.transactions.splice(value.index, 1)
+  } else {
+    const transaction = getTransactionFromInput(value)
+    if (value.index !== undefined) {
+      shipment.transactions.splice(value.index, 1, transaction)
+    } else {
+      shipment.transactions.unshift(transaction)
+    }
+  }
+
 }

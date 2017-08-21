@@ -29,7 +29,7 @@ export default class DateInput extends React.Component {
     const isValid = dateIsValid(this.state.inputValue)
     if (isValid) {
       const isoDate = getISODateFromInput(inputValue)
-      this.props.valueUpdated(this.props.valueKey, isoDate)
+      this.props.valueUpdated('date', isoDate)
     } else {
       this.setState({ error: true })
     }
@@ -65,6 +65,5 @@ export default class DateInput extends React.Component {
 
 DateInput.propTypes = {
   value: PropTypes.string,
-  valueKey: PropTypes.string.isRequired,
   valueUpdated: PropTypes.func.isRequired
 }
