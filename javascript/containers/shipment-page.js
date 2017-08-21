@@ -14,6 +14,7 @@ const ShipmentPage = class extends React.Component {
 
   render () {
     const ship = this.props.currentShipment || { transactions: [] }
+    const {displayType} = this.props
     const { dbName } = this.props.route
     return (
       <div className='shipment-page'>
@@ -22,7 +23,7 @@ const ShipmentPage = class extends React.Component {
         ) : (
           <div>
             <h5 className='text-capitalize'>
-              <i className='icon mail-solid' />{ship.prettyType}: {ship.from} to {ship.to}
+              <i className='icon mail-solid' />{displayType}: {ship.from} to {ship.to}
             </h5>
             <hr />
             <div className='shipment-details'>

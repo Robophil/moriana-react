@@ -1,7 +1,7 @@
 // actions and reducer for viewing shipments
 import client from 'client'
-import decorateShipment from 'decorate-shipment'
 import {objectFromKeys} from 'utils'
+import h from 'helpers'
 
 export const REQUEST_SHIPMENT = 'REQUEST_SHIPMENT'
 export const RECEIVED_SHIPMENT = 'RECEIVED_SHIPMENT'
@@ -19,8 +19,11 @@ export const getShipment = (dbName, id) => {
         dispatch({ type: SHIPMENTS_ERROR, error: response.body })
       } else {
         const {currentLocation} = getState().locations
-        const prettyShip = decorateShipment.decorate(response.body, currentLocation)
-        dispatch({ type: RECEIVED_SHIPMENT, shipment: prettyShip })
+        dispatch({
+          type: RECEIVED_SHIPMENT,
+          shipment: response.body,
+          meta: decorate(response.body, currentLocation)
+        })
       }
     })
   }
@@ -62,7 +65,7 @@ export default (state = defaultShipments, action) => {
       return { ...state, loading: true, apiError: null, currentShipment: null }
     }
     case RECEIVED_SHIPMENT: {
-      return { ...state, loading: false, currentShipment: action.shipment }
+      return { ...state, loading: false, currentShipment: action.shipment, ...action.meta }
     }
     case REQUEST_SHIPMENTS: {
       const loading = (action.offset !== state.offsetLoaded)
@@ -88,3 +91,28 @@ export default (state = defaultShipments, action) => {
 const parseShipments = (response) => {
   return objectFromKeys(['date', 'from', 'to', 'updated', 'totalTransactions', 'username'], response)
 }
+
+const decorate = (ship, currentLocation) => {
+  const type = getType(ship, currentLocation)
+  const displayType = type.split('-').join(' ')
+  const shipmentName = `${ship.from} to ${ship.to} on ${h.formatDate(ship.date)}`
+  return { type, displayType, shipmentName }
+}
+
+const getType = (ship, currentLocation) => {
+  if (ship.from === currentLocation) {
+    if (ship.toType === 'I') return 'transfer'
+    if (ship.toType === 'P') return 'dispense'
+    return 'transfer-out'
+  } else if (ship.fromType === 'I') {
+    return 'transfer'
+  } else {
+    return 'receive'
+  }
+}
+
+// if an internal transfer to this location, don't allow edit
+// isReceiveFromInternal (ship, currentLocation) {
+//   return ship.type === 'transfer' && ship.to &&
+//     ship.to.toLowerCase() === currentLocation
+// }

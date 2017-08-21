@@ -57,7 +57,7 @@ export default (state = defaultEditShipment, action) => {
 
     case RECEIVED_SHIPMENT: {
       const shipment = clone(action.shipment)
-      return { ...state, shipment, loadingInitialShipment: false, isNew: false }
+      return { ...state, shipment, loadingInitialShipment: false, isNew: false, ...action.meta }
     }
 
     case START_NEW_SHIPMENT: {

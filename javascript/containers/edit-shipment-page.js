@@ -10,8 +10,12 @@ const ShipmentPage = class extends React.Component {
   }
 
   componentWillReceiveProps = (newProps) => {
-    if (newProps.currentShipment && newProps.currentShipment.prettyType) {
-      window.location.hash = window.location.hash.replace('edit-generic', `edit/${newProps.currentShipment.prettyType}`)
+    if (newProps.currentShipment && newProps.type) {
+      // change the hash & fire the hashchange event so the router catches it, but don't replace state in history
+      // with edit-generic hash
+      const newHash = window.location.hash.replace('edit-generic', `edit/${newProps.type}`)
+      window.history.replaceState(undefined, undefined, newHash)
+      window.dispatchEvent(new Event('hashchange'))
     }
   }
 

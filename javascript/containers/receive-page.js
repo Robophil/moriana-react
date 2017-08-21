@@ -112,7 +112,7 @@ const ReceivePage = class extends React.Component {
   }
 
   render () {
-    const { shipment, loadingInitialShipment, isNew } = this.props.editshipment
+    const { shipment, loadingInitialShipment, isNew, shipmentName } = this.props.editshipment
     const { locations, items, updateShipment, route } = this.props
     const { dbName } = route
     return loadingInitialShipment ? (
@@ -217,7 +217,7 @@ const ReceivePage = class extends React.Component {
         {this.state.showDeleteModal && (
           <DeleteShipmentModal
             onConfirm={this.deleteShipment}
-            shipmentName={shipment.prettyName}
+            shipmentName={shipmentName}
             onClose={this.toggleDeleteModal}
           />
         )}
