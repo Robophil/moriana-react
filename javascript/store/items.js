@@ -25,7 +25,8 @@ const defaultItems = {
   loading: false,
   items: [],
   apiError: null,
-  firstRequest: true
+  firstRequest: true,
+  categories: []
 }
 
 export default (state = defaultItems, action) => {
@@ -48,7 +49,8 @@ function parseResponse (body) {
     headers.forEach((header, i) => { row[header] = row.key[i] })
     return row
   }).sort((a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase()))
-  return { items }
+  const categories = getCategories(items)
+  return { items, categories }
 }
 
 export const getCategories = (items) => {
@@ -79,6 +81,10 @@ export const searchItems = (rows, input) => {
     item.item.toLowerCase().indexOf(input) !== -1 ||
     item.category.toLowerCase().indexOf(input) !== -1
   )
+}
+
+export const searchCategories = (rows, input) => {
+  return rows.filter(cat => cat.name.toLowerCase().indexOf(input) !== -1)
 }
 
 export const displayItemName = (row) => {

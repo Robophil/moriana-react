@@ -79,11 +79,6 @@ export default class SearchDrop extends React.Component {
     this.setState({ currIndex: Number(event.target.dataset.index) })
   }
 
-  // toggleEdit = (event) => {
-  //   if (event) event.preventDefault()
-  //   this.setState({ showEdit: !this.state.showEdit, showSearch: !this.state.showSearch })
-  // }
-
   close = () => {
     this.setState({ showEdit: false, showSearch: false })
   }

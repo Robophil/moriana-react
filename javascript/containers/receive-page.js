@@ -14,6 +14,7 @@ import EditTransactionsTable from 'edit-transactions-table'
 import StaticInput from 'static-input'
 import ShipmentLink from 'shipment-link'
 import DeleteShipmentModal from 'delete-shipment-modal'
+import NewItem from 'new-item'
 
 const ReceivePage = class extends React.Component {
   state = {
@@ -26,7 +27,8 @@ const ReceivePage = class extends React.Component {
     editingCategory: '',
     editingBatch: null,
     editingIndex: null,
-    showDeleteModal: false
+    showDeleteModal: false,
+    showNewItem: false
   }
 
   componentDidMount = () => {
@@ -100,7 +102,16 @@ const ReceivePage = class extends React.Component {
   }
 
   toggleNewItem = (name) => {
-    console.log('new item')
+    this.setState({ editingItem: name, showNewItem: true })
+  }
+
+  closeNewItem = () => {
+    this.setState({ showNewItem: false })
+  }
+
+  newItemSelected = (item, category) => {
+    this.setState({ showNewItem: false })
+    this.toggleNewBatch({item, category})
   }
 
   toggleDeleteModal = () => {
@@ -219,6 +230,14 @@ const ReceivePage = class extends React.Component {
             onConfirm={this.deleteShipment}
             shipmentName={shipmentName}
             onClose={this.toggleDeleteModal}
+          />
+        )}
+        {this.state.showNewItem && (
+          <NewItem
+            value={this.state.editingItem}
+            closeClicked={this.closeNewItem}
+            valueUpdated={this.newItemSelected}
+            categories={this.props.items.categories}
           />
         )}
         </div>
