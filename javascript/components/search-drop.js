@@ -37,7 +37,7 @@ export default class SearchDrop extends React.Component {
       }
       case 'ESCAPE': {
         if (this.props.value.name) {
-          this.toggleEdit()
+          this.close()
         } else {
           this.hideSearch()
         }
@@ -79,9 +79,18 @@ export default class SearchDrop extends React.Component {
     this.setState({ currIndex: Number(event.target.dataset.index) })
   }
 
-  toggleEdit = (event) => {
-    if (event) event.preventDefault()
-    this.setState({ showEdit: !this.state.showEdit, showSearch: !this.state.showSearch })
+  // toggleEdit = (event) => {
+  //   if (event) event.preventDefault()
+  //   this.setState({ showEdit: !this.state.showEdit, showSearch: !this.state.showSearch })
+  // }
+
+  close = () => {
+    this.setState({ showEdit: false, showSearch: false })
+  }
+
+  open = () => {
+    this.setState({ showEdit: true })
+    this.showSearch()
   }
 
   showSearch = () => {
@@ -96,6 +105,8 @@ export default class SearchDrop extends React.Component {
   }
 
   onClick = (event) => {
+    event.stopPropagation()
+    event.preventDefault()
     this.rowSelected(Number(event.currentTarget.dataset.index))
   }
 
@@ -113,60 +124,58 @@ export default class SearchDrop extends React.Component {
   render () {
     const { inputValue, showEdit, currIndex, visibleRows, showSearch } = this.state
     const { value, label, resourceName, rows, onNewSelected, loading, autoFocus } = this.props
+    if (!showEdit) {
+      return (
+        <StaticInput label={label} value={this.displayFunction(value)} onEditClick={this.open} />
+      )
+    }
     return (
       <ClickOutHandler onClickOut={this.hideSearch}>
-        {showEdit ? (
-          <div className='form-group field'>
-            <label className='col-lg-2 control-label'>{label}</label>
-            <div className='col-sm-9 input-group'>
-              <input
-                onBlur={this.onBlur}
-                value={inputValue}
-                onKeyUp={this.onKeyUp}
-                onChange={this.onChange}
-                className='form-control form-input'
-                onFocus={this.showSearch}
-                autoFocus={autoFocus}
-                type='text' />
-              {showSearch && (
-                <div className='search-drop form-input'>
-                  {loading
-                  ? (
-                    <div className='list-group list-group-item'>
-                      <div className='loader' />
-                    </div>
-                  )
-                  : (
-                    <div className='list-group'>
-                      {visibleRows.map((row, i) => (
-                        <a
-                          data-index={i}
-                          className={`list-group-item result ${currIndex === i ? 'active' : ''}`}
-                          key={i}
-                          onMouseEnter={this.setCurrIndex}
-                          onClick={this.onClick}
-                        >
-                          {this.displayFunction(row)}
-                        </a>
-                      ))}
+        <div className='form-group field'>
+          <label className='col-lg-2 control-label'>{label}</label>
+          <div className='col-sm-9 input-group'>
+            <input
+              onBlur={this.onBlur}
+              value={inputValue}
+              onKeyUp={this.onKeyUp}
+              onChange={this.onChange}
+              className='form-control form-input'
+              onFocus={this.showSearch}
+              autoFocus={autoFocus}
+              type='text' />
+            {showSearch && (
+              <div className='search-drop form-input'>
+                {loading
+                ? (<div className='list-group list-group-item'><div className='loader' /></div>)
+                : (
+                  <div className='list-group'>
+                    {visibleRows.map((row, i) => (
                       <a
-                        data-index={visibleRows.length}
+                        data-index={i}
+                        className={`list-group-item result ${currIndex === i ? 'active' : ''}`}
+                        key={i}
                         onMouseEnter={this.setCurrIndex}
                         onClick={this.onClick}
-                        className={`list-group-item result ${currIndex === visibleRows.length ? 'active' : ''}`}
                       >
-                        {resourceName}: {visibleRows.length} of {rows.length}
-                        {onNewSelected && (<strong> | Add New {resourceName}</strong>)}
+                        {this.displayFunction(row)}
                       </a>
-                    </div>
-                  )
-                  }
-                </div>
-              )}
-            </div>
+                    ))}
+                    <a
+                      data-index={visibleRows.length}
+                      onMouseEnter={this.setCurrIndex}
+                      onClick={this.onClick}
+                      className={`list-group-item result ${currIndex === visibleRows.length ? 'active' : ''}`}
+                    >
+                      {resourceName}: {visibleRows.length} of {rows.length}
+                      {onNewSelected && (<strong> | Add New {resourceName}</strong>)}
+                    </a>
+                  </div>
+                )
+                }
+              </div>
+            )}
           </div>
-        ) : (<StaticInput label={label} value={this.displayFunction(value)} onEditClick={this.toggleEdit} />)
-        }
+        </div>
       </ClickOutHandler>
     )
   }
