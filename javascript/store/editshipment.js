@@ -30,6 +30,8 @@ export const updateShipment = (key, value) => {
     dispatch(updateShipmentAction(key, value))
     const state = getState().editshipment
     if (state.isValid) {
+      // don't save a new shipment until there are transactions
+      if (state.isNew && state.shipment.transactions.length === 0) return
       client.put(`${state.dbName}/${state.shipment._id}`, state.shipment)
       .then(response => {
         if (response.status >= 400) {
@@ -114,7 +116,7 @@ export default (state = defaultEditShipment, action) => {
     case SAVED_SHIPMENT: {
       const shipment = clone(state.shipment)
       shipment._rev = action.rev
-      return { ...state, shipment, savingShipment: false }
+      return { ...state, isNew: false, shipment, savingShipment: false }
     }
 
     case SAVE_ERROR: {

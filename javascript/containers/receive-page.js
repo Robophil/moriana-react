@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import {getShipment} from 'shipments'
+import { getShipment } from 'shipments'
 import { updateShipment, startNewShipmentAction } from 'editshipment'
 import { displayLocationName, searchLocations, getLocations } from 'locations'
 import { displayItemName, searchItems, getItems } from 'items'
@@ -44,8 +44,13 @@ const ReceivePage = class extends React.Component {
   }
 
   componentWillReceiveProps = (newProps) => {
-    if (newProps.editshipment.shipment.from) {
+    const {shipment} = newProps.editshipment
+    if (shipment.from) {
       this.setState({ showNewLocation: false })
+    }
+    if (!this.props.route.params.id && this.props.editshipment.isNew && !newProps.editshipment.isNew) {
+      const newHash = window.location.hash + '/' + shipment._id
+      window.history.replaceState(undefined, undefined, newHash)
     }
   }
 
