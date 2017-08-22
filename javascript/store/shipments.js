@@ -13,7 +13,7 @@ export const SHIPMENTS_ERROR = 'SHIPMENTS_ERROR'
 
 export const getShipment = (dbName, id) => {
   return (dispatch, getState) => {
-    dispatch({ type: REQUEST_SHIPMENT })
+    dispatch({ type: REQUEST_SHIPMENT, dbName })
     return client.getDoc(dbName, id).then(response => {
       if (response.status >= 400) {
         dispatch({ type: SHIPMENTS_ERROR, error: response.body })

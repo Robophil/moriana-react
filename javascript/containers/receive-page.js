@@ -37,7 +37,7 @@ const ReceivePage = class extends React.Component {
       this.setState({ showEditDetails: false, showEditTransactions: true })
       this.props.getShipment(dbName, params.id)
     } else {
-      this.props.startNewShipmentAction(currentLocationName, 'receive')
+      this.props.startNewShipmentAction(currentLocationName, dbName, 'receive')
     }
     this.props.getItems(dbName, currentLocationName)
     this.props.getLocations(dbName, currentLocationName)

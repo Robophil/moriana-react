@@ -29,3 +29,11 @@ export const empty = (input) => {
 const removeExtraWhiteSpace = (input) => {
   return input ? input.replace(/\s+/g, ' ').trim() : ''
 }
+
+export const generateId = (username, created, docType) => {
+  return `00__${created}__${username}__${docType}__${getRandom()}`
+}
+
+export const getRandom = () => {
+  return ('' + Math.random()).substring(2,8)
+}

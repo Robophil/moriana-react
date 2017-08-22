@@ -14,7 +14,7 @@ const ShipmentPage = class extends React.Component {
 
   render () {
     const ship = this.props.currentShipment || { transactions: [] }
-    const {displayType} = this.props
+    const {displayType, type} = this.props
     const { dbName } = this.props.route
     return (
       <div className='shipment-page'>
@@ -33,7 +33,7 @@ const ShipmentPage = class extends React.Component {
 
                | created by <strong>{ship.username} </strong>
                 latest edited <strong>{h.dateFromNow(ship.updated)} </strong>
-                | <ShipmentLink linkType='edit' shipmentType={ship.type} id={ship._id} dbName={dbName} > edit </ShipmentLink>
+                | <ShipmentLink linkType='edit' shipmentType={type} id={ship._id} dbName={dbName} > edit </ShipmentLink>
                 | <ShipmentLink linkType='print' id={ship._id} dbName={dbName} > print </ShipmentLink>
                 | <ShipmentLink linkType='print' id={`${ship._id}/reversed`} dbName={dbName} > print reversed </ShipmentLink>
             </div>

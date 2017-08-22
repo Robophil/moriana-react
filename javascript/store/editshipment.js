@@ -1,7 +1,7 @@
 // actions and reducer for editing a shipment
 
 import client from 'client'
-import {clone} from 'utils'
+import {clone, generateId} from 'utils'
 
 import { validateShipment } from 'validation'
 import { getTransactionFromInput } from 'input-transforms'
@@ -12,11 +12,11 @@ import { REQUEST_SHIPMENT, RECEIVED_SHIPMENT } from 'shipments'
 
 export const START_NEW_SHIPMENT = 'START_NEW_SHIPMENT'
 export const UPDATE_SHIPMENT = 'UPDATE_SHIPMENT'
+export const SAVED_SHIPMENT = 'SAVED_SHIPMENT'
+export const SAVE_ERROR = 'SAVE_ERROR'
 
-export const UPDATE_ERROR = 'UPDATE_ERROR'
-
-export const startNewShipmentAction = (currentLocationName, shipmentType) => {
-  return { type: START_NEW_SHIPMENT, currentLocationName, shipmentType }
+export const startNewShipmentAction = (currentLocationName, dbName, shipmentType) => {
+  return { type: START_NEW_SHIPMENT, currentLocationName, dbName, shipmentType }
 }
 
 export const updateShipmentAction = (key, value) => {
@@ -30,8 +30,14 @@ export const updateShipment = (key, value) => {
     dispatch(updateShipmentAction(key, value))
     const state = getState().editshipment
     if (state.isValid) {
-      // UPDATING_ACTION
-      client.post(`${state.dbName}/${state.shipment.id}`, state.shipment)
+      client.put(`${state.dbName}/${state.shipment._id}`, state.shipment)
+      .then(response => {
+        if (response.status >= 400) {
+          dispatch({ type: SAVE_ERROR, error: response.body })
+        } else {
+          dispatch({ type: SAVED_SHIPMENT, rev: response.body.rev })
+        }
+      })
       // UPDATED_ACTION :) :)
     }
   }
@@ -44,6 +50,7 @@ const defaultEditShipment = {
   savingShipment: false,
   apiError: null,
   shipment: {},
+  dbName: null,
   type: null,
   isNew: true,
   isValid: false
@@ -52,7 +59,7 @@ const defaultEditShipment = {
 export default (state = defaultEditShipment, action) => {
   switch (action.type) {
     case REQUEST_SHIPMENT: {
-      return { ...defaultEditShipment, loadingInitialShipment: true }
+      return { ...defaultEditShipment, loadingInitialShipment: true, dbName: action.dbName }
     }
 
     case RECEIVED_SHIPMENT: {
@@ -62,11 +69,17 @@ export default (state = defaultEditShipment, action) => {
 
     case START_NEW_SHIPMENT: {
       const shipment = createNewShipment(action.currentLocationName)
-      return { ...defaultEditShipment, shipment, type: action.shipmentType }
+      return {
+        ...defaultEditShipment,
+        dbName: action.dbName,
+        shipment,
+        type: action.shipmentType
+      }
     }
 
     case UPDATE_SHIPMENT: {
       const newState = clone(state)
+      newState.savingShipment = true
       const {key, value} = action
       switch (action.key) {
         case 'date': {
@@ -94,7 +107,19 @@ export default (state = defaultEditShipment, action) => {
         }
       }
       Object.assign(newState, validateShipment(newState.shipment))
+      newState.shipment.updated = new Date().toISOString()
       return newState
+    }
+
+    case SAVED_SHIPMENT: {
+      const shipment = clone(state.shipment)
+      shipment._rev = action.rev
+      return { ...state, shipment, savingShipment: false }
+    }
+
+    case SAVE_ERROR: {
+      const shipment = clone(state.shipment)
+      return { ...state, shipment, apiError: action.error, savingShipment: false }
     }
 
     default: {
@@ -105,12 +130,15 @@ export default (state = defaultEditShipment, action) => {
 
 const createNewShipment = (currentLocationName) => {
   const date = new Date().toISOString()
+  const username = 'testname'
   return {
     date,
+    docType: 'shipment',
     created: date,
     updated: date,
+    _id: generateId(username, date, 'shipment'),
     // username: currentUsername,
-    to: currentLocationName,
+    to: currentLocationName.toLowerCase(),
     toType: 'I',
     transactions: [],
     totalValue: 0,

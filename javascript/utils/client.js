@@ -33,9 +33,13 @@ export default {
     .catch(parseError)
   },
 
-  post (url, data = {}) {
+  put (url, data = {}) {
+    return this.post(url, data, 'PUT')
+  },
+
+  post (url, data = {}, method = 'POST') {
     return fetch(config.backendUrl + url, {
-      method: 'POST',
+      method,
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)

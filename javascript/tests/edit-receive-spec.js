@@ -7,7 +7,7 @@ import editshipmentReducer, {
 import chai from 'chai'
 const expect = chai.expect
 
-const receiveState = editshipmentReducer(null, startNewShipmentAction('test warehouse', 'receive'))
+const receiveState = editshipmentReducer(null, startNewShipmentAction('test warehouse', 'testwarehouse', 'receive'))
 const editedState = editshipmentReducer(receiveState, updateShipmentAction(
   'transaction', { item: 'Test item', category: 'test category', quantity: '3' }))
 
