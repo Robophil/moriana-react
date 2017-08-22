@@ -12,6 +12,7 @@ import { REQUEST_SHIPMENT, RECEIVED_SHIPMENT } from 'shipments'
 
 export const START_NEW_SHIPMENT = 'START_NEW_SHIPMENT'
 export const UPDATE_SHIPMENT = 'UPDATE_SHIPMENT'
+export const SAVING_SHIPMENT = 'SAVING_SHIPMENT'
 export const SAVED_SHIPMENT = 'SAVED_SHIPMENT'
 export const SAVE_ERROR = 'SAVE_ERROR'
 
@@ -32,6 +33,7 @@ export const updateShipment = (key, value) => {
     if (state.isValid) {
       // don't save a new shipment until there are transactions
       if (state.isNew && state.shipment.transactions.length === 0) return
+      dispatch({ type: SAVING_SHIPMENT })
       client.put(`${state.dbName}/${state.shipment._id}`, state.shipment)
       .then(response => {
         if (response.status >= 400) {
@@ -81,7 +83,6 @@ export default (state = defaultEditShipment, action) => {
 
     case UPDATE_SHIPMENT: {
       const newState = clone(state)
-      newState.savingShipment = true
       const {key, value} = action
       switch (action.key) {
         case 'date': {
@@ -111,6 +112,11 @@ export default (state = defaultEditShipment, action) => {
       Object.assign(newState, validateShipment(newState.shipment))
       newState.shipment.updated = new Date().toISOString()
       return newState
+    }
+
+    case SAVING_SHIPMENT: {
+      const shipment = clone(state.shipment)
+      return { ...state, shipment, savingShipment: true }
     }
 
     case SAVED_SHIPMENT: {

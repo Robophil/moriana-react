@@ -7,6 +7,8 @@ import { getUser, logout } from 'user'
 import hl from 'header-links'
 import HeaderSearch from 'header-search'
 import Logo from 'logo'
+import NotificationsList from 'notifications-list'
+import {clearNote} from 'notifications'
 
 import config from 'config'
 import h from 'helpers'
@@ -68,8 +70,11 @@ const SiteHeader = class extends React.Component {
     }
     return (
       <ClickOutHandler onClickOut={this.hideLink}>
+        <NotificationsList
+          clearNote={this.props.clearNote}
+          notifications={this.props.notifications}
+        />
         <div className='header'>
-          {/* {user.getUserFailed && (<Redirect to='/login' />)} */}
           <nav className='navbar navbar-default no-print'>
             <div className='container-fluid'>
               <div className='navbar-header'>
@@ -108,7 +113,7 @@ const SiteHeader = class extends React.Component {
 
 export default connect(
   state => {
-    return { user: state.user }
+    return { user: state.user, notifications: state.notifications }
   },
-  { getUser, logout }
+  { getUser, logout, clearNote }
 )(SiteHeader)

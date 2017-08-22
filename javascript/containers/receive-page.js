@@ -4,6 +4,7 @@ import { getShipment } from 'shipments'
 import { updateShipment, startNewShipmentAction } from 'editshipment'
 import { displayLocationName, searchLocations, getLocations } from 'locations'
 import { displayItemName, searchItems, getItems } from 'items'
+import { showNote } from 'notifications'
 import DateInput from 'date-input'
 import SearchDrop from 'search-drop'
 import VendorIdInput from 'vendor-id-input'
@@ -52,6 +53,12 @@ const ReceivePage = class extends React.Component {
       const newHash = window.location.hash + '/' + shipment._id
       window.history.replaceState(undefined, undefined, newHash)
     }
+    const {currentLocationName} = this.props.route
+    if (!this.props.editshipment.savingShipment && newProps.editshipment.savingShipment) {
+      this.props.showNote(`Saving shipment at ${currentLocationName}`)
+    } else if (this.props.editshipment.savingShipment && !newProps.editshipment.savingShipment) {
+      this.props.showNote(`Shipment saved at ${currentLocationName}`)
+    }
   }
 
   toggleShowEditDetails = () => {
@@ -89,7 +96,7 @@ const ReceivePage = class extends React.Component {
     this.setState({
       editingItem: item,
       editingCategory: category,
-      editingBatch: {quantity, expiration, lot, unitPrice},
+      editingBatch: { quantity, expiration, lot, unitPrice },
       editingIndex: Number(index),
       showBatchEdit: true
     })
@@ -252,7 +259,19 @@ const ReceivePage = class extends React.Component {
 
 export default connect(
   state => {
-    return { editshipment: state.editshipment, user: state.user, locations: state.locations, items: state.items }
+    return {
+      editshipment: state.editshipment,
+      user: state.user,
+      locations: state.locations,
+      items: state.items
+    }
   },
-  { startNewShipmentAction, updateShipment, getShipment, getItems, getLocations }
+  {
+    startNewShipmentAction,
+    updateShipment,
+    getShipment,
+    getItems,
+    getLocations,
+    showNote
+  }
 )(ReceivePage)
