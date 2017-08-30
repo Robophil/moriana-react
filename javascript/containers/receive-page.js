@@ -138,6 +138,8 @@ const ReceivePage = class extends React.Component {
     const { shipment, loadingInitialShipment, isNew, shipmentName } = this.props.editshipment
     const { locations, items, updateShipment, route } = this.props
     const { dbName } = route
+    const shipmentFromValue = {name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}
+    console.log(shipmentFromValue)
     return loadingInitialShipment ? (
       <div className='loader' />
       ) : (
@@ -157,7 +159,7 @@ const ReceivePage = class extends React.Component {
                   <SearchDrop
                     rows={locations.externalLocations}
                     loading={locations.firstRequest}
-                    value={{name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}}
+                    value={shipmentFromValue}
                     valueSelected={this.fromSelected}
                     onNewSelected={this.toggleNewReceiveLocation}
                     label={'From Location'}
