@@ -1,30 +1,73 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getShipment } from 'shipments'
+import { updateShipment, startNewShipmentAction } from 'editshipment'
+import { displayLocationName, searchLocations, getLocations } from 'locations'
+import { displayItemName, searchItems, getItems } from 'items'
+import { showNote } from 'notifications'
+import DeleteShipmentModal from 'delete-shipment-modal'
 
-const ShipmentPage = class extends React.Component {
+const EditShipmentPage = class extends React.Component {
+  state = {
+    showEditDetails: true,
+    showEditTransactions: false,
+    showDeleteModal: false
+  }
+
   componentDidMount = () => {
-    const { dbName, params } = this.props.route
-    const { id } = params
-    this.props.getShipment(dbName, id)
+    const { dbName, currentLocationName, params } = this.props.route
+    if (params.id) {
+      this.setState({ showEditDetails: false, showEditTransactions: true })
+      this.props.getShipment(dbName, params.id)
+    } else {
+      this.props.startNewShipmentAction(currentLocationName, dbName, params.type)
+    }
+    this.props.getItems(dbName, currentLocationName)
+    this.props.getLocations(dbName, currentLocationName)
   }
 
-  componentWillReceiveProps = (newProps) => {
-    if (newProps.currentShipment && newProps.type) {
-      // change the hash & fire the hashchange event so the router catches it, but don't replace state in history
-      // with edit-generic hash
-      const newHash = window.location.hash.replace('edit-generic', `edit/${newProps.type}`)
-      window.history.replaceState(undefined, undefined, newHash)
-      window.dispatchEvent(new Event('hashchange'))
-    }
-  }
+  // componentWillReceiveProps = (newProps) => {
+  //   if (newProps.currentShipment && newProps.type) {
+  //     // change the hash & fire the hashchange event so the router catches it, but don't replace state in history
+  //     // with edit/generic hash
+  //     const newHash = window.location.hash.replace('edit/generic', `edit/${newProps.type}`)
+  //     window.history.replaceState(undefined, undefined, newHash)
+  //     // window.dispatchEvent(new Event('hashchange'))
+  //   }
+  // }
 
   render () {
-    return (<div className='loader' />)
+    const { type, shipment, loadingInitialShipment, isNew, shipmentName } = this.props.editshipment
+    const { locations, items, updateShipment, route } = this.props
+    const { dbName } = route
+
+    if (loadingInitialShipment) return (<div className='loader' />)
+    return (
+      <div className='edit-page'>
+        <h5 className='text-capitalize title'>
+          {shipment.from ? (<span>{type}: {shipment.from} to {shipment.to}</span>) : (<span>Create {type}</span>)}
+        </h5>
+        <hr />
+      </div>
+    )
   }
 }
 
 export default connect(
-  state => state.shipments,
-  { getShipment }
-)(ShipmentPage)
+  state => {
+    return {
+      editshipment: state.editshipment,
+      user: state.user,
+      locations: state.locations,
+      items: state.items
+    }
+  },
+  {
+    startNewShipmentAction,
+    updateShipment,
+    getShipment,
+    getItems,
+    getLocations,
+    showNote
+  }
+)(EditShipmentPage)

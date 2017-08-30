@@ -31,7 +31,7 @@ export default class extends React.Component {
               <td>
                 <ShipmentLink
                   id={row.id}
-                  linkType='edit-generic'
+                  linkType='edit/generic'
                   className='btn btn-sm btn-default'
                   dbName={this.props.dbName}
                 >

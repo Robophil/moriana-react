@@ -1,3 +1,10 @@
+// to clean up:
+// remove showEditDetails, showDeleteModal, showEditTransactions from state
+// remove details
+// remove buttons
+// remove delete modal
+// remove showNote
+
 import React from 'react'
 import { connect } from 'react-redux'
 import { getShipment } from 'shipments'
@@ -139,7 +146,6 @@ const ReceivePage = class extends React.Component {
     const { locations, items, updateShipment, route } = this.props
     const { dbName } = route
     const shipmentFromValue = {name: shipment.from, type: shipment.fromType, attributes: shipment.fromAttributes}
-    console.log(shipmentFromValue)
     return loadingInitialShipment ? (
       <div className='loader' />
       ) : (
