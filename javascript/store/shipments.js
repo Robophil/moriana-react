@@ -2,6 +2,7 @@
 import client from 'client'
 import {objectFromKeys} from 'utils'
 import h from 'helpers'
+import db from 'db'
 
 export const REQUEST_SHIPMENT = 'REQUEST_SHIPMENT'
 export const RECEIVED_SHIPMENT = 'RECEIVED_SHIPMENT'
@@ -18,11 +19,10 @@ export const getShipment = (dbName, id) => {
       if (response.status >= 400) {
         dispatch({ type: SHIPMENTS_ERROR, error: response.body })
       } else {
-        const {currentLocation} = getState().locations
         dispatch({
           type: RECEIVED_SHIPMENT,
           shipment: response.body,
-          meta: decorate(response.body, currentLocation)
+          meta: decorate(response.body, dbName)
         })
       }
     })
@@ -92,15 +92,16 @@ const parseShipments = (response) => {
   return objectFromKeys(['date', 'from', 'to', 'updated', 'totalTransactions', 'username'], response)
 }
 
-const decorate = (ship, currentLocation) => {
-  const type = getType(ship, currentLocation)
-  const displayType = type.split('-').join(' ')
+const decorate = (ship, dbName) => {
+  const shipmentType = getType(ship, dbName)
+  const displayType = shipmentType.split('-').join(' ')
   const shipmentName = `${ship.from} to ${ship.to} on ${h.formatDate(ship.date)}`
-  return { type, displayType, shipmentName }
+  return { shipmentType, displayType, shipmentName }
 }
 
-const getType = (ship, currentLocation) => {
-  if (ship.from === currentLocation) {
+const getType = (ship, dbName) => {
+  // TODO: refactor out grabbing currentLocationName all over the place
+  if (ship.from === db.getNamefromDBName(dbName)) {
     if (ship.toType === 'I') return 'transfer'
     if (ship.toType === 'P') return 'dispense'
     return 'transfer-out'

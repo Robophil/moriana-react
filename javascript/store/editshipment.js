@@ -77,7 +77,7 @@ export default (state = defaultEditShipment, action) => {
         ...defaultEditShipment,
         dbName: action.dbName,
         shipment,
-        type: action.shipmentType
+        shipmentType: action.shipmentType
       }
     }
 
@@ -90,11 +90,11 @@ export default (state = defaultEditShipment, action) => {
           break
         }
         case 'from': {
-          Object.assign(newState.shipment, getTargetDetails('from', value, state.type))
+          Object.assign(newState.shipment, getTargetDetails('from', value, state.shipmentType))
           break
         }
         case 'to': {
-          Object.assign(newState.shipment, getTargetDetails('to', value, state.type))
+          Object.assign(newState.shipment, getTargetDetails('to', value, state.shipmentType))
           break
         }
         case 'vendorId': {
@@ -102,7 +102,7 @@ export default (state = defaultEditShipment, action) => {
           break
         }
         case 'transaction': {
-          if (state.type === 'receive') {
+          if (state.shipmentType === 'receive') {
             editReceiveTransaction(newState.shipment, value)
           }
           Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
@@ -154,22 +154,22 @@ const createNewShipment = (currentLocationName) => {
   }
 }
 
-const getTargetDetails = (fromOrTo, value, type) => {
+const getTargetDetails = (fromOrTo, value, shipmentType) => {
   const details = {}
   details[fromOrTo] = value.name
-  details[`${fromOrTo}Type`] = value.type || getTargetType(type)
+  details[`${fromOrTo}Type`] = value.type || getTargetType(shipmentType)
   details[`${fromOrTo}Attributes`] = value.attributes
   return details
 }
 
-const getTargetType = (type) => {
+const getTargetType = (shipmentType) => {
   const typeMap = {
     'receive': 'E',
     'transfer': 'I',
     'transfer-out': 'E',
     'dispense': 'P'
   }
-  return typeMap[type]
+  return typeMap[shipmentType]
 }
 
 

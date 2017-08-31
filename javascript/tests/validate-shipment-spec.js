@@ -18,7 +18,7 @@ const initState = {
     totalTransactions: 0
   },
   isValid: true,
-  type: 'receive'
+  shipmentType: 'receive'
 }
 
 export default {

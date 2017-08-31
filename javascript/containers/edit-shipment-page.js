@@ -20,7 +20,7 @@ const EditShipmentPage = class extends React.Component {
       this.setState({ showEditDetails: false, showEditTransactions: true })
       this.props.getShipment(dbName, params.id)
     } else {
-      this.props.startNewShipmentAction(currentLocationName, dbName, params.type)
+      this.props.startNewShipmentAction(currentLocationName, dbName, params.shipmentType)
     }
     this.props.getItems(dbName, currentLocationName)
     this.props.getLocations(dbName, currentLocationName)
@@ -37,7 +37,7 @@ const EditShipmentPage = class extends React.Component {
   // }
 
   render () {
-    const { type, shipment, loadingInitialShipment, isNew, shipmentName } = this.props.editshipment
+    const { shipmentType, shipment, loadingInitialShipment, isNew, shipmentName } = this.props.editshipment
     const { locations, items, updateShipment, route } = this.props
     const { dbName } = route
 
@@ -45,7 +45,10 @@ const EditShipmentPage = class extends React.Component {
     return (
       <div className='edit-page'>
         <h5 className='text-capitalize title'>
-          {shipment.from ? (<span>{type}: {shipment.from} to {shipment.to}</span>) : (<span>Create {type}</span>)}
+          {shipment.from 
+            ? (<span>{shipmentType}: {shipment.from} to {shipment.to}</span>)
+            : (<span>Create {shipmentType}</span>)
+          }
         </h5>
         <hr />
       </div>
