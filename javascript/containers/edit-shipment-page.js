@@ -6,6 +6,8 @@ import { displayLocationName, searchLocations, getLocations } from 'locations'
 import { displayItemName, searchItems, getItems } from 'items'
 import { showNote } from 'notifications'
 import DeleteShipmentModal from 'delete-shipment-modal'
+import StaticShipmentDetails from 'static-shipment-details'
+import EditShipmentDetails from 'edit-shipment-details'
 
 const EditShipmentPage = class extends React.Component {
   state = {
@@ -36,21 +38,38 @@ const EditShipmentPage = class extends React.Component {
   //   }
   // }
 
+  toggleDetails = () => {
+    const {from, to, date} = this.props.editshipment.shipment
+    if (from && to && date) {
+      this.setState({ showEditDetails: !this.state.showEditDetails, showEditTransactions: true })
+    }
+  }
+
   render () {
-    const { shipmentType, shipment, loadingInitialShipment, isNew, shipmentName } = this.props.editshipment
+    const { showEditDetails } = this.state
     const { locations, items, updateShipment, route } = this.props
+    const { shipmentType, shipment, loadingInitialShipment, isNew, shipmentName } = this.props.editshipment
     const { dbName } = route
 
     if (loadingInitialShipment) return (<div className='loader' />)
     return (
       <div className='edit-page'>
         <h5 className='text-capitalize title'>
-          {shipment.from 
+          {shipment.from
             ? (<span>{shipmentType}: {shipment.from} to {shipment.to}</span>)
             : (<span>Create {shipmentType}</span>)
           }
         </h5>
         <hr />
+        {showEditDetails ? (
+          <EditShipmentDetails
+            onDone={this.toggleDetails}
+          />
+        ) : (
+          <StaticShipmentDetails shipment={shipment}>
+            <a onClick={this.toggleDetails}>edit details</a>
+          </StaticShipmentDetails>
+        )}
       </div>
     )
   }

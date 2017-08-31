@@ -4,6 +4,8 @@
 // remove buttons
 // remove delete modal
 // remove showNote
+// kill details toggle
+// StaticShipmentDetails
 
 import React from 'react'
 import { connect } from 'react-redux'
