@@ -21,6 +21,9 @@ export default class StaticInput extends React.Component {
 
 StaticInput.propTypes = {
   label: PropTypes.string.isRequired,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   onEditClick: PropTypes.func
 }

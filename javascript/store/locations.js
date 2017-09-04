@@ -1,24 +1,30 @@
 // actions and reducer for locations
 import client from 'client'
 import {objectFromKeys} from 'utils'
+import { REQUEST_USER, RECEIVED_USER, parseRoles } from 'user'
 
-export const REQUEST_LOCATIONS = 'REQUEST_ULOCATION'
+export const REQUEST_LOCATIONS = 'REQUEST_LOCATIONS'
 export const RECEIVED_LOCATIONS = 'RECEIVED_LOCATIONS'
 
 export const getLocations = (dbName) => {
   return dispatch => {
     dispatch({ type: REQUEST_LOCATIONS })
     let locations
+    let patients
     return client.getDesignDoc(dbName, 'locations', { reduce: true, group: true })
     .then(locationsResponse => {
       locations = locationsResponse.body
+      return client.getDesignDoc(dbName, 'patients', { reduce: true, group: true })
+    })
+    .then(patientsResponse => {
+      patients = patientsResponse.body
       return client.getDesignDoc(dbName, 'types', { key: '"extension"', include_docs: true, descending: false, reduce: false })
     })
     .then(extensionsResponse => {
       const extensions = extensionsResponse.body
       dispatch({
         type: RECEIVED_LOCATIONS,
-        response: { ...parseLocations(locations, extensions) }
+        response: { ...parseLocations(locations, extensions), patients: parsePatients(patients) }
       })
     })
   }
@@ -26,11 +32,13 @@ export const getLocations = (dbName) => {
 
 const defaultLocations = {
   loading: false,
+  loadingRoles: false,
   apiError: false,
   locations: [],
   locationsExcludedFromConsumption: {},
   externalLocations: [],
-  firstRequest: true
+  patients: [],
+  roles: []
 }
 
 export default (state = defaultLocations, action) => {
@@ -38,8 +46,14 @@ export default (state = defaultLocations, action) => {
     case REQUEST_LOCATIONS: {
       return { ...state, loading: true, apiError: null }
     }
+    case REQUEST_USER: {
+      return { ...state, loadingRoles: true }
+    }
+    case RECEIVED_USER: {
+      return { ...state, roles: parseRoles(action.userCtx.roles), loadingRoles: false }
+    }
     case RECEIVED_LOCATIONS: {
-      return { ...state, loading: false, firstRequest: false, ...action.response }
+      return { ...state, loading: false, ...action.response }
     }
     default: {
       return state
@@ -87,8 +101,12 @@ export const searchLocations = (rows, input) => {
   return rows.filter(row => (row.name.toLowerCase().indexOf(input) !== -1))
 }
 
-export const displayLocationName = (location) => {
-  const map = { E: 'external', EV: 'virtual', I: 'internal', P: 'patient' }
-  const excludedFromConsumption = location.attributes && location.attributes.excludeFromConsumption
-  return `${location.name} (${map[location.type]}) ${excludedFromConsumption ? '(excluded from consumption)' : ''}`
+export const parsePatients = (patientsResponse) => {
+  return patientsResponse.rows.map(row => {
+    const attributes = row.key[1] || {}
+    return {
+      name: row.key[0],
+      ...attributes
+    }
+  })
 }

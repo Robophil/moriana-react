@@ -84,12 +84,16 @@ export default (state = defaultAuth, action) => {
   }
 }
 
-function parseUser (response) {
+const parseUser = (response) => {
   return {
     ...response,
     isAdmin: response.roles.indexOf('_admin') !== -1,
-    prettyRoles: response.roles.sort().map(role => {
-      return { name: db.getNamefromDBName(role, config.deploymentName), dbName: role }
-    })
+    prettyRoles: parseRoles(response.roles)
   }
+}
+
+export const parseRoles = (roles) => {
+  return roles.sort().map(role => {
+    return { name: db.getNamefromDBName(role, config.deploymentName), dbName: role, type: 'I' }
+  })
 }

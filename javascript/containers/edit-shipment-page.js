@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getShipment } from 'shipments'
 import { updateShipment, startNewShipmentAction } from 'editshipment'
-import { displayLocationName, searchLocations, getLocations } from 'locations'
+import { getLocations } from 'locations'
 import { displayItemName, searchItems, getItems } from 'items'
 import { showNote } from 'notifications'
 import DeleteShipmentModal from 'delete-shipment-modal'
@@ -48,8 +48,9 @@ const EditShipmentPage = class extends React.Component {
   render () {
     const { showEditDetails } = this.state
     const { locations, items, updateShipment, route } = this.props
-    const { shipmentType, shipment, loadingInitialShipment, isNew, shipmentName } = this.props.editshipment
+    const { shipment, loadingInitialShipment, isNew, shipmentName } = this.props.editshipment
     const { dbName } = route
+    const shipmentType = route.params.shipmentType
 
     if (loadingInitialShipment) return (<div className='loader' />)
     return (
@@ -64,6 +65,10 @@ const EditShipmentPage = class extends React.Component {
         {showEditDetails ? (
           <EditShipmentDetails
             onDone={this.toggleDetails}
+            locations={locations}
+            updateShipment={updateShipment}
+            shipment={shipment}
+            shipmentType={shipmentType}
           />
         ) : (
           <StaticShipmentDetails shipment={shipment}>

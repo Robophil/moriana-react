@@ -15,7 +15,7 @@ export default class SearchDrop extends React.Component {
   }
 
   componentDidMount = () => {
-    this.setState({ visibleRows: this.props.rows.slice(0, 25) })
+    this.setState({ visibleRows: this.props.rows.slice(0, 25), showEdit: !this.props.value.name })
   }
 
   componentWillReceiveProps = (newProps) => {

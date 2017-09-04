@@ -72,7 +72,7 @@ export default (state = defaultEditShipment, action) => {
     }
 
     case START_NEW_SHIPMENT: {
-      const shipment = createNewShipment(action.currentLocationName)
+      const shipment = createNewShipment(action.currentLocationName, action.shipmentType)
       return {
         ...defaultEditShipment,
         dbName: action.dbName,
@@ -136,22 +136,27 @@ export default (state = defaultEditShipment, action) => {
   }
 }
 
-const createNewShipment = (currentLocationName) => {
+const createNewShipment = (currentLocationName, shipmentType) => {
   const date = new Date().toISOString()
   const username = 'testname'
-  return {
+  const shipment = {
     date,
     docType: 'shipment',
     created: date,
     updated: date,
     _id: generateId(username, date, 'shipment'),
-    // username: currentUsername,
-    to: currentLocationName.toLowerCase(),
-    toType: 'I',
     transactions: [],
     totalValue: 0,
     totalTransactions: 0
   }
+  if (shipmentType === 'receive') {
+    shipment.to = currentLocationName.toLowerCase()
+    shipment.toType = 'I'
+  } else {
+    shipment.from = currentLocationName.toLowerCase()
+    shipment.fromType = 'I'
+  }
+  return shipment
 }
 
 const getTargetDetails = (fromOrTo, value, shipmentType) => {
@@ -159,7 +164,15 @@ const getTargetDetails = (fromOrTo, value, shipmentType) => {
   details[fromOrTo] = value.name
   details[`${fromOrTo}Type`] = value.type || getTargetType(shipmentType)
   details[`${fromOrTo}Attributes`] = value.attributes
+  if (shipmentType === 'dispense') {
+    details.patient = getPatientForShipment(value)
+  }
   return details
+}
+
+const getPatientForShipment = (patient) => {
+  const { identifier, gender, dob, district } = patient
+  return { identifier, gender, dob, district }
 }
 
 const getTargetType = (shipmentType) => {
