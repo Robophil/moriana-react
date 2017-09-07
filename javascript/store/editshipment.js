@@ -8,7 +8,7 @@ import { getTransactionFromInput } from 'input-transforms'
 
 // actions
 
-import { REQUEST_SHIPMENT, RECEIVED_SHIPMENT } from 'shipments'
+import { REQUEST_SHIPMENT, RECEIVED_SHIPMENT, SHIPMENTS_ERROR } from 'shipments'
 
 export const START_NEW_SHIPMENT = 'START_NEW_SHIPMENT'
 export const UPDATE_SHIPMENT = 'UPDATE_SHIPMENT'
@@ -57,7 +57,8 @@ const defaultEditShipment = {
   dbName: null,
   type: null,
   isNew: true,
-  isValid: false
+  isValid: false,
+  deleted: false
 }
 
 export default (state = defaultEditShipment, action) => {
@@ -69,6 +70,14 @@ export default (state = defaultEditShipment, action) => {
     case RECEIVED_SHIPMENT: {
       const shipment = clone(action.shipment)
       return { ...state, shipment, loadingInitialShipment: false, isNew: false, ...action.meta }
+    }
+
+    case SHIPMENTS_ERROR: {
+      return {
+        ...state,
+        loading: false,
+        apiError: action.error
+      }
     }
 
     case START_NEW_SHIPMENT: {
@@ -107,6 +116,10 @@ export default (state = defaultEditShipment, action) => {
           }
           Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
           break
+        }
+        case 'delete': {
+          newState.shipment._deleted = true
+          newState.deleted = true
         }
       }
       Object.assign(newState, validateShipment(newState.shipment))
