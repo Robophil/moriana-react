@@ -4,6 +4,7 @@ import { displayItemName, searchItems } from 'items'
 import SearchDrop from 'search-drop'
 import EditTransactionsTable from 'edit-transactions-table'
 import EditBatch from 'edit-batch'
+import EditTransferBatch from 'edit-transfer-batch'
 import NewItem from 'new-item'
 
 export default class EditTransactions extends React.Component {
@@ -13,7 +14,8 @@ export default class EditTransactions extends React.Component {
     editingItem: '',
     editingCategory: '',
     editingBatch: null,
-    editingIndex: null
+    editingIndex: null,
+    editingTransactions: []
   }
 
   toggleNewBatch = (value) => {
@@ -26,7 +28,8 @@ export default class EditTransactions extends React.Component {
       editingCategory: null,
       editingBatch: null,
       editingIndex: null,
-      showBatchEdit: false
+      showBatchEdit: false,
+      editingTransactions: []
     })
   }
 
@@ -44,14 +47,19 @@ export default class EditTransactions extends React.Component {
   }
 
   transactionEditClick = (index) => {
-    const {transactions} = this.props
+    const {transactions, shipmentType} = this.props
     const {item, category, quantity, expiration, lot, unitPrice} = transactions[index]
+    let editingTransactions = []
+    if (shipmentType !== 'receive') {
+      editingTransactions = transactions.filter(t => t.item === item && t.category === category)
+    }
     this.setState({
       editingItem: item,
       editingCategory: category,
       editingBatch: { quantity, expiration, lot, unitPrice },
       editingIndex: Number(index),
-      showBatchEdit: true
+      showBatchEdit: true,
+      editingTransactions,
     })
   }
 
@@ -67,8 +75,15 @@ export default class EditTransactions extends React.Component {
   }
 
   render () {
-    const { items, itemsLoading, categories, transactions } = this.props
-    const { editingItem, editingCategory, editingBatch, showBatchEdit, showNewItem } = this.state
+    const { items, itemsLoading, categories, transactions, shipmentType } = this.props
+    const {
+      editingItem,
+      editingCategory,
+      editingBatch,
+      editingTransactions,
+      showBatchEdit,
+      showNewItem
+    } = this.state
     const emptyItem = {}
     return (
       <div>
@@ -88,13 +103,24 @@ export default class EditTransactions extends React.Component {
           transactions={transactions}
           onEditClick={this.transactionEditClick}
         />
-        {showBatchEdit && (
+        {showBatchEdit && shipmentType === 'receive' && (
           <EditBatch
             item={editingItem}
             category={editingCategory}
             batch={editingBatch}
             valueUpdated={this.updateTransaction}
             deleteClicked={this.deleteTransaction}
+            closeClicked={this.hideEditBatch}
+          />
+        )}
+        {showBatchEdit && shipmentType !== 'receive' && (
+          <EditTransferBatch
+            item={editingItem}
+            category={editingCategory}
+            batch={editingBatch}
+            valueUpdated={this.updateTransaction}
+            deleteClicked={this.deleteTransaction}
+            transactions={editingTransactions}
             closeClicked={this.hideEditBatch}
           />
         )}

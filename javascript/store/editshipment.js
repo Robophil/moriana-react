@@ -42,7 +42,6 @@ export const updateShipment = (key, value) => {
           dispatch({ type: SAVED_SHIPMENT, rev: response.body.rev })
         }
       })
-      // UPDATED_ACTION :) :)
     }
   }
 }
