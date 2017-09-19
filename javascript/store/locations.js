@@ -18,7 +18,12 @@ export const getLocations = (dbName) => {
     })
     .then(patientsResponse => {
       patients = patientsResponse.body
-      return client.getDesignDoc(dbName, 'types', { key: '"extension"', include_docs: true, descending: false, reduce: false })
+      return client.getDesignDoc(dbName, 'types', {
+        key: '"extension"',
+        include_docs: true,
+        descending: false,
+        reduce: false
+      })
     })
     .then(extensionsResponse => {
       const extensions = extensionsResponse.body

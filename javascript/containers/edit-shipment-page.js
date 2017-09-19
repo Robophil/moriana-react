@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getShipment } from 'shipments'
 import { updateShipment, startNewShipmentAction } from 'editshipment'
+import { getStock } from 'stock'
 import { getLocations } from 'locations'
 import { getItems } from 'items'
 import { showNote } from 'notifications'
@@ -131,6 +132,8 @@ const EditShipmentPage = class extends React.Component {
             itemsLoading={items.firstRequest}
             updateShipment={updateShipment}
             transactions={shipment.transactions}
+            getStock={this.props.getStock}
+            stock={this.props.stock.transactions}
           />
         )}
         {!isNew && (
@@ -163,7 +166,8 @@ export default connect(
       editshipment: state.editshipment,
       user: state.user,
       locations: state.locations,
-      items: state.items
+      items: state.items,
+      stock: state.stock
     }
   },
   {
@@ -172,6 +176,7 @@ export default connect(
     getShipment,
     getItems,
     getLocations,
-    showNote
+    showNote,
+    getStock
   }
 )(EditShipmentPage)

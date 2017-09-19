@@ -1,11 +1,5 @@
 var path = require('path');
 var webpack = require('webpack');
-// const ExtractTextPlugin = require("extract-text-webpack-plugin");
-//
-// const extractLess = new ExtractTextPlugin({
-//     filename: "styles.css",
-//     disable: process.env.NODE_ENV === "development"
-// });
 
 module.exports = {
   entry: './javascript/app.js',
@@ -72,7 +66,6 @@ module.exports = {
    port: 9000
  },
  plugins: [
-   new webpack.HotModuleReplacementPlugin(),
-  //  extractLess
+   new webpack.HotModuleReplacementPlugin()
  ]
 };
