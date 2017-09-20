@@ -32,8 +32,9 @@ const SiteHeader = class extends React.Component {
 
   showSection = (e) => {
     let {section} = e.target.dataset
+    if (section === 'database') e.preventDefault()
     section = (this.state.openSection === section) ? null : section
-    this.setState({ openSection: section, sectionPosition: e.target.dataset.position })
+    this.setState({ openSection: section })
   }
 
   linkClicked = (e) => {
@@ -53,60 +54,55 @@ const SiteHeader = class extends React.Component {
     const headerLink = dbName ? `/#d/${dbName}/` : '/'
     const links = hl.getLinks(user, config.isLocal, currentLocationName)
     const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, dbName)
-    const {openSection, sectionPosition} = this.state
+    const {openSection} = this.state
     let subsection = openSection ? (
-      <div className={`toggle-content toggle-content-${openSection}`}>
-        <div className={`text-${sectionPosition}`}>
-          {subsections[openSection].map((link, i) => (
-            <a key={i} href={link.url} className='btn btn-default btn-lg some-margin' onClick={this.linkClicked}>
-              <i className={`${link.icon} small`} /> &nbsp; {link.title}
-            </a>
-          ))}
-        </div>
+      <div className={`drawer ${openSection === 'database' ? 'database' : ''}`}>
+        {subsections[openSection].map((link, i) => (
+          <a className='button' key={i} href={link.url} onClick={this.linkClicked}>
+            {/* <i className={`${link.icon} small`} /> &nbsp;  */}
+            {link.title}
+          </a>
+        ))}
       </div>
     ) : ''
     if (openSection === 'search' && dbName) {
       subsection = (<HeaderSearch closeClicked={this.hideLink} dbName={dbName} currentLocationName={currentLocationName} />)
     }
     return (
-      <ClickOutHandler onClickOut={this.hideLink}>
-        <NotificationsList
-          clearNote={this.props.clearNote}
-          notifications={this.props.notifications}
-        />
-        <div className='header'>
-          <nav className='navbar navbar-default no-print'>
-            <div className='container-fluid'>
-              <div className='navbar-header'>
-                <a href={headerLink} className='navbar-brand show-drop-nav location-link'>
-                  <Logo />
-                </a>
-                <ul className='nav navbar-nav left-links'>
-                  {links.leftLinks.map((link, i) => (
-                    <li onClick={this.showSection} key={i}>
-                      <a href={null} data-section={link.section} className='toggle-link' data-position='left'>
-                        <i className={`${link.icon} icon`} /> {link.linkName}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <ul className='nav navbar-nav navbar-right'>
-                {links.rightLinks.map((link, i) => (
-                  <li onClick={this.showSection} key={i}>
-                    <a href={null} data-section={link.section} className='toggle-link' data-position='right'>
-                      <i className={`${link.icon} icon`} /> {link.linkName}
-                    </a>
-                  </li>
-                ))}
-                <li />
-              </ul>
-            </div>
-          </nav>
+      <div className='site-header'>
+        <ClickOutHandler onClickOut={this.hideLink}>
+          <a href={headerLink}><Logo /></a>
+          {(links.leftLinks.length !==0) && (
+            <ul>
+            {links.leftLinks.map((link, i) => (
+              <li onClick={this.showSection} key={i}>
+                <button data-section={link.section}>
+                  {/* <i className={`${link.icon} icon`} /> */}
+                  {link.linkName}
+                </button>
+              </li>
+            ))}
+            </ul>
+          )}
+          {(links.rightLinks.length !== 0) && (
+            <ul className='right-links'>
+              {links.rightLinks.map((link, i) => (
+                <li onClick={this.showSection} key={i}>
+                  <button href='' data-section={link.section}>
+                    {/* <i className={`${link.icon} icon`} /> */}
+                    {link.linkName}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
           {subsection}
-          <hr />
-        </div>
-      </ClickOutHandler>
+          <NotificationsList
+            clearNote={this.props.clearNote}
+            notifications={this.props.notifications}
+          />
+        </ClickOutHandler>
+      </div>
     )
   }
 }
