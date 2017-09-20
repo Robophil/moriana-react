@@ -1,16 +1,19 @@
 .search-drop {
-  position: absolute;
-  width: 100%;
-  z-index: 100;
-  margin-top: 45px;
-  .list-group {
-    position: relative;
+  .active {
+    background-color: #2196F3;
+    color: white;
   }
-  .list-group-item {
+  a {
+    display: block;
+    width: 100%;
     padding: 5px;
+    text-decoration: none;
+    color: #666;
+    border: 1px solid #eee;
+    border-bottom: none;
+    font-weight: 100;
+    &:hover {
+      .active;
+    }
   }
-}
-
-.list-group a:hover {
-  .active;
 }
