@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getShipment } from 'shipments'
 import { updateShipment, startNewShipmentAction } from 'editshipment'
-import { getStock } from 'stock'
+import { getStockForEdit } from 'stock'
 import { getLocations } from 'locations'
 import { getItems } from 'items'
 import { showNote } from 'notifications'
@@ -132,7 +132,8 @@ const EditShipmentPage = class extends React.Component {
             itemsLoading={items.firstRequest}
             updateShipment={updateShipment}
             transactions={shipment.transactions}
-            getStock={this.props.getStock}
+            getStockForEdit={this.props.getStockForEdit}
+            date={shipment.date}
             stock={this.props.stock.transactions}
           />
         )}
@@ -177,6 +178,6 @@ export default connect(
     getItems,
     getLocations,
     showNote,
-    getStock
+    getStockForEdit
   }
 )(EditShipmentPage)

@@ -4,17 +4,34 @@ import amc from 'amc'
 export const REQUEST_STOCK = 'REQUEST_STOCK'
 export const RECEIVED_STOCK = 'RECEIVED_STOCK'
 
+const getStockRequest = (dbName, currentLocationName, category, item) => {
+  const key = [currentLocationName.toLowerCase(), item, category]
+  const startkey = JSON.stringify([...key, {}])
+  const endkey = JSON.stringify([...key])
+  return client.getDesignDoc(dbName, 'stock', { startkey: startkey, endkey: endkey })
+}
+
 export const getStock = (dbName, currentLocationName, category, item, filter = null) => {
   return dispatch => {
     dispatch({ type: REQUEST_STOCK, item, category })
-    const key = [currentLocationName.toLowerCase(), item, category]
-    const startkey = JSON.stringify([...key, {}])
-    const endkey = JSON.stringify([...key])
-    return client.getDesignDoc(dbName, 'stock', { startkey: startkey, endkey: endkey })
+    getStockRequest(dbName, currentLocationName, category, item)
     .then(response => {
       dispatch({
         type: RECEIVED_STOCK,
         response: { ...parseResponse(response.body, filter) }
+      })
+    })
+  }
+}
+
+export const getStockForEdit = (dbName, currentLocationName, category, item, date) => {
+  return dispatch => {
+    dispatch({ type: REQUEST_STOCK, item, category })
+    getStockRequest(dbName, currentLocationName, category, item)
+    .then(response => {
+      dispatch({
+        type: RECEIVED_STOCK,
+        response: { ...parseStockForEdit(response.body, date) }
       })
     })
   }
@@ -51,16 +68,7 @@ export default (state = defaultStock, action) => {
 
 export function parseResponse (body, filter) {
   const parsedResponse = {}
-  const headers = ['from', 'item', 'category', 'expiration',
-    'lot', 'unitPrice', 'date', '_id', 'from', 'to', 'username']
-  let rows = body.rows.map(row => {
-    headers.forEach((header, i) => {
-      row[header] = row.key[i]
-    })
-    row.quantity = row.value
-    row.totalValue = Math.abs(row.quantity * row.unitPrice)
-    return cleanTransaction(row)
-  })
+  let rows = parseRows(body)
   if (filter) {
     parsedResponse.atBatch = true
     const { expiration, lot } = parseBatchFilter(filter)
@@ -73,6 +81,25 @@ export function parseResponse (body, filter) {
   parsedResponse.amcDetails = amc.getAMCDetails(rows)
   parsedResponse.transactions = addResultingQuantities(rows)
   return parsedResponse
+}
+
+function parseRows (response) {
+  const headers = ['from', 'item', 'category', 'expiration',
+    'lot', 'unitPrice', 'date', '_id', 'from', 'to', 'username']
+  return response.rows.map(row => {
+    headers.forEach((header, i) => {
+      row[header] = row.key[i]
+    })
+    row.quantity = row.value
+    row.totalValue = Math.abs(row.quantity * row.unitPrice)
+    return cleanTransaction(row)
+  })
+}
+
+function parseStockForEdit (response, date) {
+  let rows = parseRows(response).filter(t => t.date < date)
+  const batches = getBatches(rows).filter(batch => batch.sum !== 0)
+  return { batches }
 }
 
 function cleanTransaction (transaction) {

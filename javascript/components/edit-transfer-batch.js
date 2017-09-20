@@ -18,8 +18,8 @@ export default class EditTransferBatch extends React.Component {
     quantity = quantity || ''
     this.setState({quantity})
 
-    const { dbName, currentLocationName, category, item } = this.props
-    this.props.getStock(dbName, currentLocationName, category, item)
+    const { dbName, currentLocationName, category, item, date } = this.props
+    this.props.getStockForEdit(dbName, currentLocationName, category, item, date)
   }
 
   onKeyDown = (event) => {
@@ -58,7 +58,7 @@ export default class EditTransferBatch extends React.Component {
   render () {
     const { item, category, batch, transactions, closeClicked, deleteClicked, stock } = this.props
     const { error, quantity } = this.state
-    console.log(stock, transactions)
+    console.log(this.props)
     return (
       <ClickOutHandler onClickOut={closeClicked}>
         <div className='clickout-modal'>
@@ -132,8 +132,9 @@ EditTransferBatch.propTypes = {
   deleteClicked: PropTypes.func.isRequired,
   transactions: PropTypes.array.isRequired,
   stock: PropTypes.array.isRequired,
-  getStock: PropTypes.func.isRequired,
+  getStockForEdit: PropTypes.func.isRequired,
   dbName: PropTypes.string.isRequired,
   currentLocationName: PropTypes.string.isRequired,
+  date: PropTypes.string.isRequired,
   batch: PropTypes.object
 }

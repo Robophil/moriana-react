@@ -122,10 +122,11 @@ export default class EditTransactions extends React.Component {
             deleteClicked={this.deleteTransaction}
             transactions={editingTransactions}
             closeClicked={this.hideEditBatch}
-            getStock={this.props.getStock}
+            getStockForEdit={this.props.getStockForEdit}
             stock={this.props.stock}
             dbName={this.props.dbName}
             currentLocationName={this.props.currentLocationName}
+            date={this.props.date}
           />
         )}
         {showNewItem && (
@@ -150,6 +151,7 @@ EditTransactions.propTypes = {
   itemsLoading: PropTypes.bool.isRequired,
   transactions: PropTypes.array.isRequired,
   updateShipment: PropTypes.func.isRequired,
-  getStock: PropTypes.func.isRequired,
-  stock: PropTypes.array.isRequired
+  getStockForEdit: PropTypes.func.isRequired,
+  stock: PropTypes.array.isRequired,
+  date: PropTypes.string.isRequired
 }
