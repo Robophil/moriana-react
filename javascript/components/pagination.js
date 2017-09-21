@@ -10,26 +10,18 @@ export default class Pagination extends React.Component {
     const previousNumber = offset ? offset - limit : ''
     const nextNumber = offset + displayedCount < count ? offset + limit : ''
     return (
-      <div className='pull-right pagination'>
-        <div className='pagination'>
-          <ul className='pagination pagination-sm'>
-            <li className={offset ? '' : 'disabled'}>
-              <a className='darker trigger-page' href={`/#d/${dbName}/${previousNumber}`}>
-                «
-              </a>
-            </li>
-            <li>
-              <a className='darker trigger-page' href={`/#d/${dbName}/`}>
-                {h.num(startingNumber)} - {h.num(offset + displayedCount)} of {h.num(count)}
-              </a>
-            </li>
-            <li className={nextNumber ? '' : 'disabled'}>
-              <a className='darker trigger-page' href={`/#d/${dbName}/${nextNumber}`}>
-                »
-              </a>
-            </li>
-          </ul>
-        </div>
+      <div className='pagination'>
+        <ul>
+          <li className={offset ? '' : 'disabled'}>
+            <a href={`/#d/${dbName}/${previousNumber}`}>«</a>
+          </li>
+          <li>
+            {h.num(startingNumber)} - {h.num(offset + displayedCount)} of {h.num(count)}
+          </li>
+          <li className={nextNumber ? '' : 'disabled'}>
+            <a href={`/#d/${dbName}/${nextNumber}`}>»</a>
+          </li>
+        </ul>
       </div>
     )
   }

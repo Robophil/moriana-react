@@ -16,24 +16,32 @@ export class ShipmentsPage extends React.Component {
     const { loading, route, shipments } = this.props
     const { dbName, currentLocationName, params } = route
     const {offset} = params
+    const pagination = (<Pagination
+      offset={offset}
+      count={this.props.shipmentsCount}
+      dbName={dbName}
+      limit={this.state.limit}
+      displayedCount={shipments.length}
+    />)
     return (
-      <div className='home-page'>
+      <div className='shipments-page'>
         {loading ? (
           <div className='loader' />
-        ) : dbName ? (<div className='shipments'>
-          <h5 className='title'>
-            <i className='icon mail-solid' />
-            Shipments: <span className='text-capitalize'>{currentLocationName}</span>
-          </h5>
-          <button className='download-button btn btn-default btn-md pull-right'>Download</button>
-          <Pagination
-            offset={offset}
-            count={this.props.shipmentsCount}
-            dbName={dbName}
-            limit={this.state.limit}
-            displayedCount={shipments.length} />
-          <ShipmentsTable dbName={dbName} shipments={shipments} />
-        </div>
+        ) : dbName ? (
+          <div>
+            <div className='shipments-header'>
+              <h5>
+                {/* <i className='icon mail-solid' /> */}
+                Shipments: <span>{currentLocationName}</span>
+              </h5>
+              <div>
+                <button>Download</button>
+                {pagination}
+              </div>
+            </div>
+            <ShipmentsTable dbName={dbName} shipments={shipments} />
+            {pagination}
+          </div>
         ) : (<div />)
       }
       </div>

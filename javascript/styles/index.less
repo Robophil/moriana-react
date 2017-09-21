@@ -34,6 +34,15 @@ button.button-primary {
   border-color: @blue;
 }
 
+.button, button {
+  box-shadow: 2px 2px 2px #eee;
+}
+
+.button:hover, button:hover {
+  background-color: black;
+  color: white;
+}
+
 .container {
   max-width: 95%;
 }
@@ -42,4 +51,52 @@ button.button-primary {
   .container {
       width: 95%;
   }
+}
+
+.pagination {
+  display: block;
+  li {
+    display: inline-block;
+    text-decoration: none;
+  }
+  a {
+    font-size: 1.5em;
+    letter-spacing: .5em;
+    margin: 0 15px;
+  }
+  .disabled a {
+    color: black;
+    text-decoration: none;
+    &:hover {
+      cursor: default;
+    }
+  }
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+table {
+  th {
+    font-size: .8em;
+  }
+  td {
+    font-size: .8em;
+    color: black;
+  }
+  tr td:first-child {
+    padding-left: 10px;
+  }
+  tr td:last-child {
+    padding-right: 10px;
+  }
+}
+
+.button-small {
+  font-size: 6px;
+  padding: 5px 15px 5px 15px;
+  line-height: 2;
+  height: auto;
+  margin: 0;
 }

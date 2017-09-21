@@ -1,39 +1,46 @@
 import React from 'react'
 import h from 'helpers'
 import ShipmentLink from 'shipment-link'
+import {buildHref} from 'shipment-link'
 
 export default class extends React.Component {
+  shipmentClicked = (event) => {
+    if (event.target.nodeName !== 'A') {
+      const {id} = event.currentTarget.dataset
+      const href = buildHref(id, this.props.dbName)
+      window.location.href = href;
+    }
+  }
   render () {
     return (
-      <table className='table table-striped table-hover'>
+      <table className='u-full-width'>
         <thead>
           <tr>
             <th>Date</th>
             <th>From</th>
             <th>To</th>
             <th>Transactions</th>
-            <th>Total Value</th>
-            <th>View</th>
+            <th>Value</th>
             <th>Edit</th>
-            <th>Last edited</th>
-            <th>Created by</th>
+            <th>Last Edited</th>
+            <th>Creator</th>
           </tr>
         </thead>
         <tbody>
           {this.props.shipments.map((row, i) => (
-            <tr key={i}>
+            <tr key={i} onClick={this.shipmentClicked} data-id={row.id}>
               <td className='date'>{h.formatDate(row.date)} <small> ({h.dateFromNow(row.date)})</small></td>
               <td className='text-capitalize'>{row.from}</td>
               <td className='text-capitalize'>{row.to}</td>
               <td>{row.totalTransactions}</td>
               <td>{h.num(row.value)}</td>
-              <td><ShipmentLink id={row.id} dbName={this.props.dbName} >view</ShipmentLink></td>
               <td>
+                {/* <ShipmentLink id={row.id} dbName={this.props.dbName} >view</ShipmentLink> |&nbsp; */}
                 <ShipmentLink
                   id={row.id}
                   linkType='edit/generic'
-                  className='btn btn-sm btn-default'
                   dbName={this.props.dbName}
+                  className='button button-small'
                 >
                   edit
                 </ShipmentLink>
