@@ -13,16 +13,23 @@ h4 { font-size: 2.4em; margin-bottom: 1em; }
 h5 { font-size: 1.2em; margin-bottom: 1em; }
 h6 { font-size: 1em; margin-bottom: 1em; }
 
+.active {
+  background-color: #eee;
+  border-radius: 3px;
+  color: black;
+}
+
 a {
   color: @blue;
+  cursor: pointer;
+  padding: 5px;
+  &:hover {
+    .active;
+  }
 }
 
 input {
   width: 100%;
-}
-
-table {
-  font-weight: 100;
 }
 
 .error {
@@ -54,18 +61,16 @@ button.button-primary {
 }
 
 .pagination {
-  display: block;
   li {
     display: inline-block;
     text-decoration: none;
   }
   a {
     font-size: 1.5em;
-    letter-spacing: .5em;
     margin: 0 15px;
   }
   .disabled a {
-    color: black;
+  color: black;
     text-decoration: none;
     &:hover {
       cursor: default;
@@ -78,6 +83,8 @@ button.button-primary {
 }
 
 table {
+  width: 100%;
+  font-weight: 100;
   th {
     font-size: .8em;
   }
@@ -91,6 +98,16 @@ table {
   tr td:last-child {
     padding-right: 10px;
   }
+  tbody tr:hover, tbody tr:hover .info {
+    background-color: #eee;
+    cursor: pointer;
+    color: black;
+  }
+}
+
+table.no-hover tbody tr:hover {
+  background-color: inherit;
+  cursor: auto;
 }
 
 .button-small {
@@ -99,4 +116,37 @@ table {
   line-height: 2;
   height: auto;
   margin: 0;
+}
+
+.pull-right {
+  float: right;
+}
+
+.info {
+  background-color: #eef9ff;
+  color: #31708f;
+  a {
+    cursor: pointer;
+  }
+}
+
+.filtering-on-batch {
+  padding: 15px;
+}
+
+.reports-page {
+  h5 {
+    display: inline-block;
+    margin-left: 35px;
+    margin-bottom: 35px;
+  }
+  .links {
+    a {
+      padding: 15px;
+      margin-left: 15px;
+    }
+  }
+  .filters {
+    text-align: center;
+  }
 }

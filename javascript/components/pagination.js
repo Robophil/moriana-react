@@ -1,6 +1,5 @@
 import React from 'react'
 import h from 'helpers'
-// import PropTypes from 'prop-types'
 
 export default class Pagination extends React.Component {
   render () {
@@ -10,23 +9,19 @@ export default class Pagination extends React.Component {
     const previousNumber = offset ? offset - limit : ''
     const nextNumber = offset + displayedCount < count ? offset + limit : ''
     return (
-      <div className='pagination'>
+      <span className='pagination'>
         <ul>
           <li className={offset ? '' : 'disabled'}>
-            <a href={`/#d/${dbName}/${previousNumber}`}>«</a>
+            <a href={`/#d/${dbName}/${previousNumber}`}>&nbsp; « &nbsp;</a>
           </li>
           <li>
             {h.num(startingNumber)} - {h.num(offset + displayedCount)} of {h.num(count)}
           </li>
           <li className={nextNumber ? '' : 'disabled'}>
-            <a href={`/#d/${dbName}/${nextNumber}`}>»</a>
+            <a href={`/#d/${dbName}/${nextNumber}`}>&nbsp; » &nbsp;</a>
           </li>
         </ul>
-      </div>
+      </span>
     )
   }
 }
-
-// Pagination.propTypes = {
-//   count: PropTypes.number.isRequired,
-// }

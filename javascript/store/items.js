@@ -64,18 +64,6 @@ export const getCategories = (items) => {
   .map(cat => { return { name: cat } })
 }
 
-export const stockCardLink = (dbName, transaction, atBatch = false) => {
-  const { item, category } = transaction
-  let link = `/#d/${dbName}/stockcard/${encodeURIComponent(category)}/${encodeURIComponent(item)}/`
-  if (atBatch) {
-    let { expiration, lot } = transaction
-    expiration = expiration === null ? '' : expiration
-    lot = lot === null ? '' : lot
-    link += `${expiration}__${lot}/`
-  }
-  return link
-}
-
 export const searchItems = (rows, input) => {
   return rows.filter(item =>
     item.item.toLowerCase().indexOf(input) !== -1 ||

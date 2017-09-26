@@ -63,7 +63,9 @@ module.exports = {
    hot: true,
    noInfo: true,
    historyApiFallback: true,
-   port: 9000
+   port: 9000,
+   quiet: true,
+   clientLogLevel: 'none'
  },
  plugins: [
    new webpack.HotModuleReplacementPlugin()

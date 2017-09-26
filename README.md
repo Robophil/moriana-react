@@ -83,6 +83,17 @@ Now, `Clinic A` has a stock of Ibuprofen with quantity `980`
     npm i
     npm start
 
+## Update all dependencies
+
+first run:
+
+    npm i -g npm-check-updates
+
+normally:
+
+    npm-check-updates -u
+    npm i
+
 ## Javascript Layout
 
 React/Redux app. Follows parts of [this article](https://medium.com/javascript-scene/10-tips-for-better-redux-architecture-69250425af44), e.g. having related constants, actions, and reducers in the same file.

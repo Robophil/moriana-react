@@ -5,7 +5,7 @@ import ShipmentsTable from 'shipments-table'
 import Pagination from 'pagination'
 
 export class ShipmentsPage extends React.Component {
-  state = { limit: 500 }
+  state = { limit: 100 }
   componentDidMount = () => {
     const { dbName, params } = this.props.route
     const {offset} = params
@@ -34,13 +34,15 @@ export class ShipmentsPage extends React.Component {
                 {/* <i className='icon mail-solid' /> */}
                 Shipments: <span>{currentLocationName}</span>
               </h5>
-              <div>
-                <button>Download</button>
+              <div className='pull-right'>
+                <a href='#' >Download</a>
                 {pagination}
               </div>
             </div>
             <ShipmentsTable dbName={dbName} shipments={shipments} />
-            {pagination}
+            <div className='pull-right'>
+              {pagination}
+            </div>
           </div>
         ) : (<div />)
       }

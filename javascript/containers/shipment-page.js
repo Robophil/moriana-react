@@ -3,13 +3,18 @@ import { connect } from 'react-redux'
 import { getShipment } from 'shipments'
 import h from 'helpers'
 import ShipmentLink from 'shipment-link'
-import StockcardLink from 'stockcard-link'
+import {buildStockCardHref} from 'stockcard-link'
 
 const ShipmentPage = class extends React.Component {
   componentDidMount = () => {
     const { dbName, params } = this.props.route
     const { id } = params
     this.props.getShipment(dbName, id)
+  }
+
+  stockLinkClicked = (event) => {
+    const {item, category} = event.currentTarget.dataset
+    window.location.href = buildStockCardHref(this.props.route.dbName, {item, category})
   }
 
   render () {
@@ -23,22 +28,22 @@ const ShipmentPage = class extends React.Component {
         ) : (
           <div>
             <h5 className='text-capitalize'>
-              <i className='icon mail-solid' />{displayType}: {ship.from} to {ship.to}
+              {/* <i className='icon mail-solid' /> */}
+              {displayType}: {ship.from} to {ship.to}
             </h5>
-            <hr />
-            <div className='shipment-details'>
+            <div>
               <strong>{h.formatDate(ship.date)}</strong> ({h.dateFromNow(ship.date)})
               <strong> {ship.totalTransactions}</strong> transactions
               total value <strong>{h.currency(ship.totalValue)} </strong>
 
                | created by <strong>{ship.username} </strong>
-                latest edited <strong>{h.dateFromNow(ship.updated)} </strong>
-                | <ShipmentLink linkType='edit' shipmentType={shipmentType} id={ship._id} dbName={dbName} > edit </ShipmentLink>
-                | <ShipmentLink linkType='print' id={ship._id} dbName={dbName} > print </ShipmentLink>
+                {ship.updated ? (<span>latest edited <strong>{h.dateFromNow(ship.updated)} </strong></span>) : '' }
+                | <ShipmentLink linkType='edit' shipmentType={shipmentType} id={ship._id} dbName={dbName} > edit</ShipmentLink>
+                | <ShipmentLink linkType='print' id={ship._id} dbName={dbName} > print</ShipmentLink>
                 | <ShipmentLink linkType='print' id={`${ship._id}/reversed`} dbName={dbName} > print reversed </ShipmentLink>
             </div>
             <hr />
-            <table className='table table-striped table-hover'>
+            <table>
               <thead>
                 <tr>
                   <th>Item</th>
@@ -53,12 +58,8 @@ const ShipmentPage = class extends React.Component {
               </thead>
               <tbody>
                 {ship.transactions.map((t, i) => (
-                  <tr key={i}>
-                    <td>
-                      <StockcardLink dbName={dbName} transaction={t}>
-                        {t.item}
-                      </StockcardLink>
-                    </td>
+                  <tr key={i} data-item={t.item} data-category={t.category} onClick={this.stockLinkClicked}>
+                    <td>{t.item}</td>
                     <td>{t.category}</td>
                     <td>{t.lotNum}</td>
                     <td>{h.expiration(t.expiration)}</td>
@@ -70,6 +71,8 @@ const ShipmentPage = class extends React.Component {
                 ))}
               </tbody>
             </table>
+            <a href={`/#d/${this.props.route.dbName}/`}>Go to all shipments</a>
+            <br /><br /><br />
           </div>
         )}
       </div>

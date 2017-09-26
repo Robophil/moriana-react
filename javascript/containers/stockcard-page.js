@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { getStock } from 'stock'
 import QuantityByBatch from 'quantity-by-batch'
 import AMCTable from 'amc-table'
-import ShipmentLink from 'shipment-link'
+import {buildHref} from 'shipment-link'
 import StockCardLink from 'stockcard-link'
 import h from 'helpers'
 
@@ -18,11 +18,19 @@ const StockCardPage = class extends React.Component {
     this.props.getStock(dbName, currentLocationName, category, item, atBatch)
   }
 
-  showAllRows = () => {
+  showAllRows = (event) => {
+    event.preventDefault()
     this.setState({ showAll: true })
   }
 
-  scrollToTop = () => {
+  rowSelected = (event) => {
+    if (event.target.nodeName !== 'A') {
+      window.location.href = buildHref(event.currentTarget.dataset.id, this.props.route.dbName)
+    }
+  }
+
+  scrollToTop = (event) => {
+    event.preventDefault()
     window.scrollTo(0, 0)
   }
 
@@ -41,27 +49,28 @@ const StockCardPage = class extends React.Component {
             <h5 className='text-capitalize'>
               {item} | {category} {h.expiration(expiration)} {lot}
             </h5>
-            <hr />
             <div className='row'>
-              {atBatch ? (<div className='col-md-5 no-print'>
-                <div className='alert alert-info'>
-                  Filtering on batch: {h.expiration(expiration)} {lot}
-                  <StockCardLink
-                    dbName={dbName}
-                    className='pull-right'
-                    transaction={{ item, category, expiration, lot }}
-                    >
-                    remove filter
-                  </StockCardLink>
+              {atBatch ? (
+                <div className='no-print four columns'>
+                  <div className='info filtering-on-batch'>
+                    Filtering on batch: {h.expiration(expiration)} {lot} &nbsp;
+                    <StockCardLink
+                      dbName={dbName}
+                      // className='pull-right'
+                      transaction={{ item, category, expiration, lot }}
+                      >
+                      remove
+                    </StockCardLink>
+                  </div>
                 </div>
-              </div>) : (
+              ) : (
                 <QuantityByBatch dbName={dbName} batches={batches} />
               )}
               <AMCTable amcDetails={amcDetails} />
             </div>
-            <button className='download-button btn btn-default btn-md pull-right'>Download</button>
-            <h5 className='transactions-header'>{totalTransactions} Transaction{h.soronos(totalTransactions)}</h5>
-            <table className='table table-striped table-small table-hover table-condensed'>
+            <a href='#' className='pull-right'>Download</a>
+            <h5>{totalTransactions} Transaction{h.soronos(totalTransactions)}</h5>
+            <table>
               <thead>
                 <tr>
                   <th>Relative</th>
@@ -75,31 +84,27 @@ const StockCardPage = class extends React.Component {
                   <th>To</th>
                   <th>User</th>
                   <th>Quantity</th>
-                  <th className='result-quantity'>Result</th>
+                  <th>Result</th>
                 </tr>
               </thead>
-              <tbody className='transactions'>
+              <tbody>
                 {transactions.map((row, i) => (
-                  <tr key={i}>
+                  <tr key={i} onClick={this.rowSelected} data-id={row.id}>
                     <td>{h.dateFromNow(row.date)}</td>
-                    <td>
-                      <ShipmentLink id={row._id} dbName={this.props.route.dbName} >
-                        {h.formatDate(row.date)}
-                      </ShipmentLink>
-                    </td>
-                    <td className={`${atBatch ? 'alert-info' : ''}`}>{h.expiration(row.expiration)}</td>
-                    <td className={`${atBatch ? 'alert-info' : ''}`}>{h.currency(row.unitPrice)}</td>
-                    <td className={`${atBatch ? 'alert-info' : ''}`}>{h.currency(row.totalValue)}</td>
-                    <td className={`no-print ${atBatch ? 'alert-info' : ''}`}>
+                    <td>{h.formatDate(row.date)}</td>
+                    <td className={`${atBatch ? 'info' : ''}`}>{h.expiration(row.expiration)}</td>
+                    <td className={`${atBatch ? 'info' : ''}`}>{h.currency(row.unitPrice)}</td>
+                    <td className={`${atBatch ? 'info' : ''}`}>{h.currency(row.totalValue)}</td>
+                    <td className={`action no-print ${atBatch ? 'info' : ''}`}>
                       <StockCardLink
                         dbName={dbName}
                         transaction={row}
                         atBatch={!atBatch}
                         >
-                        {atBatch ? (<span>remove filter</span>) : (<span>filter</span>)}
+                        {atBatch ? 'remove' : 'filter'}
                       </StockCardLink>
                     </td>
-                    <td className={`${atBatch ? 'alert-info' : ''}`}>{row.lot}</td>
+                    <td className={`${atBatch ? 'info' : ''}`}>{row.lot}</td>
                     <td className='text-capitalize'>{row.from}</td>
                     <td className='text-capitalize'>{row.to}</td>
                     <td>{row.username}</td>
@@ -109,15 +114,14 @@ const StockCardPage = class extends React.Component {
                 ))}
               </tbody>
             </table>
-            <div className='text-center show-all'>
+            <a href={`/#d/${dbName}/stock/`}>Go to all items</a>
+            <div className='pull-right'>
               Showing {h.num(transactions.length)} of {h.num(totalTransactions)} transaction
               {h.soronos(totalTransactions)}. &nbsp;
               {!showAll && transactions.length === totalTransactions
               ? (<span />)
-              : !showAll ? (<button onClick={this.showAllRows} className='btn btn-default btn-lg'>Show All</button>) : (
-                <div className='text-center scroll-to-top'>
-                  <button onClick={this.scrollToTop} className='btn btn-default btn-lg'>Scroll To Top</button>
-                </div>
+              : !showAll ? (<a href='#' onClick={this.showAllRows}>Show All Transactions</a>) : (
+                <a href='#' onClick={this.scrollToTop}>Scroll To Top</a>
               )}
             </div>
             <br /><br /><br /><br />

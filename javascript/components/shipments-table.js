@@ -8,10 +8,11 @@ export default class extends React.Component {
     if (event.target.nodeName !== 'A') {
       const {id} = event.currentTarget.dataset
       const href = buildHref(id, this.props.dbName)
-      window.location.href = href;
+      window.location.href = href
     }
   }
   render () {
+    const {dbName} = this.props
     return (
       <table className='u-full-width'>
         <thead>
@@ -35,13 +36,7 @@ export default class extends React.Component {
               <td>{row.totalTransactions}</td>
               <td>{h.num(row.value)}</td>
               <td>
-                {/* <ShipmentLink id={row.id} dbName={this.props.dbName} >view</ShipmentLink> |&nbsp; */}
-                <ShipmentLink
-                  id={row.id}
-                  linkType='edit/generic'
-                  dbName={this.props.dbName}
-                  className='button button-small'
-                >
+                <ShipmentLink id={row.id} linkType='edit/generic' dbName={dbName}className='button button-small'>
                   edit
                 </ShipmentLink>
               </td>

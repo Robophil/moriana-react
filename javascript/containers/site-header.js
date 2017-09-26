@@ -15,6 +15,7 @@ import h from 'helpers'
 
 const SiteHeader = class extends React.Component {
   state = { openSection: null }
+  // state = { openSection: 'database' }
 
   componentDidMount = () => {
     this.props.getUser()
@@ -55,18 +56,18 @@ const SiteHeader = class extends React.Component {
     const links = hl.getLinks(user, config.isLocal, currentLocationName)
     const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, dbName)
     const {openSection} = this.state
-    let subsection = openSection ? (
-      <div className={`drawer ${openSection === 'database' ? 'database' : ''}`}>
-        {subsections[openSection].map((link, i) => (
-          <a className='button' key={i} href={link.url} onClick={this.linkClicked}>
-            {/* <i className={`${link.icon} small`} /> &nbsp;  */}
-            {link.title}
-          </a>
-        ))}
-      </div>
-    ) : ''
-    if (openSection === 'search' && dbName) {
-      subsection = (<HeaderSearch closeClicked={this.hideLink} dbName={dbName} currentLocationName={currentLocationName} />)
+    const drawerClasses = (openSection === 'database') ? 'drawer database' : 'drawer right'
+    let subsection = ''
+    if (openSection) {
+      if (openSection === 'search' && dbName) {
+        subsection = (<HeaderSearch closeClicked={this.hideLink} dbName={dbName} currentLocationName={currentLocationName} />)
+      } else {
+        subsection = (
+          <div className={drawerClasses}>
+            {subsections[openSection].map((link, i) => (<a href={link.url} key={i} onClick={this.linkClicked}>{link.title}</a>))}
+          </div>
+        )
+      }
     }
     return (
       <div className='site-header'>
@@ -77,7 +78,6 @@ const SiteHeader = class extends React.Component {
             {links.leftLinks.map((link, i) => (
               <li onClick={this.showSection} key={i}>
                 <button data-section={link.section}>
-                  {/* <i className={`${link.icon} icon`} /> */}
                   {link.linkName}
                 </button>
               </li>
@@ -88,8 +88,7 @@ const SiteHeader = class extends React.Component {
             <ul className='right-links'>
               {links.rightLinks.map((link, i) => (
                 <li onClick={this.showSection} key={i}>
-                  <button href='' data-section={link.section}>
-                    {/* <i className={`${link.icon} icon`} /> */}
+                  <button data-section={link.section}>
                     {link.linkName}
                   </button>
                 </li>

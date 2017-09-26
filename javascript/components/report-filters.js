@@ -25,14 +25,14 @@ export default class extends React.Component {
     } = this.props
     const availableFilters = { date: dateFilter, category: categoryFilter, batch: batchFilter }
     return (
-      <div>
-        <div className='current-filters text-center'>
+      <div className='filters'>
+        <div className='links'>
           {Object.keys(availableFilters).map((key, i) => {
-            const btnClass = (key === openFilter) ? 'btn-default' : 'btn-primary'
+            const btnClass = (key === openFilter) ? 'active' : ''
             return (
-              <button key={i} onClick={this.showFilter} data-filter-name={key} className={`btn ${btnClass}`}>
+              <a key={i} href onClick={this.showFilter} data-filter-name={key} className={`${btnClass}`}>
                 {availableFilters[key].name}
-              </button>
+              </a>
             )
           })}
         </div>

@@ -5,7 +5,7 @@ export default {
       account: [
         { title: 'Account', url: '/account', icon: 'icon profile' },
         { title: 'Status', url: '/status/', icon: 'icon clock-h9m0' },
-        { title: 'logout', url: '/logout', icon: 'icon close' }
+        { title: 'Log Out', url: '/logout', icon: 'icon close' }
       ],
       admin: [
         { title: 'Users', url: '/admin/users/' },

@@ -29,49 +29,42 @@ export class ReportsPage extends React.Component {
 
   render () {
     const { allItemsFetched, reportTypes, reportHeaders, reportRows } = this.props
+    if (!allItemsFetched) return (<div className='loader' />)
     return (
-      <div className='reports'>
-        {
-          !allItemsFetched ? (<div className='loader' />)
-          : (
-            <div>
-              <br />
-              <ul className='nav nav-pills'>
-                <li>
-                  <h5>Reports &nbsp; &nbsp; </h5>
-                </li>
-                {Object.keys(reportTypes).map((slug, i) => {
-                  const activeClass = (slug === this.state.reportType) ? 'active' : ''
-                  return (<li key={i} className={`report-links consumption ${activeClass}`}>
-                    <a onClick={this.changeReport} data-type={slug}>{reportTypes[slug].name}</a>
-                  </li>)
-                })}
-                <button className='btn btn-default btn-md pull-right'>Download</button>
-              </ul>
-              <hr />
-              {allItemsFetched
-              ? (
-                <div>
-                  <ReportFilters
-                    allDateFilters={this.props.allDateFilters}
-                    allCategoryFilters={this.props.allCategoryFilters}
-                    allBatchFilters={this.props.allBatchFilters}
-                    dateFilter={this.props.dateFilter}
-                    categoryFilter={this.props.categoryFilter}
-                    batchFilter={this.props.batchFilter}
-                    filterSet={this.filterSet}
-                  />
-                  <div className='report'>
-                    <hr />
-                    <div className='pull-right table-description'>Rows: {h.num(reportRows.length)}</div>
-                    <ReportTable headers={reportHeaders} rows={reportRows} />
-                  </div>
-                </div>
-              )
-              : (<div className='loader' />)}
+      <div className='reports-page'>
+        <h5>Reports</h5>
+        <span className='links'>
+          {Object.keys(reportTypes).map((slug, i) => {
+            const activeClass = (slug === this.state.reportType) ? 'active' : ''
+            return (
+              <a key={i} href className={`${activeClass}`} onClick={this.changeReport} data-type={slug}>
+                {reportTypes[slug].name}
+              </a>
+            )
+          })}
+        </span>
+        {allItemsFetched
+        ? (
+          <div>
+            <ReportFilters
+              allDateFilters={this.props.allDateFilters}
+              allCategoryFilters={this.props.allCategoryFilters}
+              allBatchFilters={this.props.allBatchFilters}
+              dateFilter={this.props.dateFilter}
+              categoryFilter={this.props.categoryFilter}
+              batchFilter={this.props.batchFilter}
+              filterSet={this.filterSet}
+            />
+            <div className='report'>
+              <div className='pull-right'>
+                <a href className='button-small'>Download</a>
+                <span>Rows: {h.num(reportRows.length)}</span>
+              </div>
+              <ReportTable headers={reportHeaders} rows={reportRows} />
             </div>
-          )
-        }
+          </div>
+        )
+        : (<div className='loader' />)}
       </div>
     )
   }
