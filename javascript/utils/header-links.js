@@ -56,7 +56,7 @@ export default {
       leftLinks.push({
         section: 'database',
         icon: 'focus',
-        linkName: (currentLocationName || 'Select Location') + server
+        linkName: (currentLocationName || 'Select Database') + server
       })
       if (currentLocationName) {
         rightLinks.unshift(

@@ -125,21 +125,20 @@ export default class EditBatch extends React.Component {
     } = this.state
     return (
       <ClickOutHandler onClickOut={closeClicked}>
-        <div className='clickout-modal'>
-          <div className='modal-header'>
+        <div className='modal edit-batch'>
+          <div>
             {/* use onmousedown to beat out race with input blur events */}
-            <button type='button' className='close' onMouseDown={closeClicked}>
+            <button className='close' onMouseDown={closeClicked}>
               <span>×</span>
             </button>
-            <h4 className='modal-title'>{item} {category}</h4>
+            <h5>{item} {category}</h5>
           </div>
-          <div>
-            <div className={`form-group ${quantityError ? 'has-error' : ''}`}>
-              <label className='col-lg-2 control-label'>Quantity</label>
-              <div className='col-lg-9 input-group'>
+          <form onSubmit={this.onSubmit}>
+            <div className={`row ${quantityError ? 'error' : ''}`}>
+              <label>Quantity</label>
+              <div className='input-group'>
                 <input
                   type='text'
-                  className='form-control form-input'
                   value={quantity}
                   data-key='quantity'
                   onChange={this.valueChanged}
@@ -147,7 +146,7 @@ export default class EditBatch extends React.Component {
                   onBlur={this.onBlur}
                   autoFocus
                 />
-                {quantityError && (<p className='error help-block'>
+                {quantityError && (<p className='error'>
                   Quantity is required and must be numeric.
                 </p>)}
               </div>
@@ -155,30 +154,28 @@ export default class EditBatch extends React.Component {
             {expirationDisplay ? (
               <StaticInput label={'Expiration'} value={expirationDisplay} onEditClick={this.onExpirationEditClick} />
             ) : (
-              <div className={`form-group ${expirationError ? 'has-error' : ''}`}>
-                <label className='col-lg-2 control-label'>Expiration</label>
-                <div className='col-lg-9 input-group'>
+              <div className={`row ${expirationError ? 'has-error' : ''}`}>
+                <label>Expiration</label>
+                <div className='input-group'>
                   <input
                     type='text'
-                    className='form-control form-input'
                     value={expiration}
                     data-key='expiration'
                     onChange={this.valueChanged}
                     onBlur={this.onBlur}
                     onKeyDown={this.onKeyDown}
                   />
-                  {expirationError && (<p className='error help-block'>
+                  {expirationError && (<p className='error'>
                     Expiration must be format "MM/YY", "MM/YYYY" or "YYYY-MM-DD".
                   </p>)}
                 </div>
               </div>
             )}
-            <div className='form-group'>
-              <label className='col-lg-2 control-label'>Lot</label>
-              <div className='col-lg-9 input-group'>
+            <div className='row'>
+              <label>Lot</label>
+              <div className='input-group'>
                 <input
                   type='text'
-                  className='form-control form-input'
                   value={lot}
                   data-key='lot'
                   onChange={this.valueChanged}
@@ -186,29 +183,28 @@ export default class EditBatch extends React.Component {
                 />
               </div>
             </div>
-            <div className={`form-group ${unitPriceError ? 'has-error' : ''}`}>
-              <label className='col-lg-2 control-label'>Unit Price</label>
-              <div className='col-lg-9 input-group'>
+            <div className={`row ${unitPriceError ? 'has-error' : ''}`}>
+              <label>Unit Price</label>
+              <div className='input-group'>
                 <input
                   type='text'
-                  className='form-control form-input'
                   value={unitPrice}
                   data-key='unitPrice'
                   onChange={this.valueChanged}
                   onBlur={this.onBlur}
                   onKeyDown={this.onKeyDown}
                 />
-                {unitPriceError && (<p className='error help-block'>
+                {unitPriceError && (<p className='error'>
                   Unit price must be a number.
                 </p>)}
               </div>
             </div>
-            <button onMouseDown={closeClicked} style={{marginRight: '5px'}} className='btn btn-default'>Cancel</button>
-            <button onClick={this.onSubmit} className='btn btn-primary'>Done</button>
+            <button onMouseDown={closeClicked}>Cancel</button>
+            <button onClick={this.onSubmit} className='button button-primary'>Done</button>
             {batch && (
-              <button onMouseDown={this.deleteClicked} className='btn btn-default pull-right'>delete</button>
+              <button onMouseDown={this.deleteClicked} className='pull-right'>delete</button>
             )}
-          </div>
+          </form>
         </div>
       </ClickOutHandler>
     )

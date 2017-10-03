@@ -12,16 +12,15 @@ export default class extends React.Component {
           {Object.keys(notifications).map((key, i) => {
             const note = notifications[key]
             return (
-              <div key={i} className='notification alert-warning' role='alert'>
+              <div key={i} className='notification'>
                 <button
-                  type='button'
                   onClick={this.close}
                   data-id={note.id}
-                  className='close close-notification'
+                  className='close'
                 >
                   <span>×</span>
                 </button>
-                <span className='text'>{note.text}</span>
+                <p>{note.text}</p>
               </div>
             )
           })}

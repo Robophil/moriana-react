@@ -40,7 +40,7 @@ export default class extends React.Component {
                   edit
                 </ShipmentLink>
               </td>
-              <td><small>{h.dateFromNow(row.updated)}</small></td>
+              <td><small>{h.dateFromNow(row.updated || row.date)}</small></td>
               <td>{row.username}</td>
             </tr>
           ))}

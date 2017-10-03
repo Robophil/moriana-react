@@ -9,7 +9,7 @@ export default class EditTransactionsTable extends React.Component {
 
   render () {
     return (
-      <table className='table table-striped table-hover'>
+      <table>
         <thead>
           <tr>
             <th>Item</th>
@@ -25,7 +25,7 @@ export default class EditTransactionsTable extends React.Component {
         </thead>
         <tbody>
           {this.props.transactions.map((t, i) => (
-            <tr key={i}>
+            <tr key={i} onClick={this.onClick} data-index={i}>
               <td>{t.item}</td>
               <td>{t.category}</td>
               <td>{t.lot}</td>
@@ -34,7 +34,7 @@ export default class EditTransactionsTable extends React.Component {
               <td>{h.currency(t.unitPrice)}</td>
               <td>{h.currency(t.unitPrice * t.quantity)}</td>
               <td>{t.username}</td>
-              <td><button onClick={this.onClick} data-index={i} className='btn btn-sm btn-default'>edit</button></td>
+              <td><button>edit</button></td>
             </tr>
           ))}
         </tbody>

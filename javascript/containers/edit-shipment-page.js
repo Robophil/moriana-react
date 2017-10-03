@@ -45,9 +45,6 @@ const EditShipmentPage = class extends React.Component {
   componentWillReceiveProps = (newProps) => {
     const {shipment, isNew} = newProps.editshipment
     const {currentLocationName, dbName} = this.props.route
-    // if (shipment.from) {
-    //   this.setState({ showNewLocation: false })
-    // }
     if (!this.props.route.params.id && this.props.editshipment.isNew && !isNew) {
       const newHash = window.location.hash + '/' + shipment._id
       window.history.replaceState(undefined, undefined, newHash)
@@ -87,7 +84,7 @@ const EditShipmentPage = class extends React.Component {
     const { locations, items, updateShipment, route } = this.props
     const { shipment, loadingInitialShipment, isNew, shipmentName, apiError } = this.props.editshipment
     const { dbName, currentLocationName } = route
-    const shipmentType = route.params.shipmentType
+    const shipmentType = this.props.editshipment.shipmentType || route.params.shipmentType
 
     if (apiError) {
       return (
@@ -102,13 +99,12 @@ const EditShipmentPage = class extends React.Component {
 
     return (
       <div className='edit-page'>
-        <h5 className='text-capitalize title'>
+        <h5 className='text-capitalize'>
           {shipment.from
             ? (<span>{shipmentType}: {shipment.from} to {shipment.to}</span>)
             : (<span>Create {shipmentType}</span>)
           }
         </h5>
-        <hr />
         {showEditDetails ? (
           <EditShipmentDetails
             onDone={this.toggleDetails}
@@ -142,11 +138,10 @@ const EditShipmentPage = class extends React.Component {
             <ShipmentLink
               dbName={dbName}
               id={shipment._id}
-              className='btn btn-primary'
               shipmentType='receive'>
               Done
             </ShipmentLink>
-            <button onClick={this.toggleDeleteModal} className='btn btn-default pull-right'>delete</button>
+            <button onClick={this.toggleDeleteModal} className='pull-right'>delete</button>
           </div>
         )}
         {this.state.showDeleteModal && (

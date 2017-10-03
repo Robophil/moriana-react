@@ -80,7 +80,7 @@ const HeaderSearch = class extends React.Component {
               <button className='button-primary' data-search-field='items'>Search Items</button>
               <button data-search-field='locations'>Search Locations</button>
             </div>
-            <div className='search-drop'>
+            <div className='search-drop-results'>
               {itemResults.map((item, i) => (
                 <StockcardLink
                   className={`${currIndex === i ? 'active' : ''}`}
@@ -95,7 +95,7 @@ const HeaderSearch = class extends React.Component {
                 </StockcardLink>
               ))}
               <p>
-                items: {query ? `${query} found ` : ''} {itemResults.length} of {h.num(items.length)}
+                items: {query && (<span><strong>{query} </strong> found </span>)} {itemResults.length} of {h.num(items.length)}
               </p>
             </div>
           </div>

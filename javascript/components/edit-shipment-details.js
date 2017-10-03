@@ -93,21 +93,15 @@ export default class EditShipmentDetails extends React.Component {
       )
     }
     return (
-      <div>
-        <form className='form-horizontal'>
+      <div className='edit-details'>
+        <form onSubmit={onDone}>
           <DateInput
             value={shipment.date}
             valueUpdated={updateShipment}
           />
           {detailsElement}
         </form>
-        <br />
-        <div className='row'>
-          <label className='col-lg-2' />
-          <div className='col-sm-10 input-group'>
-            <button onClick={onDone} className='btn btn-primary'>Save Details</button>
-          </div>
-        </div>
+        <button className='save-details' onClick={onDone}>Save Details</button>
         {this.state.showNewLocation && (
           <NewLocation
             value={this.state.newLocationName}
@@ -121,7 +115,6 @@ export default class EditShipmentDetails extends React.Component {
 }
 
 EditShipmentDetails.propTypes = {
-  // value: PropTypes.string,
   onDone: PropTypes.func.isRequired,
   updateShipment: PropTypes.func.isRequired,
   shipment: PropTypes.object.isRequired,

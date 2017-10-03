@@ -178,6 +178,18 @@ function makeTransactionFromBatchKey (batchKey) {
   return transaction
 }
 
+function addResultingQuantities (rows) {
+  const sum = rows.reduce((sum, t) => {
+    sum += t.quantity
+    return sum
+  }, 0)
+  const rowsByDate = rows.sort((a, b) => b.date.localeCompare(a.date))
+  return rowsByDate.map((t, i) => {
+    t.result = (i === 0) ? sum : rowsByDate[i - 1].result - rowsByDate[i - 1].quantity
+    return t
+  })
+}
+
 // function getBatchesOnDate (transactions, date) {
 //   return getBatches(_.filter(transactions, t => t.date < date))
 // }
@@ -308,15 +320,3 @@ function makeTransactionFromBatchKey (batchKey) {
 //     return batch
 //   })
 // }
-
-function addResultingQuantities (rows) {
-  const sum = rows.reduce((sum, t) => {
-    sum += t.quantity
-    return sum
-  }, 0)
-  const rowsByDate = rows.sort((a, b) => b.date.localeCompare(a.date))
-  return rowsByDate.map((t, i) => {
-    t.result = (i === 0) ? sum : rowsByDate[i - 1].result - rowsByDate[i - 1].quantity
-    return t
-  })
-}

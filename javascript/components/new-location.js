@@ -40,29 +40,29 @@ export default class NewLocation extends React.Component {
     const attributes = checked ? { excludeFromConsumption: true } : {}
     if (name) {
       this.props.valueUpdated(this.props.valueKey, { name, attributes })
+      this.props.closeClicked()
     }
   }
 
   render () {
     return (
       <ClickOutHandler onClickOut={this.props.closeClicked}>
-        <div className='clickout-modal'>
-          <div className='modal-header'>
-            <button type='button' className='close' onClick={this.props.closeClicked}>
+        <div className='modal'>
+          <div>
+            <button className='close' onClick={this.props.closeClicked}>
               <span>×</span>
             </button>
-            <h4 className='modal-title'>New Location</h4>
+            <h5>New Location</h5>
           </div>
-          <div className='modal-body'>
-            <form className='form-horizontal edit-location-form'>
+          <div>
+            <form onSubmit={this.onSubmit}>
               <fieldset>
                 <div>
-                  <div className='form-group'>
-                    <label className='col-lg-2 control-label'>Name</label>
-                    <div className='col-lg-10'>
+                  <div className='row'>
+                    <label>Name</label>
+                    <div className='input-group'>
                       <input
                         type='text'
-                        className='form-control form-input'
                         value={this.state.name}
                         onChange={this.nameChanged}
                         onKeyDown={this.onKeyDown}
@@ -70,20 +70,14 @@ export default class NewLocation extends React.Component {
                       />
                     </div>
                   </div>
-                  <br /><br />
-                  <div className='form-group'>
-                    <label className='col-lg-2 control-label'>Do not track as consumption</label>
-                    <div className='col-lg-10'>
-                      <input type='checkbox' checked={this.state.checked} onChange={this.checkboxChanged} />
-                    </div>
+                  <div className='row consumption-check-box'>
+                    <label htmlFor='donottrack'>Do not track as consumption</label>
+                    <input id='donottrack' type='checkbox' checked={this.state.checked} onChange={this.checkboxChanged} />
                   </div>
                 </div>
-                <br /><br />
-                <div className='form-group'>
-                  <div className='col-lg-10 col-lg-offset-2'>
-                    <button onClick={this.props.closeClicked} className='btn btn-default'>Cancel</button>
-                    <button onClick={this.onSubmit} className='btn btn-primary'>OK</button>
-                  </div>
+                <div>
+                  <button onClick={this.props.closeClicked}>Cancel</button>
+                  <button onClick={this.onSubmit} className='button-primary'>OK</button>
                 </div>
               </fieldset>
             </form>

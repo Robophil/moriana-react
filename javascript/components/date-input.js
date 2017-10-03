@@ -38,20 +38,20 @@ export default class DateInput extends React.Component {
   render () {
     const { inputValue, error, showEdit } = this.state
     const { value } = this.props
+    const classes = error ? 'row error' : 'row'
     if (showEdit) {
       return (
-        <div className={`form-group field ${error ? 'has-error' : ''}`}>
-          <label className='col-lg-2 control-label'>Date</label>
-          <div className='col-sm-9 input-group'>
+        <div className={classes}>
+          <label>Date</label>
+          <div className='input-group'>
             <input
               onBlur={this.onBlur}
               value={inputValue}
               onKeyUp={this.onKeyUp}
               onChange={this.onChange}
-              className='form-control form-input'
               autoFocus
               type='text' />
-            {error && (<p className='error help-block'>
+            {error && (<p className='error'>
               Date must be format "YYYY-MM-DD or "t-1" or "t+1" (e.g. today - 1, today + 1)"
             </p>)}
           </div>

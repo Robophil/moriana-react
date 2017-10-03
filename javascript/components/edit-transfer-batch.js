@@ -58,24 +58,22 @@ export default class EditTransferBatch extends React.Component {
   render () {
     const { item, category, batch, transactions, closeClicked, deleteClicked, stock } = this.props
     const { error, quantity } = this.state
-    console.log(this.props)
     return (
       <ClickOutHandler onClickOut={closeClicked}>
-        <div className='clickout-modal'>
-          <div className='modal-header'>
+        <div className='modal edit-batch'>
+          <div>
             {/* use onmousedown to beat out race with input blur events */}
-            <button type='button' className='close' onMouseDown={closeClicked}>
+            <button className='close' onMouseDown={closeClicked}>
               <span>×</span>
             </button>
-            <h4 className='modal-title'>{item} {category}</h4>
+            <h5>{item} {category}</h5>
           </div>
-          <div>
-            <div className={`form-group ${error ? 'has-error' : ''}`}>
-              <label className='col-lg-2 control-label'>Quantity</label>
-              <div className='col-lg-9 input-group'>
+          <form onSubmit={this.onSubmit}>
+            <div className={`${error ? 'has-error' : ''}`}>
+              <label>Quantity</label>
+              <div className='input-group'>
                 <input
                   type='text'
-                  className='form-control form-input'
                   value={quantity}
                   data-key='quantity'
                   onChange={this.quantityChanged}
@@ -83,21 +81,21 @@ export default class EditTransferBatch extends React.Component {
                   onBlur={this.onBlur}
                   autoFocus
                 />
-                {error && (<p className='error help-block'>
+                {error && (<p className='error'>
                   Quantity is required and must be numeric.
                 </p>)}
               </div>
             </div>
-            <button className='btn btn-primary'>Confirm Quantity</button>
+            <button className='button-primary'>Confirm Quantity</button>
             <br /><br />
-            <table className='table table-striped text-center table-bordered table-small table-hover'>
+            <table>
               <thead>
                 <tr>
-                  <th className='text-center'>Expiration</th>
-                  <th className='text-center'>Lot</th>
-                  <th className='text-center'>Stock</th>
+                  <th>Expiration</th>
+                  <th>Lot</th>
+                  <th>Stock</th>
                   <th className='text-capitalize'>Quantity</th>
-                  <th className='text-center'>Resulting Stock</th>
+                  <th>Resulting Stock</th>
                 </tr>
               </thead>
               <tbody>
@@ -112,12 +110,12 @@ export default class EditTransferBatch extends React.Component {
                 ))}
               </tbody>
             </table>
-            <button onMouseDown={closeClicked} style={{marginRight: '5px'}} className='btn btn-default'>Cancel</button>
-            <button onClick={this.onSubmit} className='btn btn-primary'>Done</button>
+            <button onMouseDown={closeClicked}>Cancel</button>
+            <button onClick={this.onSubmit}>Done</button>
             {batch && (
-              <button onMouseDown={this.deleteClicked} className='btn btn-default pull-right'>delete</button>
+              <button onMouseDown={this.deleteClicked} className='pull-right'>delete</button>
             )}
-          </div>
+          </form>
         </div>
       </ClickOutHandler>
     )

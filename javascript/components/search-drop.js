@@ -124,42 +124,45 @@ export default class SearchDrop extends React.Component {
         <StaticInput label={label} value={this.displayFunction(value)} onEditClick={this.open} />
       )
     }
+    const detailsLinkClasses = currIndex === visibleRows.length ? 'active' : ''
+    let classes = 'row'
+    if (this.props.className) classes += ' ' + this.props.className
     return (
       <ClickOutHandler onClickOut={this.hideSearch}>
-        <div className='form-group field'>
-          <label className='col-lg-2 control-label'>{label}</label>
-          <div className='col-sm-9 input-group'>
+        <div className={classes}>
+          <label>{label}</label>
+          <div className='input-group'>
             <input
               onBlur={this.onBlur}
               value={inputValue}
               onKeyUp={this.onKeyUp}
               onChange={this.onChange}
-              className='form-control form-input'
               onFocus={this.showSearch}
               autoFocus={autoFocus}
               type='text' />
             {showSearch && (
-              <div className='search-drop form-input'>
+              <div className='search-drop-results'>
                 {loading
-                ? (<div className='list-group list-group-item'><div className='loader' /></div>)
+                ? (<div className='loader' />)
                 : (
-                  <div className='list-group'>
-                    {visibleRows.map((row, i) => (
-                      <a
+                  <div>
+                    {visibleRows.map((row, i) => {
+                      const className = currIndex === i ? 'active' : ''
+                      return (<a
                         data-index={i}
-                        className={`list-group-item result ${currIndex === i ? 'active' : ''}`}
+                        className={className}
                         key={i}
                         onMouseEnter={this.setCurrIndex}
                         onClick={this.onClick}
                       >
                         {this.displayFunction(row)}
-                      </a>
-                    ))}
+                      </a>)
+                    })}
                     <a
                       data-index={visibleRows.length}
                       onMouseEnter={this.setCurrIndex}
                       onClick={this.onClick}
-                      className={`list-group-item result ${currIndex === visibleRows.length ? 'active' : ''}`}
+                      className={detailsLinkClasses}
                     >
                       {resourceName}: {visibleRows.length} of {rows.length}
                       {onNewSelected && (<strong> | Add New {resourceName}</strong>)}
@@ -186,5 +189,6 @@ SearchDrop.propTypes = {
   searchFilterFunction: PropTypes.func.isRequired,
   displayFunction: PropTypes.func,
   onNewSelected: PropTypes.func,
-  autoFocus: PropTypes.bool
+  autoFocus: PropTypes.bool,
+  className: PropTypes.string
 }

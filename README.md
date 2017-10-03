@@ -109,3 +109,9 @@ React/Redux app. Follows parts of [this article](https://medium.com/javascript-s
 ## Tests
 
 Tests always run in the console during local development. `tests/run-tests.js` is the starting point, and anything included as a -spec file in the tests dir will run.
+
+## Styles
+
+Moriana uses Less, normalize 3.0.2, and a modified version of the skeleton css boilerplate (getskeleton.com). Skeleton un-minified is 11KB and is not under active development. In Moriana it is (a) not included through a package manager and (b) slightly modified to quickly fit the project needs. Other frameworks (Bootstrap, Semantic, Material) were found to be too heavy and complicated to be as useful as skeleton.
+
+Icons and animations added development time and file size without much end user benefit and were removed.

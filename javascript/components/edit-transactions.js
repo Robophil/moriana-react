@@ -74,6 +74,10 @@ export default class EditTransactions extends React.Component {
     this.props.updateShipment('transaction', {delete: true, index: this.state.editingIndex})
   }
 
+  onSubmit = (event) => {
+    if (event) event.preventDefault()
+  }
+
   render () {
     const { items, itemsLoading, categories, transactions, shipmentType } = this.props
     const {
@@ -87,18 +91,21 @@ export default class EditTransactions extends React.Component {
     const emptyItem = {}
     return (
       <div>
-        <SearchDrop
-          rows={items}
-          loading={itemsLoading}
-          value={emptyItem}
-          valueSelected={this.toggleNewBatch}
-          onNewSelected={this.toggleNewItem}
-          label={'Search Items'}
-          resourceName={'Item'}
-          displayFunction={displayItemName}
-          searchFilterFunction={searchItems}
-          // autoFocus={isNew}
-        />
+        <form onSubmit={this.onSubmit}>
+          <SearchDrop
+            rows={items}
+            loading={itemsLoading}
+            value={emptyItem}
+            valueSelected={this.toggleNewBatch}
+            onNewSelected={this.toggleNewItem}
+            label={'Search Items'}
+            resourceName={'Item'}
+            displayFunction={displayItemName}
+            searchFilterFunction={searchItems}
+            // autoFocus={isNew}
+            className='search-items'
+          />
+        </form>
         <EditTransactionsTable
           transactions={transactions}
           onEditClick={this.transactionEditClick}

@@ -36,18 +36,22 @@ input {
   color: @error-red;
 }
 
-button.button-primary {
+.button, button {
+  color: black;
+  box-shadow: 1px 1px 4px rgba(0,0,0,.4);
+}
+
+.button-primary {
   background-color: @blue;
   border-color: @blue;
+  font-weight: normal;
+  color: white;
 }
 
-.button, button {
-  box-shadow: 2px 2px 2px #eee;
-}
-
-.button:hover, button:hover {
+.button:hover, button:hover, .button-primary:hover {
   background-color: black;
   color: white;
+  border: 1px solid black;
 }
 
 .container {
@@ -99,7 +103,7 @@ table {
     padding-right: 10px;
   }
   tbody tr:hover, tbody tr:hover .info {
-    background-color: #eee;
+    background-color: #aaa;
     cursor: pointer;
     color: black;
   }
@@ -148,5 +152,32 @@ table.no-hover tbody tr:hover {
   }
   .filters {
     text-align: center;
+  }
+}
+
+.close {
+  border: 0;
+  font-size: 2em;
+  box-shadow: none;
+  position: absolute;
+  right: 29px;
+  top: 4px;
+}
+
+.notification {
+  .modal;
+  text-align: center;
+  padding: 10px;
+  width: 80%;
+  p {
+    margin-bottom: 0px;
+    font-size: 1.2em;
+  }
+}
+
+.delete-modal {
+  text-align: center;
+  button {
+    margin-top: 15px;
   }
 }
