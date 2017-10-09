@@ -20,15 +20,15 @@ export const startNewShipmentAction = (currentLocationName, dbName, shipmentType
   return { type: START_NEW_SHIPMENT, currentLocationName, dbName, shipmentType }
 }
 
-export const updateShipmentAction = (key, value) => {
-  return { type: UPDATE_SHIPMENT, key, value }
+export const updateShipmentAction = (key, value, username) => {
+  return { type: UPDATE_SHIPMENT, key, value, username }
 }
 
 // thunkettes
 
 export const updateShipment = (key, value) => {
   return (dispatch, getState) => {
-    dispatch(updateShipmentAction(key, value))
+    dispatch(updateShipmentAction(key, value, getState().user.name))
     const state = getState().editshipment
     if (state.isValid) {
       // don't save a new shipment until there are transactions
@@ -91,7 +91,7 @@ export default (state = defaultEditShipment, action) => {
 
     case UPDATE_SHIPMENT: {
       const newState = clone(state)
-      const {key, value} = action
+      const {key, value, username} = action
       switch (action.key) {
         case 'date': {
           newState.shipment.date = value
@@ -111,7 +111,7 @@ export default (state = defaultEditShipment, action) => {
         }
         case 'transaction': {
           if (state.shipmentType === 'receive') {
-            editReceiveTransaction(newState.shipment, value)
+            editReceiveTransaction(newState.shipment, value, username)
           }
           Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
           break
@@ -122,7 +122,12 @@ export default (state = defaultEditShipment, action) => {
         }
       }
       Object.assign(newState, validateShipment(newState.shipment))
-      newState.shipment.updated = new Date().toISOString()
+      if (newState.isValid) {
+        newState.shipment.updated = new Date().toISOString()
+        if (!newState.shipment.username && newState.isNew) {
+          newState.shipment.username = username
+        }
+      }
       return newState
     }
 
@@ -207,11 +212,11 @@ const getTransactionTotals = (shipment) => {
 }
 
 // reminder: splice is (start index, # of things to remove/replace, [optional things to replace them with])
-const editReceiveTransaction = (shipment, value) => {
+const editReceiveTransaction = (shipment, value, username) => {
   if (value.delete) {
     shipment.transactions.splice(value.index, 1)
   } else {
-    const transaction = getTransactionFromInput(value)
+    const transaction = getTransactionFromInput(value, username)
     if (value.index !== undefined) {
       shipment.transactions.splice(value.index, 1, transaction)
     } else {

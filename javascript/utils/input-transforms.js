@@ -34,18 +34,18 @@ export const getISOExpirationFromInput = (input) => {
   return value
 }
 
-export const getTransactionFromInput = (input, username = null) => {
-  // TODO: add username
+export const getTransactionFromInput = (input, username) => {
+  const updated = new Date().toISOString()
   let { item, category, quantity, expiration, lot, unitPrice } = input
+  let totalValue = 0
   quantity = Number(quantity)
   expiration = getISOExpirationFromInput(expiration) || null
   lot = lot || null
-  let totalValue = 0
   if (unitPrice) {
     unitPrice = Number(unitPrice)
     totalValue = unitPrice * quantity
   } else {
     unitPrice = null
   }
-  return { item, category, quantity, expiration, lot, unitPrice, totalValue, username }
+  return { item, category, quantity, expiration, lot, unitPrice, totalValue, username, updated }
 }

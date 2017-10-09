@@ -4,6 +4,8 @@ import editshipmentReducer, {
   updateShipmentAction
 } from 'editshipment'
 
+import {dateWithoutTime} from 'test-utils'
+
 import chai from 'chai'
 const expect = chai.expect
 
@@ -12,15 +14,15 @@ const editedState = editshipmentReducer(receiveState, updateShipmentAction(
   'transaction', { item: 'Test item', category: 'test category', quantity: '3' }))
 
 export default {
-  'Start new shipment action:': {
+  'Start new receive shipment action:': {
     'should return a shipment defaulted to the current date' () {
-      expect(receiveState.shipment.date.split(':')[0]).eq(new Date().toISOString().split(':')[0])
+      expect(dateWithoutTime(receiveState.shipment.date)).eq(dateWithoutTime(new Date().toISOString()))
     },
     'should default to location to current location name ' () {
       expect(receiveState.shipment.to).eq('test warehouse')
     }
   },
-  'Update shipment action:': {
+  'Update receive shipment action:': {
     'a new receive transaction should update shipment totalValue and totalTransactions' () {
       expect(editedState.shipment.totalTransactions).eq(1)
       expect(editedState.shipment.totalValue).eq(0)

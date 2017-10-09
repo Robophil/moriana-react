@@ -1,23 +1,38 @@
 import ReactDOMServer from 'react-dom/server'
 import Moment from 'moment'
+import {clone} from 'utils'
 
 export const getRoute = (params = {}) => {
   return { route: { dbName: 'moriana_test_warehouse', currentLocationName: 'test warehouse', path: '/', params } }
 }
 
-export const getShipments = (n = 10) => {
+export const getShipment = (shipmentType = 'receive') => {
   const shipment = {
     id: 'dummy_id',
     value: 0,
     date: '2017-03-08T07:02:05.687Z',
     from: 'test warehouse',
+    fromType: 'I',
     to: 'test dispensary',
+    toType: 'I',
     updated: '2017-03-08T07:16:40.289Z',
     totalTransactions: 1,
-    username: 'testuser'
+    transactions: []
   }
+  if (shipmentType === 'receive') {
+    Object.assign(shipment, {
+      to: 'test warehouse',
+      toType: 'I',
+      from: 'test supplier',
+      fromType: 'E'
+    })
+  }
+  return shipment
+}
+
+export const getShipments = (n = 10) => {
   return [...Array(n).keys()].map(i => {
-    return Object.assign({}, shipment, { date: new Date().toISOString() })
+    return clone(getShipment('transfer'))
   })
 }
 
@@ -50,4 +65,8 @@ export const getTransactions = (numberBatches = 2, numberTransactions = 10) => {
     const expiration = expirations[i % numberBatches]
     return Object.assign({}, transaction, { item, expiration })
   })
+}
+
+export const dateWithoutTime = (date) => {
+  return date.split(':')[0]
 }
