@@ -38,7 +38,7 @@ const ShipmentPage = class extends React.Component {
 
                | created by <strong>{ship.username} </strong>
                 {ship.updated ? (<span>latest edited <strong>{h.dateFromNow(ship.updated)} </strong></span>) : '' }
-                | <ShipmentLink linkType='edit' shipmentType={shipmentType} id={ship._id} dbName={dbName} > edit</ShipmentLink>
+                |&nbsp; <ShipmentLink linkType='edit' className='button button-small' shipmentType={shipmentType} id={ship._id} dbName={dbName} > edit</ShipmentLink>&nbsp;
                 | <ShipmentLink linkType='print' id={ship._id} dbName={dbName} > print</ShipmentLink>
                 | <ShipmentLink linkType='print' id={`${ship._id}/reversed`} dbName={dbName} > print reversed </ShipmentLink>
             </div>

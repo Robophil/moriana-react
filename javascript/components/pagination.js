@@ -8,17 +8,19 @@ export default class Pagination extends React.Component {
     const startingNumber = 1 + offset
     const previousNumber = offset ? offset - limit : ''
     const nextNumber = offset + displayedCount < count ? offset + limit : ''
+    const previousLinkClasses = offset ? '' : 'disabled'
+    const nextLinkClasses = nextNumber ? '' : 'disabled'
     return (
       <span className='pagination'>
         <ul>
-          <li className={offset ? '' : 'disabled'}>
+          <li className={previousLinkClasses}>
             <a href={`/#d/${dbName}/${previousNumber}`}>&nbsp; « &nbsp;</a>
           </li>
           <li>
             {h.num(startingNumber)} - {h.num(offset + displayedCount)} of {h.num(count)}
           </li>
-          <li className={nextNumber ? '' : 'disabled'}>
-            <a href={`/#d/${dbName}/${nextNumber}`}>&nbsp; » &nbsp;</a>
+          <li className={nextLinkClasses}>
+            <a href={`/#d/${dbName}/${nextNumber || offset}`}>&nbsp; » &nbsp;</a>
           </li>
         </ul>
       </span>

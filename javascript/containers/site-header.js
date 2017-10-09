@@ -56,17 +56,18 @@ const SiteHeader = class extends React.Component {
     const links = hl.getLinks(user, config.isLocal, currentLocationName)
     const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, dbName)
     const {openSection} = this.state
-    const drawerClasses = (openSection === 'database') ? 'drawer database' : 'drawer right'
-    let subsection = ''
+    const numberOfDatabaseColumns = 4
+    const drawerClasses = `${openSection || 'no-section'} drawer`
+    let drawerLinks = null
     if (openSection) {
       if (openSection === 'search' && dbName) {
-        subsection = (<HeaderSearch closeClicked={this.hideLink} dbName={dbName} currentLocationName={currentLocationName} />)
+        drawerLinks = (<HeaderSearch closeClicked={this.hideLink} dbName={dbName} currentLocationName={currentLocationName} />)
+      } else if (openSection === 'database' && subsections[openSection].length > numberOfDatabaseColumns) {
+        drawerLinks = buildDatabaseLinkColumns(subsections[openSection], numberOfDatabaseColumns, this.linkClicked)
       } else {
-        subsection = (
-          <div className={drawerClasses}>
-            {subsections[openSection].map((link, i) => (<a href={link.url} key={i} onClick={this.linkClicked}>{link.title}</a>))}
-          </div>
-        )
+        drawerLinks = subsections[openSection].map((link, i) => (
+          <a href={link.url} key={i} onClick={this.linkClicked}>{link.title}</a>
+        ))
       }
     }
     return (
@@ -95,7 +96,7 @@ const SiteHeader = class extends React.Component {
               ))}
             </ul>
           )}
-          {subsection}
+          {openSection && (<div className={drawerClasses}>{drawerLinks}</div>)}
           <NotificationsList
             clearNote={this.props.clearNote}
             notifications={this.props.notifications}
@@ -112,3 +113,14 @@ export default connect(
   },
   { getUser, logout, clearNote }
 )(SiteHeader)
+
+export const buildDatabaseLinkColumns = (links, numberOfColumns, onClick) => {
+  // Make's an array of arrays; i.e. Python range: [[] for n in range(numberOfDatabaseColumns)]]
+  const rows = [...Array(numberOfColumns).keys()].map(i => [])
+  const itemsPerColumn = links.length / numberOfColumns
+  links.forEach((link, i) => {
+    const currentRow = rows[Math.floor(i / itemsPerColumn)]
+    currentRow.push((<a href={link.url} key={currentRow.length} onClick={onClick}>{link.title}</a>))
+  })
+  return rows.map((row, i) => (<div key={i} className='three columns'>{row}</div>))
+}

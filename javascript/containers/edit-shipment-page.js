@@ -4,7 +4,7 @@ import { getShipment } from 'shipments'
 import { updateShipment, startNewShipmentAction } from 'editshipment'
 import { getStockForEdit } from 'stock'
 import { getLocations } from 'locations'
-import { getItems } from 'items'
+import { getItems, addItem } from 'items'
 import { showNote } from 'notifications'
 import ShipmentLink from 'shipment-link'
 import DeleteShipmentModal from 'delete-shipment-modal'
@@ -32,16 +32,6 @@ const EditShipmentPage = class extends React.Component {
     this.props.getLocations(dbName, currentLocationName)
   }
 
-  // componentWillReceiveProps = (newProps) => {
-  //   if (newProps.currentShipment && newProps.type) {
-  //     // change the hash & fire the hashchange event so the router catches it, but don't replace state in history
-  //     // with edit/generic hash
-  //     const newHash = window.location.hash.replace('edit/generic', `edit/${newProps.type}`)
-  //     window.history.replaceState(undefined, undefined, newHash)
-  //     // window.dispatchEvent(new Event('hashchange'))
-  //   }
-  // }
-
   componentWillReceiveProps = (newProps) => {
     const {shipment, isNew} = newProps.editshipment
     const {currentLocationName, dbName} = this.props.route
@@ -64,7 +54,8 @@ const EditShipmentPage = class extends React.Component {
     }
   }
 
-  toggleDetails = () => {
+  toggleDetails = (event) => {
+    if (event) event.preventDefault()
     const {from, to, date} = this.props.editshipment.shipment
     if (from && to && date) {
       this.setState({ showEditDetails: !this.state.showEditDetails, showEditTransactions: true })
@@ -129,6 +120,7 @@ const EditShipmentPage = class extends React.Component {
             updateShipment={updateShipment}
             transactions={shipment.transactions}
             getStockForEdit={this.props.getStockForEdit}
+            addItem={this.props.addItem}
             date={shipment.date}
             stock={this.props.stock.transactions}
           />
@@ -171,6 +163,7 @@ export default connect(
     updateShipment,
     getShipment,
     getItems,
+    addItem,
     getLocations,
     showNote,
     getStockForEdit

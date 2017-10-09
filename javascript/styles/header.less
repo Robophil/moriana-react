@@ -31,27 +31,32 @@
     border-top: 1px solid #eee;
     padding-top: 15px;
     padding-bottom: 15px;
-    text-align: right;
     a {
-      // .two.columns;
+      font-size: 1.2em;
     }
   }
   .database {
     text-align: center;
-    column-count: 4;
-    column-width: auto;
+    text-transform: capitalize;
+    display: inline-block;
+    width: 100%;
     a {
       display: block;
-      text-transform: capitalize;
     }
   }
-  .drawer.right {
-    padding-right: 125px;
+
+  .account, .view, .create {
+    text-align: right;
+    font-size: 1.1em;
     a {
-      margin-left: 25px;
+      padding: 15px;
     }
   }
-  .header-search {
+  .view { padding-right: 240px; }
+  .create { padding-right: 115px; }
+  .account { padding-right: 10px; }
+
+  .search {
     width: 80%;
     margin: 0 auto;
     border: 1px solid #eee;

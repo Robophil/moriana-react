@@ -1,4 +1,5 @@
 import {parseHash} from 'routing'
+import {buildDatabaseLinkColumns} from 'site-header'
 
 import chai from 'chai'
 const expect = chai.expect
@@ -44,6 +45,30 @@ export default {
     'should return route = test on test' () {
       const route = parseHash('#d/moriana_loc/test', PAGES)
       expect(route.path).eq('test')
+    }
+  },
+  'site header build database link columns': {
+    'should return given number of columns' () {
+      let columnCount = 2
+      let links = [...Array(30).keys()].map(i => { return {} })
+      let result = buildDatabaseLinkColumns(links, columnCount)
+      expect(result.length).eq(columnCount)
+      expect(result[0].props.children.length).eq(15)
+      expect(result[1].props.children.length).eq(15)
+      columnCount = 3
+      links = [...Array(13).keys()].map(i => { return {} })
+      result = buildDatabaseLinkColumns(links, columnCount)
+      expect(result.length).eq(columnCount)
+      expect(result[0].props.children.length).eq(5)
+      expect(result[1].props.children.length).eq(4)
+      expect(result[2].props.children.length).eq(4)
+      columnCount = 9
+      links = [...Array(8).keys()].map(i => { return {} })
+      result = buildDatabaseLinkColumns(links, columnCount)
+      expect(result.length).eq(columnCount)
+      expect(result[0].props.children.length).eq(1)
+      expect(result[7].props.children.length).eq(1)
+      expect(result[8].props.children.length).eq(0)
     }
   }
 }

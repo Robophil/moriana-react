@@ -1,8 +1,10 @@
 // actions and reducer for viewing items
 import client from 'client'
+import clone from 'clone'
 
 export const REQUEST_ITEMS = 'REQUEST_ITEMS'
 export const RECEIVED_ITEMS = 'RECEIVED_ITEMS'
+export const ADD_ITEM = 'ADD_ITEM'
 
 export const getItems = (dbName, currentLocationName) => {
   return dispatch => {
@@ -21,6 +23,12 @@ export const getItems = (dbName, currentLocationName) => {
   }
 }
 
+export const addItem = ({item, category}) => {
+  return dispatch => {
+    dispatch({ type: ADD_ITEM, item, category })
+  }
+}
+
 const defaultItems = {
   loading: false,
   items: [],
@@ -32,10 +40,23 @@ const defaultItems = {
 export default (state = defaultItems, action) => {
   switch (action.type) {
     case REQUEST_ITEMS: {
-      return { ...state, loading: true, apiError: null }
+      const newState = clone(state)
+      return { ...newState, loading: true, apiError: null }
     }
     case RECEIVED_ITEMS: {
-      return { ...state, loading: false, firstRequest: false, ...action.response }
+      const newState = clone(state)
+      return { ...newState, loading: false, firstRequest: false, ...action.response }
+    }
+    case ADD_ITEM: {
+      const newState = clone(state)
+      const {item, category} = action
+      if (newState.categories.every(cat => cat.name !== category)) {
+        newState.categories.push({ name: category })
+      }
+      if (newState.items.every(item => item.item !== item && item.category !== category)) {
+        newState.items.push({ item, category })
+      }
+      return { ...newState, loading: false, firstRequest: false, ...action.response }
     }
     default: {
       return state
@@ -46,8 +67,7 @@ export default (state = defaultItems, action) => {
 function parseResponse (body) {
   const headers = ['from', 'item', 'category']
   const items = body.rows.map(row => {
-    headers.forEach((header, i) => { row[header] = row.key[i] })
-    return row
+    return { item: row.key[1], category: row.key[2], value: row.value}
   }).sort((a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase()))
   const categories = getCategories(items)
   return { items, categories }

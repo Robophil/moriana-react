@@ -44,6 +44,7 @@ export default class EditTransactions extends React.Component {
   newItemSelected = (item, category) => {
     this.setState({ showNewItem: false })
     this.toggleNewBatch({item, category})
+    this.props.addItem({item, category})
   }
 
   transactionEditClick = (index) => {
@@ -160,5 +161,6 @@ EditTransactions.propTypes = {
   updateShipment: PropTypes.func.isRequired,
   getStockForEdit: PropTypes.func.isRequired,
   stock: PropTypes.array.isRequired,
-  date: PropTypes.string.isRequired
+  date: PropTypes.string.isRequired,
+  addItem: PropTypes.func.isRequired
 }
