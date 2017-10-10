@@ -15,7 +15,9 @@ export default class VendorIdInput extends React.Component {
   }
 
   onBlur = () => {
-    this.props.valueUpdated('vendorId', this.state.inputValue)
+    if (this.state.inputValue !== this.props.value) {
+      this.props.valueUpdated('vendorId', this.state.inputValue)
+    }
   }
 
   render () {

@@ -190,6 +190,15 @@ function addResultingQuantities (rows) {
   })
 }
 
+export function getItemTotalQuantity (transactions, item, category) {
+  // const sum = rows.reduce((sum, t) => {
+  //   sum += t.quantity
+  //   return sum
+  // }, 0)
+  // editingTransactions = transactions.filter(t => t.item === item && t.category === category)
+  return 0
+}
+
 // function getBatchesOnDate (transactions, date) {
 //   return getBatches(_.filter(transactions, t => t.date < date))
 // }

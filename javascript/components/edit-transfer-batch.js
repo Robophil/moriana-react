@@ -8,15 +8,12 @@ import StaticInput from 'static-input'
 import ClickOutHandler from 'react-onclickout'
 
 export default class EditTransferBatch extends React.Component {
-  state = { error: null, quantity: '' }
+  state = { error: false, quantity: '', transactions: [] }
 
   componentDidMount = () => {
-    let quantity = this.props.transactions.reduce((memo, t) => {
-      memo += t.quantity
-      return memo
-    }, 0)
-    quantity = quantity || ''
-    this.setState({quantity})
+    this.setState({
+      quantity: this.props.itemTransferQuantity || ''
+    })
 
     const { dbName, currentLocationName, category, item, date } = this.props
     this.props.getStockForEdit(dbName, currentLocationName, category, item, date)
@@ -24,10 +21,6 @@ export default class EditTransferBatch extends React.Component {
 
   onKeyDown = (event) => {
     switch (h.keyMap(event.keyCode)) {
-      case 'ENTER': {
-        this.onSubmit()
-        break
-      }
       case 'ESCAPE': {
         this.props.closeClicked()
         break
@@ -42,12 +35,19 @@ export default class EditTransferBatch extends React.Component {
 
   quantityChanged = (event) => {
     const quantity = event.currentTarget.value
-    this.setState({ quantity })
+    const error = !numberInputIsValid(quantity)
+    this.setState({ quantity, error })
   }
 
-  onSubmit = (event) => {
+  quantityConfirmed = (event) => {
     if (event) event.preventDefault()
-    this.props.closeClicked()
+    console.log('quantity confirmed')
+  }
+
+  done = (event) => {
+    if (event) event.preventDefault()
+    console.log('save shipment')
+    // this.props.closeClicked()
   }
 
   deleteClicked = () => {
@@ -56,8 +56,8 @@ export default class EditTransferBatch extends React.Component {
   }
 
   render () {
-    const { item, category, batch, transactions, closeClicked, deleteClicked, stock } = this.props
-    const { error, quantity } = this.state
+    const { item, category, batch, closeClicked, deleteClicked, itemStock, itemStockLoading } = this.props
+    const { error, quantity, transactions } = this.state
     return (
       <ClickOutHandler onClickOut={closeClicked}>
         <div className='modal edit-batch'>
@@ -68,54 +68,56 @@ export default class EditTransferBatch extends React.Component {
             </button>
             <h5>{item} {category}</h5>
           </div>
-          <form onSubmit={this.onSubmit}>
-            <div className={`${error ? 'has-error' : ''}`}>
-              <label>Quantity</label>
-              <div className='input-group'>
-                <input
-                  type='text'
-                  value={quantity}
-                  data-key='quantity'
-                  onChange={this.quantityChanged}
-                  onKeyDown={this.onKeyDown}
-                  onBlur={this.onBlur}
-                  autoFocus
-                />
-                {error && (<p className='error'>
-                  Quantity is required and must be numeric.
-                </p>)}
+          {itemStockLoading ? (<div className='loader'></div>) : (
+            <form onSubmit={this.quantityConfirmed}>
+              <div className={`${error ? 'error' : ''}`}>
+                <label>Quantity</label>
+                <div className='input-group'>
+                  <input
+                    type='text'
+                    value={quantity}
+                    data-key='quantity'
+                    onChange={this.quantityChanged}
+                    onKeyDown={this.onKeyDown}
+                    onBlur={this.onBlur}
+                    autoFocus
+                  />
+                  {error && (<p className='error'>
+                    Quantity is required and must be numeric.
+                  </p>)}
+                </div>
               </div>
-            </div>
-            <button className='button-primary'>Confirm Quantity</button>
-            <br /><br />
-            <table>
-              <thead>
-                <tr>
-                  <th>Expiration</th>
-                  <th>Lot</th>
-                  <th>Stock</th>
-                  <th className='text-capitalize'>Quantity</th>
-                  <th>Resulting Stock</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((t,i) => (
-                  <tr key={i}>
-                    <td>{h.expiration(t.expiration)}</td>
-                    <td>{t.lot}</td>
-                    <td>{h.num(t.stock)}</td>
-                    <td>{h.num(t.quantity)}</td>
-                    <td>{h.num(t.result)}</td>
+              <button onClick={this.quantityConfirmed} className='button-primary'>Confirm Quantity</button>
+              <br /><br />
+              <table>
+                <thead>
+                  <tr>
+                    <th>Expiration</th>
+                    <th>Lot</th>
+                    <th>Stock</th>
+                    <th className='text-capitalize'>Quantity</th>
+                    <th>Resulting Stock</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <button onMouseDown={closeClicked}>Cancel</button>
-            <button onClick={this.onSubmit}>Done</button>
-            {batch && (
-              <button onMouseDown={this.deleteClicked} className='pull-right'>delete</button>
-            )}
-          </form>
+                </thead>
+                <tbody>
+                  {itemStock.map((t,i) => (
+                    <tr key={i}>
+                      <td>{h.expiration(t.expiration)}</td>
+                      <td>{t.lot}</td>
+                      <td>{h.num(t.stock)}</td>
+                      <td>{h.num(t.quantity)}</td>
+                      <td>{h.num(t.result)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <button onMouseDown={closeClicked}>Cancel</button>
+              <button onClick={this.done}>Done</button>
+              {batch && (
+                <button onMouseDown={this.deleteClicked} className='pull-right'>delete</button>
+              )}
+            </form>
+          )}
         </div>
       </ClickOutHandler>
     )
@@ -128,11 +130,12 @@ EditTransferBatch.propTypes = {
   valueUpdated: PropTypes.func.isRequired,
   closeClicked: PropTypes.func.isRequired,
   deleteClicked: PropTypes.func.isRequired,
-  transactions: PropTypes.array.isRequired,
-  stock: PropTypes.array.isRequired,
   getStockForEdit: PropTypes.func.isRequired,
   dbName: PropTypes.string.isRequired,
   currentLocationName: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
-  batch: PropTypes.object
+  itemStock: PropTypes.array.isRequired,
+  itemStockLoading: PropTypes.bool.isRequired,
+  batch: PropTypes.object,
+  itemTransferQuantity: PropTypes.number
 }

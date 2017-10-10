@@ -135,7 +135,7 @@ export default class EditShipmentDetails extends React.Component {
           />
           {detailsElement}
         </form>
-        <button className='save-details' onClick={onDone}>Save Details</button>
+        <button className='save-details' onClick={onDone}>Done</button>
         {this.state.showNewLocation && (
           <NewLocation
             value={this.state.newLocationName}

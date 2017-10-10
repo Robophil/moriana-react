@@ -122,7 +122,8 @@ const EditShipmentPage = class extends React.Component {
             getStockForEdit={this.props.getStockForEdit}
             addItem={this.props.addItem}
             date={shipment.date}
-            stock={this.props.stock.transactions}
+            itemStock={this.props.stock.batches}
+            itemStockLoading={this.props.stock.loading}
           />
         )}
         {!isNew && (

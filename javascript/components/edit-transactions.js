@@ -6,6 +6,7 @@ import EditTransactionsTable from 'edit-transactions-table'
 import EditBatch from 'edit-batch'
 import EditTransferBatch from 'edit-transfer-batch'
 import NewItem from 'new-item'
+import {getItemTotalQuantity} from 'stock'
 
 export default class EditTransactions extends React.Component {
   state = {
@@ -50,9 +51,9 @@ export default class EditTransactions extends React.Component {
   transactionEditClick = (index) => {
     const {transactions, shipmentType} = this.props
     const {item, category, quantity, expiration, lot, unitPrice} = transactions[index]
-    let editingTransactions = []
+    let itemTransferQuantity = null
     if (shipmentType !== 'receive') {
-      editingTransactions = transactions.filter(t => t.item === item && t.category === category)
+      itemTransferQuantity = getItemTotalQuantity(transactions, item, category)
     }
     this.setState({
       editingItem: item,
@@ -60,7 +61,7 @@ export default class EditTransactions extends React.Component {
       editingBatch: { quantity, expiration, lot, unitPrice },
       editingIndex: Number(index),
       showBatchEdit: true,
-      editingTransactions,
+      itemTransferQuantity
     })
   }
 
@@ -85,7 +86,7 @@ export default class EditTransactions extends React.Component {
       editingItem,
       editingCategory,
       editingBatch,
-      editingTransactions,
+      itemTransferQuantity,
       showBatchEdit,
       showNewItem
     } = this.state
@@ -128,13 +129,14 @@ export default class EditTransactions extends React.Component {
             batch={editingBatch}
             valueUpdated={this.updateTransaction}
             deleteClicked={this.deleteTransaction}
-            transactions={editingTransactions}
+            itemTransferQuantity={itemTransferQuantity}
             closeClicked={this.hideEditBatch}
             getStockForEdit={this.props.getStockForEdit}
-            stock={this.props.stock}
+            itemStock={this.props.itemStock}
             dbName={this.props.dbName}
             currentLocationName={this.props.currentLocationName}
             date={this.props.date}
+            itemStockLoading={this.props.itemStockLoading}
           />
         )}
         {showNewItem && (
@@ -160,7 +162,8 @@ EditTransactions.propTypes = {
   transactions: PropTypes.array.isRequired,
   updateShipment: PropTypes.func.isRequired,
   getStockForEdit: PropTypes.func.isRequired,
-  stock: PropTypes.array.isRequired,
+  itemStock: PropTypes.array.isRequired,
+  itemStockLoading: PropTypes.bool,
   date: PropTypes.string.isRequired,
   addItem: PropTypes.func.isRequired
 }
