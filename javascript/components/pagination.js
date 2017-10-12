@@ -8,8 +8,8 @@ export default class Pagination extends React.Component {
     const startingNumber = 1 + offset
     const previousNumber = offset ? offset - limit : ''
     const nextNumber = offset + displayedCount < count ? offset + limit : ''
-    const previousLinkClasses = offset ? '' : 'disabled'
-    const nextLinkClasses = nextNumber ? '' : 'disabled'
+    const previousLinkClasses = offset ? '' : 'disabled-link'
+    const nextLinkClasses = nextNumber ? '' : 'disabled-link'
     return (
       <span className='pagination'>
         <ul>

@@ -54,6 +54,13 @@ export const numberInputIsValid = (input) => {
   }
 }
 
+export const quantityIsValid = (input) => {
+  if (input && (input[0] === '-' || input[0] === '0')) {
+    return false
+  }
+  return numberInputIsValid(input)
+}
+
 export const isPresent = (input) => {
   return (input)
 }

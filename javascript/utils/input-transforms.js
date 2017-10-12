@@ -1,4 +1,5 @@
 import Moment from 'moment'
+import clone from 'clone'
 
 export const getISODateFromInput = (inputDate) => {
   let date = null
@@ -48,4 +49,26 @@ export const getTransactionFromInput = (input, username) => {
     unitPrice = null
   }
   return { item, category, quantity, expiration, lot, unitPrice, totalValue, username, updated }
+}
+
+export const mergeTransferQuantityWithStock = (quantity, stock) => {
+  let remainingQuantity = quantity
+  return stock.map(batch => {
+    const t = clone(batch)
+    if (remainingQuantity) {
+       if (remainingQuantity < t.sum) {
+         t.quantity = remainingQuantity
+         t.resultingQuantity = t.sum - remainingQuantity
+         remainingQuantity = 0
+       } else {
+         t.quantity = t.sum
+         t.resultingQuantity = 0
+         remainingQuantity = remainingQuantity - t.sum
+       }
+    } else {
+      t.quantity = 0
+      t.resultingQuantity = t.sum
+    }
+    return t
+  })
 }

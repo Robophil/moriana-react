@@ -127,7 +127,7 @@ export default class EditTransactions extends React.Component {
             item={editingItem}
             category={editingCategory}
             batch={editingBatch}
-            valueUpdated={this.updateTransaction}
+            valueUpdated={this.props.updateShipment}
             deleteClicked={this.deleteTransaction}
             itemTransferQuantity={itemTransferQuantity}
             closeClicked={this.hideEditBatch}

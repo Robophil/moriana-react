@@ -112,6 +112,8 @@ export default (state = defaultEditShipment, action) => {
         case 'transaction': {
           if (state.shipmentType === 'receive') {
             editReceiveTransaction(newState.shipment, value, username)
+          } else {
+            newState.shipment.transactions = makeTransferTransactionEdits(newState.shipment, value, username)
           }
           Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
           break
@@ -223,5 +225,21 @@ const editReceiveTransaction = (shipment, value, username) => {
       shipment.transactions.unshift(transaction)
     }
   }
+}
 
+export const makeTransferTransactionEdits = (shipment, displayTransactions, username) => {
+  // const newTransactions = clone(displayTransactions).reduce((memo,t) => {
+  //   if (t.quantity) {
+  //     // delete t.sum
+  //     // getTransactionFromInput
+  //     memo.push(t)
+  //   }
+  // }, [])
+  // let transactions = clone(shipment.transactions)
+  // const placementIndex = 0
+  // const countOfExistingTransactionsOnItem = 0
+  // transactions.forEach(t => {
+  //   if (t.item )
+  // })
+  return shipment.transactions
 }
