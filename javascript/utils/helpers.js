@@ -89,3 +89,10 @@ export default {
   }
 
 }
+
+
+export const setCursorAtEnd = (event) => {
+    var val = event.target.value;
+    event.target.value = '';
+    event.target.value = val;
+}

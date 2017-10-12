@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import h from 'helpers'
+import h, {setCursorAtEnd} from 'helpers'
 import Moment from 'moment'
 import { isPresentAndNumber, quantityIsValid, expirationIsValid } from 'validation'
 import { getISOExpirationFromInput, mergeTransferQuantityWithStock } from 'input-transforms'
@@ -99,11 +99,11 @@ export default class EditTransferBatch extends React.Component {
                   <input
                     type='text'
                     value={quantity}
-                    data-key='quantity'
                     onChange={this.quantityChanged}
                     onKeyDown={this.onKeyDown}
                     onBlur={this.onBlur}
                     autoFocus
+                    onFocus={setCursorAtEnd}
                   />
                   {quantityError && (<p className='error'>
                     Quantity is required and must be numeric.

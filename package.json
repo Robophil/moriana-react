@@ -3,37 +3,38 @@
   "version": "3.0.0",
   "description": "moriana.org",
   "author": "<kev.doran@gmail.com>",
+  "repository": "https://github.com/kdoran/moriana-react/",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server"
   },
   "dependencies": {
-    "babel-core": "^6.24.1",
-    "babel-eslint": "^8.0.0",
-    "babel-loader": "^7.0.0",
-    "babel-preset-env": "^1.4.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
-    "chai": "^4.1.0",
-    "css-loader": "^0.28.0",
+    "chai": "^4.1.2",
+    "css-loader": "^0.28.7",
     "isomorphic-fetch": "^2.2.1",
     "less": "^2.7.2",
-    "less-loader": "^4.0.3",
-    "moment": "^2.18.1",
-    "prop-types": "^15.5.8",
+    "less-loader": "^4.0.5",
+    "moment": "^2.19.1",
+    "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "react-onclickout": "^2.0.7",
-    "react-redux": "^5.0.4",
-    "redux": "^3.6.0",
+    "react-onclickout": "^2.0.8",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
     "style-loader": "^0.18.2",
-    "webpack": "^3.6.0",
-    "webpack-dev-server": "^2.4.2"
+    "webpack": "^3.7.1",
+    "webpack-dev-server": "^2.9.1"
   },
   "devDependencies": {
-    "standard": "^10.0.2",
+    "standard": "^10.0.3",
     "standard-loader": "^6.0.1"
   }
 }
