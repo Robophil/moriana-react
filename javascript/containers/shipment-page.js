@@ -28,7 +28,6 @@ const ShipmentPage = class extends React.Component {
         ) : (
           <div>
             <h5 className='text-capitalize'>
-              {/* <i className='icon mail-solid' /> */}
               {displayType}: {ship.from} to {ship.to}
             </h5>
             <div>

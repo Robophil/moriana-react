@@ -19,7 +19,12 @@ export default class EditTransactions extends React.Component {
   }
 
   toggleNewBatch = (value) => {
-    this.setState({ editingItem: value.item, editingCategory: value.category, showBatchEdit: true })
+    this.setState({
+      editingItem: value.item,
+      editingCategory: value.category,
+      showBatchEdit: true,
+      itemTransferQuantity: 0
+    })
   }
 
   hideEditBatch = () => {
@@ -88,6 +93,7 @@ export default class EditTransactions extends React.Component {
   }
 
   transferTransactionsDeleted = () => {
+    const { editingItem, editingCategory } = this.state
     this.props.updateShipment('transfer_transactions', {
       deleted: true,
       item: editingItem,
@@ -101,6 +107,7 @@ export default class EditTransactions extends React.Component {
 
   render () {
     const { items, itemsLoading, categories, transactions, shipmentType } = this.props
+    const addNewItemFunction = shipmentType === 'receive' ? this.toggleNewItem : null
     const {
       editingItem,
       editingCategory,
@@ -118,7 +125,7 @@ export default class EditTransactions extends React.Component {
             loading={itemsLoading}
             value={emptyItem}
             valueSelected={this.toggleNewBatch}
-            onNewSelected={this.toggleNewItem}
+            onNewSelected={addNewItemFunction}
             label={'Search Items'}
             resourceName={'Item'}
             displayFunction={displayItemName}

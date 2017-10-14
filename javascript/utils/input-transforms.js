@@ -44,7 +44,7 @@ export const getTransactionFromInput = (inputTransaction) => {
 }
 
 export const mergeTransferQuantityWithStock = (quantity, stock) => {
-  let remainingQuantity = quantity
+  let remainingQuantity = quantity ? Number(quantity) : 0
   return stock.map(batch => {
     const t = clone(batch)
     if (remainingQuantity) {

@@ -31,7 +31,6 @@ export class ShipmentsPage extends React.Component {
           <div>
             <div className='shipments-header'>
               <h5>
-                {/* <i className='icon mail-solid' /> */}
                 Shipments: <span>{currentLocationName}</span>
               </h5>
               <div className='pull-right'>

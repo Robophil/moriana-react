@@ -88,7 +88,15 @@ export const searchItems = (rows, input) => {
   return rows.filter(item =>
     item.item.toLowerCase().indexOf(input) !== -1 ||
     item.category.toLowerCase().indexOf(input) !== -1
-  )
+  ).sort((a, b) => {
+    if (a.item.toLowerCase().indexOf(input) === 0) {
+      return -1
+    } else if (b.item.toLowerCase().indexOf(input) === 0) {
+      return 1
+    } else {
+      return 0
+    }
+  })
 }
 
 export const searchCategories = (rows, input) => {

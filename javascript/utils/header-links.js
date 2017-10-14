@@ -3,9 +3,9 @@ export default {
   getSublinks (prettyRoles, isLocal, dbName) {
     const subLinks = {
       account: [
-        { title: 'Account', url: '/account', icon: 'icon profile' },
-        { title: 'Status', url: '/status/', icon: 'icon clock-h9m0' },
-        { title: 'Log Out', url: '/logout', icon: 'icon close' }
+        { title: 'Account', url: '/account' },
+        { title: 'Status', url: '/status/' },
+        { title: 'Log Out', url: '/logout' }
       ],
       admin: [
         { title: 'Users', url: '/admin/users/' },
@@ -15,17 +15,17 @@ export default {
         { title: 'Delete Doc', url: '/admin/delete-doc/' }
       ],
       view: [
-        { title: 'Shipments', url: `#d/${dbName}/`, icon: 'icon mail-solid' },
-        { title: 'Current Stock', url: `#d/${dbName}/stock/`, icon: 'icon menu' },
-        { title: 'Reports', url: `#d/${dbName}/reports/`, icon: 'icono-barChart' }
+        { title: 'Shipments', url: `#d/${dbName}/` },
+        { title: 'Current Stock', url: `#d/${dbName}/stock/` },
+        { title: 'Reports', url: `#d/${dbName}/reports/` }
       ],
       create: [
-        { title: 'Receive', url: `#d/${dbName}/shipment/edit/receive`, icon: 'icon arrow-down' },
-        { title: 'Transfer', url: `#d/${dbName}/shipment/edit/transfer`, icon: 'icon arrow-right' },
-        { title: 'Transfer Out', url: `#d/${dbName}/shipment/edit/transfer-out`, icon: 'icon arrow-up' }
+        { title: 'Receive', url: `#d/${dbName}/shipment/edit/receive` },
+        { title: 'Transfer', url: `#d/${dbName}/shipment/edit/transfer` },
+        { title: 'Transfer Out', url: `#d/${dbName}/shipment/edit/transfer-out` }
       ],
       search: [],
-      database: prettyRoles.map(db => { return { title: db.name, url: `#d/${db.dbName}/`, icon: 'icon focus' } })
+      database: prettyRoles.map(db => { return { title: db.name, url: `#d/${db.dbName}/` } })
     }
     if (isLocal) {
       subLinks.admin.push(
@@ -34,9 +34,7 @@ export default {
       )
     }
     if (dbName && dbName.toLowerCase().indexOf('dispensary') !== -1) {
-      subLinks.create.push({
-        title: 'Dispense', url: `#d/${dbName}/shipment/edit/dispense`, icon: 'icon arrow-right'
-      })
+      subLinks.create.push({ title: 'Dispense', url: `#d/${dbName}/shipment/edit/dispense` })
     }
     return subLinks
   },
@@ -45,24 +43,16 @@ export default {
     if (!user.name) return { leftLinks: [], rightLinks: [] }
     const server = isLocal ? ' [local]' : ' [online]'
     const leftLinks = []
-    const rightLinks = [{ section: 'account', icon: 'profile', linkName: user.name }]
+    const rightLinks = [{ section: 'account', linkName: user.name }]
     if (user.isAdmin) {
-      leftLinks.push({
-        section: 'admin',
-        icon: 'gear',
-        linkName: `Admin ${server}`
-      })
+      leftLinks.push({ section: 'admin', linkName: `Admin ${server}` })
     } else {
-      leftLinks.push({
-        section: 'database',
-        icon: 'focus',
-        linkName: (currentLocationName || 'Select Database') + server
-      })
+      leftLinks.push({ section: 'database', linkName: (currentLocationName || 'Select Database') + server })
       if (currentLocationName) {
         rightLinks.unshift(
-          { linkName: 'View', icon: 'menu', section: 'view' },
-          { section: 'create', icon: 'plus', linkName: 'Create' },
-          { linkName: 'Search', icon: 'search', section: 'search' }
+          { linkName: 'View', section: 'view' },
+          { section: 'create', linkName: 'Create' },
+          { linkName: 'Search', section: 'search' }
         )
       }
     }
