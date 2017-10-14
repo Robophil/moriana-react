@@ -1,6 +1,5 @@
 import React from 'react'
 import ClickOutHandler from 'react-onclickout'
-import PropTypes from 'prop-types'
 
 export default class DeleteShipmentModal extends React.Component {
   render () {
@@ -24,10 +23,4 @@ export default class DeleteShipmentModal extends React.Component {
       </ClickOutHandler>
     )
   }
-}
-
-DeleteShipmentModal.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired,
-  shipmentName: PropTypes.string.isRequired,
 }

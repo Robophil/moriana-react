@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import h from 'helpers'
 import ClickOutHandler from 'react-onclickout'
 
@@ -86,11 +85,4 @@ export default class NewLocation extends React.Component {
       </ClickOutHandler>
     )
   }
-}
-
-NewLocation.propTypes = {
-  value: PropTypes.string,
-  valueKey: PropTypes.string.isRequired,
-  valueUpdated: PropTypes.func.isRequired,
-  closeClicked: PropTypes.func.isRequired
 }

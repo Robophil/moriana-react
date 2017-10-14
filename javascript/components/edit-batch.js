@@ -1,9 +1,8 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import h from 'helpers'
 import Moment from 'moment'
 import { isPresentAndNumber, numberInputIsValid, expirationIsValid } from 'validation'
-import { getISOExpirationFromInput } from 'input-transforms'
+import { getISOExpirationFromInput, getTransactionFromInput } from 'input-transforms'
 import StaticInput from 'static-input'
 import ClickOutHandler from 'react-onclickout'
 
@@ -100,8 +99,9 @@ export default class EditBatch extends React.Component {
       }
     })
     if (!formHasError) {
-      const value = { item, category, quantity, expiration, lot, unitPrice }
-      this.props.valueUpdated(value)
+      const inputTransaction = { item, category, quantity, expiration, lot, unitPrice }
+      const transactionValue = getTransactionFromInput(inputTransaction)
+      this.props.transactionUpdated(transactionValue)
       this.props.closeClicked()
     }
   }
@@ -209,13 +209,4 @@ export default class EditBatch extends React.Component {
       </ClickOutHandler>
     )
   }
-}
-
-EditBatch.propTypes = {
-  item: PropTypes.string.isRequired,
-  category: PropTypes.string.isRequired,
-  valueUpdated: PropTypes.func.isRequired,
-  closeClicked: PropTypes.func.isRequired,
-  deleteClicked: PropTypes.func.isRequired,
-  batch: PropTypes.object
 }

@@ -1,6 +1,5 @@
 import React from 'react'
 import h from 'helpers'
-import PropTypes from 'prop-types'
 import displayPatient from 'display-patient'
 
 export default class StaticShipmentDetails extends React.Component {
@@ -21,8 +20,4 @@ export default class StaticShipmentDetails extends React.Component {
       </div>
     )
   }
-}
-
-StaticShipmentDetails.propTypes = {
-  shipment: PropTypes.object.isRequired
 }

@@ -8,15 +8,12 @@ import {getShipment, dateWithoutTime} from 'test-utils'
 import chai from 'chai'
 const expect = chai.expect
 
-const expectedUsername = 'testuser'
+const testUsername = 'testuser'
 const today = dateWithoutTime(new Date().toISOString())
 
 const newShipmentState = editshipmentReducer(null, startNewShipmentAction('test warehouse', 'moriana_test_warehouse', 'receive'))
-const existingShipmentState = editshipmentReducer({
-  shipment: getShipment('receive'),
-  shipmentType: 'receive',
-  isNew: true
-}, {})
+const existingShipmentState = editshipmentReducer({ isValid: true, shipment: getShipment('receive'), }, {})
+const editedTransaction = { item: 'Test item', category: 'test category', quantity: 3 }
 
 export default {
   'Start new shipment action:': {
@@ -29,23 +26,21 @@ export default {
 
   'Updating a shipment action:': {
     'should include an updated attribute equal to today' () {
-      const editedState = editshipmentReducer(existingShipmentState, updateShipmentAction(
-        'transaction', { item: 'Test item', category: 'test category', quantity: '3' }))
+      const editedState = editshipmentReducer(existingShipmentState,
+        updateShipmentAction('receive_transaction', { editedTransaction } ))
       expect(dateWithoutTime(editedState.shipment.updated)).eq(today)
     },
 
-    'should include the given username as a shipment attribute' () {
-      const editedState = editshipmentReducer(existingShipmentState, updateShipmentAction(
-        'transaction', { item: 'Test item', category: 'test category', quantity: '3' }, expectedUsername))
-      expect(editedState.shipment.username).eq(expectedUsername)
+    'should include a username on a new transaction' () {
+      const editedState = editshipmentReducer(existingShipmentState,
+        updateShipmentAction('receive_transaction', {editedTransaction}, testUsername))
+      expect(editedState.shipment.transactions[0].username).eq(testUsername)
     },
 
-    'should include a username and a timestamp on a new transaction' () {
-      const editedState = editshipmentReducer(existingShipmentState, updateShipmentAction(
-        'transaction', { item: 'Test item', category: 'test category', quantity: '3' }, expectedUsername))
-      const {username, updated} = editedState.shipment.transactions[0]
-      expect(username).eq(expectedUsername)
-      expect(dateWithoutTime(updated)).eq(today)
+    'should include a timestamp on a new transaction' () {
+      const editedState = editshipmentReducer(existingShipmentState,
+        updateShipmentAction('receive_transaction', { editedTransaction }, testUsername))
+      expect(dateWithoutTime(editedState.shipment.transactions[0].updated)).eq(today)
     }
   }
 

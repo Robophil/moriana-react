@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 export default class VendorIdInput extends React.Component {
   state = { inputValue: '' }
@@ -34,9 +33,4 @@ export default class VendorIdInput extends React.Component {
       </div>
     )
   }
-}
-
-VendorIdInput.propTypes = {
-  value: PropTypes.string,
-  valueUpdated: PropTypes.func.isRequired
 }

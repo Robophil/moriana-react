@@ -1,6 +1,5 @@
 import React from 'react'
 import h from 'helpers'
-import PropTypes from 'prop-types'
 import ClickOutHandler from 'react-onclickout'
 import StaticInput from 'static-input'
 
@@ -177,18 +176,4 @@ export default class SearchDrop extends React.Component {
       </ClickOutHandler>
     )
   }
-}
-
-SearchDrop.propTypes = {
-  label: PropTypes.string.isRequired,
-  resourceName: PropTypes.string.isRequired,
-  rows: PropTypes.array.isRequired,
-  loading: PropTypes.bool.isRequired,
-  value: PropTypes.object.isRequired,
-  valueSelected: PropTypes.func.isRequired,
-  searchFilterFunction: PropTypes.func.isRequired,
-  displayFunction: PropTypes.func,
-  onNewSelected: PropTypes.func,
-  autoFocus: PropTypes.bool,
-  className: PropTypes.string
 }

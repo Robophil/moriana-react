@@ -35,20 +35,12 @@ export const getISOExpirationFromInput = (input) => {
   return value
 }
 
-export const getTransactionFromInput = (input, username) => {
-  const updated = new Date().toISOString()
-  let { item, category, quantity, expiration, lot, unitPrice } = input
-  let totalValue = 0
-  quantity = Number(quantity)
-  expiration = getISOExpirationFromInput(expiration) || null
-  lot = lot || null
-  if (unitPrice) {
-    unitPrice = Number(unitPrice)
-    totalValue = unitPrice * quantity
-  } else {
-    unitPrice = null
-  }
-  return { item, category, quantity, expiration, lot, unitPrice, totalValue, username, updated }
+export const getTransactionFromInput = (inputTransaction) => {
+  const t = clone(inputTransaction)
+  t.unitPrice = Number(t.unitPrice)
+  t.quantity = Number(t.quantity)
+  t.expiration = getISOExpirationFromInput(t.expiration) || null
+  return t
 }
 
 export const mergeTransferQuantityWithStock = (quantity, stock) => {
@@ -71,4 +63,8 @@ export const mergeTransferQuantityWithStock = (quantity, stock) => {
     }
     return t
   })
+}
+
+export const getTransferTransactionsFromDisplay = (displayTransactions) => {
+  return clone(displayTransactions).filter(t => t.quantity)
 }

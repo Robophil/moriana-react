@@ -1,6 +1,5 @@
 import React from 'react'
 import h from 'helpers'
-import PropTypes from 'prop-types'
 
 export default class EditTransactionsTable extends React.Component {
   onClick = (event) => {
@@ -41,9 +40,4 @@ export default class EditTransactionsTable extends React.Component {
       </table>
     )
   }
-}
-
-EditTransactionsTable.propTypes = {
-  transactions: PropTypes.array.isRequired,
-  onEditClick: PropTypes.func.isRequired
 }

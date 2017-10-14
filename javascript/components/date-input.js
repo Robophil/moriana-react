@@ -1,6 +1,5 @@
 import React from 'react'
 import h from 'helpers'
-import PropTypes from 'prop-types'
 import StaticInput from 'static-input'
 import {dateIsValid} from 'validation'
 import {getISODateFromInput} from 'input-transforms'
@@ -61,9 +60,4 @@ export default class DateInput extends React.Component {
       return (<StaticInput label={'Date'} value={h.formatDate(value)} onEditClick={this.toggleEdit} />)
     }
   }
-}
-
-DateInput.propTypes = {
-  value: PropTypes.string,
-  valueUpdated: PropTypes.func.isRequired
 }

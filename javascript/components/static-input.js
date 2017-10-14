@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 export default class StaticInput extends React.Component {
   render () {
@@ -15,13 +14,4 @@ export default class StaticInput extends React.Component {
       </div>
     )
   }
-}
-
-StaticInput.propTypes = {
-  label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object
-  ]),
-  onEditClick: PropTypes.func
 }

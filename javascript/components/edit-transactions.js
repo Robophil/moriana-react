@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { displayItemName, searchItems } from 'items'
 import SearchDrop from 'search-drop'
 import EditTransactionsTable from 'edit-transactions-table'
@@ -65,15 +64,35 @@ export default class EditTransactions extends React.Component {
     })
   }
 
-  updateTransaction = (value) => {
-    if (this.state.editingIndex !== null) {
-      value.index = this.state.editingIndex
-    }
-    this.props.updateShipment('transaction', value)
+  receiveTransactionEdited = (transaction) => {
+    this.props.updateShipment('receive_transaction', {
+      index: this.state.editingIndex,
+      editedTransaction: transaction
+    })
   }
 
-  deleteTransaction = () => {
-    this.props.updateShipment('transaction', {delete: true, index: this.state.editingIndex})
+  receiveTransactionDeleted = () => {
+    this.props.updateShipment('receive_transaction', {
+      deleted: true,
+      index: this.state.editingIndex
+    })
+  }
+
+  transferTransactionsEdited = (transactions) => {
+    const { editingItem, editingCategory } = this.state
+    this.props.updateShipment('transfer_transactions', {
+      editedTransactions: transactions,
+      item: editingItem,
+      category: editingCategory
+    })
+  }
+
+  transferTransactionsDeleted = () => {
+    this.props.updateShipment('transfer_transactions', {
+      deleted: true,
+      item: editingItem,
+      category: editingCategory
+    })
   }
 
   onSubmit = (event) => {
@@ -117,8 +136,8 @@ export default class EditTransactions extends React.Component {
             item={editingItem}
             category={editingCategory}
             batch={editingBatch}
-            valueUpdated={this.updateTransaction}
-            deleteClicked={this.deleteTransaction}
+            transactionUpdated={this.receiveTransactionEdited}
+            deleteClicked={this.receiveTransactionDeleted}
             closeClicked={this.hideEditBatch}
           />
         )}
@@ -127,8 +146,8 @@ export default class EditTransactions extends React.Component {
             item={editingItem}
             category={editingCategory}
             batch={editingBatch}
-            valueUpdated={this.props.updateShipment}
-            deleteClicked={this.deleteTransaction}
+            transactionsUpdated={this.transferTransactionsEdited}
+            deleteClicked={this.transferTransactionsDeleted}
             itemTransferQuantity={itemTransferQuantity}
             closeClicked={this.hideEditBatch}
             getStockForEdit={this.props.getStockForEdit}
@@ -150,20 +169,4 @@ export default class EditTransactions extends React.Component {
       </div>
     )
   }
-}
-
-EditTransactions.propTypes = {
-  dbName: PropTypes.string.isRequired,
-  currentLocationName: PropTypes.string.isRequired,
-  shipmentType: PropTypes.string.isRequired,
-  items: PropTypes.array.isRequired,
-  categories: PropTypes.array.isRequired,
-  itemsLoading: PropTypes.bool.isRequired,
-  transactions: PropTypes.array.isRequired,
-  updateShipment: PropTypes.func.isRequired,
-  getStockForEdit: PropTypes.func.isRequired,
-  itemStock: PropTypes.array.isRequired,
-  itemStockLoading: PropTypes.bool,
-  date: PropTypes.string.isRequired,
-  addItem: PropTypes.func.isRequired
 }

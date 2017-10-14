@@ -4,7 +4,6 @@ import client from 'client'
 import {clone, generateId} from 'utils'
 
 import { validateShipment } from 'validation'
-import { getTransactionFromInput } from 'input-transforms'
 
 // actions
 
@@ -91,31 +90,47 @@ export default (state = defaultEditShipment, action) => {
 
     case UPDATE_SHIPMENT: {
       const newState = clone(state)
-      const {key, value, username} = action
       switch (action.key) {
         case 'date': {
-          newState.shipment.date = value
+          newState.shipment.date = action.value
           break
         }
         case 'from': {
-          Object.assign(newState.shipment, getTargetDetails('from', value, state.shipmentType))
+          Object.assign(newState.shipment, getTargetDetails('from', action.value, state.shipmentType))
           break
         }
         case 'to': {
-          Object.assign(newState.shipment, getTargetDetails('to', value, state.shipmentType))
+          Object.assign(newState.shipment, getTargetDetails('to', action.value, state.shipmentType))
           break
         }
         case 'vendorId': {
-          newState.shipment.vendorId = value
+          newState.shipment.vendorId = action.value
           break
         }
-        case 'transaction': {
-          if (state.shipmentType === 'receive') {
-            editReceiveTransaction(newState.shipment, value, username)
+        case 'receive_transaction': {
+          const { editedTransaction, deleted, index } = action.value
+          const currentTransactions = newState.shipment.transactions
+          let transactions
+          if (deleted) {
+            transactions = deleteReceiveTransaction(currentTransactions, index)
           } else {
-            newState.shipment.transactions = makeTransferTransactionEdits(newState.shipment, value, username)
+            transactions = editReceiveTransactions(currentTransactions, editedTransaction, index, action.username)
           }
-          Object.assign(newState.shipment, getTransactionTotals(newState.shipment))
+          newState.shipment.transactions = transactions
+          Object.assign(newState.shipment, getTransactionTotals(transactions))
+          break
+        }
+        case 'transfer_transactions': {
+          const currentTransactions = newState.shipment.transactions
+          const { editedTransactions, deleted, item, category } = action.value
+          let transactions
+          if (deleted) {
+            transactions = deleteTransferTransactions(currentTransactions, item, category)
+          } else {
+            transactions = editTransferTransactions(currentTransactions, editedTransactions, item, category, action.username)
+          }
+          newState.shipment.transactions = transactions
+          Object.assign(newState.shipment, getTransactionTotals(transactions))
           break
         }
         case 'delete': {
@@ -127,7 +142,7 @@ export default (state = defaultEditShipment, action) => {
       if (newState.isValid) {
         newState.shipment.updated = new Date().toISOString()
         if (!newState.shipment.username && newState.isNew) {
-          newState.shipment.username = username
+          newState.shipment.username = action.username
         }
       }
       return newState
@@ -205,8 +220,8 @@ const getTargetType = (shipmentType) => {
 }
 
 
-const getTransactionTotals = (shipment) => {
-  return shipment.transactions.reduce((memo, t) => {
+const getTransactionTotals = (transactions) => {
+  return transactions.reduce((memo, t) => {
     memo.totalValue += t.totalValue
     memo.totalTransactions ++
     return memo
@@ -214,32 +229,56 @@ const getTransactionTotals = (shipment) => {
 }
 
 // reminder: splice is (start index, # of things to remove/replace, [optional things to replace them with])
-const editReceiveTransaction = (shipment, value, username) => {
-  if (value.delete) {
-    shipment.transactions.splice(value.index, 1)
+const editReceiveTransactions = (currentTransactions, newTransaction, editIndex, username) => {
+  const transactions = clone(currentTransactions)
+  const transaction = timestampAndSanitizeTransaction(newTransaction, username)
+  if (editIndex || editIndex === 0) {
+    transactions.splice(editIndex, 1, transaction)
   } else {
-    const transaction = getTransactionFromInput(value, username)
-    if (value.index !== undefined) {
-      shipment.transactions.splice(value.index, 1, transaction)
-    } else {
-      shipment.transactions.unshift(transaction)
-    }
+    transactions.unshift(transaction)
   }
+  return transactions
 }
 
-export const makeTransferTransactionEdits = (shipment, displayTransactions, username) => {
-  // const newTransactions = clone(displayTransactions).reduce((memo,t) => {
-  //   if (t.quantity) {
-  //     // delete t.sum
-  //     // getTransactionFromInput
-  //     memo.push(t)
-  //   }
-  // }, [])
-  // let transactions = clone(shipment.transactions)
-  // const placementIndex = 0
-  // const countOfExistingTransactionsOnItem = 0
-  // transactions.forEach(t => {
-  //   if (t.item )
-  // })
-  return shipment.transactions
+const deleteReceiveTransaction = (currentTransactions, index) => {
+  const transactions = clone(currentTransactions)
+  transactions.splice(index, 1)
+  return transactions
+}
+
+export const editTransferTransactions = (currentTransactions, editedTransactions, item, category, username) => {
+  const transactions = []
+  let added = false
+  const timestampedEditedTransactions = editedTransactions.map(t => timestampAndSanitizeTransaction(t, username))
+  clone(currentTransactions).forEach(t => {
+    if (t.item === item && t.category === t.category) {
+      if (!added) {
+        transactions.push(...timestampedEditedTransactions)
+        added = true
+      }
+    } else {
+      transactions.push(t)
+    }
+  })
+  if (!added) {
+    transactions.unshift(...timestampedEditedTransactions)
+  }
+  return transactions
+}
+
+const deleteTransferTransactions = (currentTransactions, item, category) => {
+  return clone(currentTransactions).filter(t => t.item !== item && t.category !== category)
+}
+
+export const timestampAndSanitizeTransaction = (inputTransaction, username) => {
+  const updated = new Date().toISOString()
+  let { item, category, quantity, expiration, lot, unitPrice } = clone(inputTransaction)
+  let totalValue = 0
+  lot = lot || null
+  if (unitPrice) {
+    totalValue = unitPrice * quantity
+  } else {
+    unitPrice = 0
+  }
+  return { item, category, quantity, expiration, lot, unitPrice, totalValue, username, updated }
 }

@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { searchLocations } from 'locations'
 import DateInput from 'date-input'
 import SearchDrop from 'search-drop'
@@ -146,12 +145,4 @@ export default class EditShipmentDetails extends React.Component {
       </div>
     )
   }
-}
-
-EditShipmentDetails.propTypes = {
-  onDone: PropTypes.func.isRequired,
-  updateShipment: PropTypes.func.isRequired,
-  shipment: PropTypes.object.isRequired,
-  locations: PropTypes.object.isRequired,
-  shipmentType: PropTypes.string.isRequired
 }

@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import h from 'helpers'
 import ClickOutHandler from 'react-onclickout'
 import SearchDrop from 'search-drop'
@@ -92,11 +91,4 @@ export default class NewItem extends React.Component {
       </ClickOutHandler>
     )
   }
-}
-
-NewItem.propTypes = {
-  value: PropTypes.string,
-  valueUpdated: PropTypes.func.isRequired,
-  closeClicked: PropTypes.func.isRequired,
-  categories: PropTypes.array.isRequired
 }

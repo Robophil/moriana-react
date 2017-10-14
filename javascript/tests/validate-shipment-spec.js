@@ -41,7 +41,7 @@ export default {
     'adding an invalid transaction should be invalid' () {
       // from
       const state = editshipmentReducer(initState, updateShipmentAction(
-        'transaction', { item: 'abc', 'category': 'cde', quantity: 'not a number' }))
+        'receive_transaction', { editedTransaction: {item: 'abc', 'category': 'cde', quantity: 'not a number'} }))
       expect(state.isValid).eq(false)
     }
   },

@@ -9,7 +9,6 @@ export const getRoute = (params = {}) => {
 export const getShipment = (shipmentType = 'receive') => {
   const shipment = {
     id: 'dummy_id',
-    value: 0,
     date: '2017-03-08T07:02:05.687Z',
     from: 'test warehouse',
     fromType: 'I',
@@ -17,6 +16,7 @@ export const getShipment = (shipmentType = 'receive') => {
     toType: 'I',
     updated: '2017-03-08T07:16:40.289Z',
     totalTransactions: 1,
+    totalValue: 0,
     transactions: []
   }
   if (shipmentType === 'receive') {
@@ -52,7 +52,7 @@ export const getTransactions = (numberBatches = 2, numberTransactions = 10) => {
     from: 'test warehouse',
     id: 'test_transaction_id',
     item: 'test item abc',
-    lot: '',
+    lot: null,
     quantity: 1,
     to: 'test dispensary',
     unitPrice: 10,

@@ -1,10 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import h, {setCursorAtEnd} from 'helpers'
 import Moment from 'moment'
 import { isPresentAndNumber, quantityIsValid, expirationIsValid } from 'validation'
-import { getISOExpirationFromInput, mergeTransferQuantityWithStock } from 'input-transforms'
-import { getTotalAvailableStock } from 'stock'
+import {
+  getISOExpirationFromInput,
+  mergeTransferQuantityWithStock,
+  getTransferTransactionsFromDisplay
+} from 'input-transforms'
+import {getTotalAvailableStock} from 'stock'
 import StaticInput from 'static-input'
 import ClickOutHandler from 'react-onclickout'
 
@@ -67,7 +70,8 @@ export default class EditTransferBatch extends React.Component {
     const {insufficientStockError, quantityError} = this.state
     if (!insufficientStockError && !quantityError) {
       if (this.props.itemTransferQuantity !== Number.parseInt(this.state.quantity)) {
-        this.props.valueUpdated('transaction', this.state.displayTransactions)
+        const transactions = getTransferTransactionsFromDisplay(this.state.displayTransactions)
+        this.props.transactionsUpdated(transactions)
       }
       this.props.closeClicked()
     }
@@ -148,20 +152,4 @@ export default class EditTransferBatch extends React.Component {
       </ClickOutHandler>
     )
   }
-}
-
-EditTransferBatch.propTypes = {
-  item: PropTypes.string.isRequired,
-  category: PropTypes.string.isRequired,
-  valueUpdated: PropTypes.func.isRequired,
-  closeClicked: PropTypes.func.isRequired,
-  deleteClicked: PropTypes.func.isRequired,
-  getStockForEdit: PropTypes.func.isRequired,
-  dbName: PropTypes.string.isRequired,
-  currentLocationName: PropTypes.string.isRequired,
-  date: PropTypes.string.isRequired,
-  itemStock: PropTypes.array.isRequired,
-  itemStockLoading: PropTypes.bool.isRequired,
-  batch: PropTypes.object,
-  itemTransferQuantity: PropTypes.number
 }

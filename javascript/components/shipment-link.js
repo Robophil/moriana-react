@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 export const buildHref = (id, dbName, details='') => {
   return `/#d/${dbName}/shipment/${details}${id}`
@@ -19,11 +18,4 @@ export default class ShipmentLink extends React.Component {
     const href = buildHref(id, dbName, details)
     return (<a className={classes} href={href}>{children}</a>)
   }
-}
-
-ShipmentLink.propTypes = {
-  dbName: PropTypes.string.isRequired,
-  id: PropTypes.string,
-  linkType: PropTypes.string,
-  shipmentType:  PropTypes.string
 }
