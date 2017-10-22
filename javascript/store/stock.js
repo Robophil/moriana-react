@@ -24,7 +24,7 @@ export const getStock = (dbName, currentLocationName, category, item, filter = n
   }
 }
 
-export const getStockForEdit = (dbName, currentLocationName, category, item, date) => {
+export const getStockForEdit = (dbName, currentLocationName, date, category, item) => {
   return dispatch => {
     dispatch({ type: REQUEST_STOCK, item, category })
     getStockRequest(dbName, currentLocationName, category, item)
@@ -98,7 +98,7 @@ function parseRows (response) {
 
 function parseStockForEdit (response, date) {
   let rows = parseRows(response).filter(t => t.date < date)
-  const batches = getBatches(rows).filter(batch => batch.sum !== 0)
+  const batches = getBatches(rows).filter(batch => batch.sum > 0)
   return { batches }
 }
 

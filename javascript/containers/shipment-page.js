@@ -70,8 +70,9 @@ const ShipmentPage = class extends React.Component {
                 ))}
               </tbody>
             </table>
-            <a href={`/#d/${this.props.route.dbName}/`}>Go to all shipments</a>
-            <br /><br /><br />
+            <div className='footer-link'>
+              <a href={`/#d/${this.props.route.dbName}/`}>Go to all shipments</a>
+            </div>
           </div>
         )}
       </div>

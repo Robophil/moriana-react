@@ -1,4 +1,5 @@
 // actions and reducer for viewing items
+
 import client from 'client'
 import clone from 'clone'
 
@@ -12,7 +13,7 @@ export const getItems = (dbName, currentLocationName) => {
     const key = [currentLocationName.toLowerCase()]
     const startkey = JSON.stringify([...key, {}])
     const endkey = JSON.stringify([...key])
-    return client.getDesignDoc(dbName, 'stock', { reduce: true, startkey: startkey, endkey: endkey, group_level: 3 })
+    return client.getDesignDoc(dbName, 'stock', { reduce: true, startkey, endkey, group_level: 3 })
     .then(response => {
       const { body } = response
       dispatch({
@@ -52,9 +53,11 @@ export default (state = defaultItems, action) => {
       const {item, category} = action
       if (newState.categories.every(cat => cat.name !== category)) {
         newState.categories.push({ name: category })
+        newState.categories.sort(sortCategories)
       }
-      if (newState.items.every(item => item.item !== item && item.category !== category)) {
+      if (newState.items.every(i => i.item !== item)) {
         newState.items.push({ item, category })
+        newState.items.sort(sortItems)
       }
       return { ...newState, loading: false, firstRequest: false, ...action.response }
     }
@@ -68,7 +71,7 @@ function parseResponse (body) {
   const headers = ['from', 'item', 'category']
   const items = body.rows.map(row => {
     return { item: row.key[1], category: row.key[2], value: row.value}
-  }).sort((a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase()))
+  }).sort(sortItems)
   const categories = getCategories(items)
   return { items, categories }
 }
@@ -80,8 +83,8 @@ export const getCategories = (items) => {
     }
     return memo
   }, [])
-  .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
   .map(cat => { return { name: cat } })
+  .sort(sortCategories)
 }
 
 export const searchItems = (rows, input) => {
@@ -105,4 +108,12 @@ export const searchCategories = (rows, input) => {
 
 export const displayItemName = (row) => {
   return `${row.item} ${row.category}`
+}
+
+const sortItems = (a, b) => {
+  return a.item.toLowerCase().localeCompare(b.item.toLowerCase())
+}
+
+const sortCategories = (a, b) => {
+  return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
 }

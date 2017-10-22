@@ -61,10 +61,10 @@ module.exports = {
   devServer: {
    compress: true,
    hot: true,
-   noInfo: true,
+  //  noInfo: true,
    historyApiFallback: true,
    port: 9000,
-   quiet: true,
+  //  quiet: true,
    clientLogLevel: 'none'
  },
  plugins: [

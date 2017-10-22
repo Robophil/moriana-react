@@ -96,3 +96,7 @@ export const setCursorAtEnd = (event) => {
     event.target.value = '';
     event.target.value = val;
 }
+
+export const preventDefault = (event) => {
+    event.preventDefault()
+}

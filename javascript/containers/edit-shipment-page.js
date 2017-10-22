@@ -10,7 +10,8 @@ import ShipmentLink from 'shipment-link'
 import DeleteShipmentModal from 'delete-shipment-modal'
 import StaticShipmentDetails from 'static-shipment-details'
 import EditShipmentDetails from 'edit-shipment-details'
-import EditTransactions from 'edit-transactions'
+import EditReceiveBatch from 'edit-receive-batch'
+import EditTransferBatch from 'edit-transfer-batch'
 import h from 'helpers'
 
 const EditShipmentPage = class extends React.Component {
@@ -70,9 +71,15 @@ const EditShipmentPage = class extends React.Component {
     this.props.updateShipment('delete')
   }
 
+  getStockOnItem = (item, category) => {
+    const { dbName, currentLocationName } = this.props.route
+    const { date } = this.props.editshipment.shipment
+    this.props.getStockForEdit(dbName, currentLocationName, date, category, item)
+  }
+
   render () {
     const { showEditDetails } = this.state
-    const { locations, items, updateShipment, route } = this.props
+    const { locations, items, updateShipment, route, addItem } = this.props
     const { shipment, loadingInitialShipment, isNew, shipmentName, apiError } = this.props.editshipment
     const { dbName, currentLocationName } = route
     const shipmentType = this.props.editshipment.shipmentType || route.params.shipmentType
@@ -88,6 +95,37 @@ const EditShipmentPage = class extends React.Component {
       return (<div className='loader' />)
     }
 
+    let editBatch
+    if (shipmentType === 'receive') {
+      editBatch = (
+        <EditReceiveBatch
+          items={items.items}
+          categories={items.categories}
+          itemsLoading={items.firstRequest}
+          updateShipment={updateShipment}
+          transactions={shipment.transactions}
+          addItem={addItem}
+        />
+      )
+    } else {
+      editBatch = (
+        <EditTransferBatch
+          dbName={dbName}
+          currentLocationName={currentLocationName}
+          shipmentType={shipmentType}
+          items={items.items}
+          categories={items.categories}
+          itemsLoading={items.firstRequest}
+          updateShipment={updateShipment}
+          transactions={shipment.transactions}
+          getStockOnItem={this.getStockOnItem}
+          date={shipment.date}
+          itemStock={this.props.stock.batches}
+          itemStockLoading={this.props.stock.loading}
+        />
+      )
+    }
+
     return (
       <div className='edit-page'>
         <h5 className='text-capitalize'>
@@ -95,6 +133,9 @@ const EditShipmentPage = class extends React.Component {
             ? (<span>{shipmentType}: {shipment.from} to {shipment.to}</span>)
             : (<span>Create {shipmentType}</span>)
           }
+          {!isNew && (<button onClick={this.toggleDeleteModal} className='pull-right button-small'>
+            delete shipment
+          </button>)}
         </h5>
         {showEditDetails ? (
           <EditShipmentDetails
@@ -109,32 +150,15 @@ const EditShipmentPage = class extends React.Component {
             <a onClick={this.toggleDetails}>edit details</a>
           </StaticShipmentDetails>
         )}
-        {this.state.showEditTransactions && (
-          <EditTransactions
-            dbName={dbName}
-            currentLocationName={currentLocationName}
-            shipmentType={shipmentType}
-            items={items.items}
-            categories={items.categories}
-            itemsLoading={items.firstRequest}
-            updateShipment={updateShipment}
-            transactions={shipment.transactions}
-            getStockForEdit={this.props.getStockForEdit}
-            addItem={this.props.addItem}
-            date={shipment.date}
-            itemStock={this.props.stock.batches}
-            itemStockLoading={this.props.stock.loading}
-          />
-        )}
+        {this.state.showEditTransactions && editBatch}
         {!isNew && (
-          <div>
+          <div className='footer-link'>
             <ShipmentLink
               dbName={dbName}
               id={shipment._id}
               shipmentType='receive'>
-              Done
+              Done editing shipment
             </ShipmentLink>
-            <button onClick={this.toggleDeleteModal} className='pull-right'>delete</button>
           </div>
         )}
         {this.state.showDeleteModal && (

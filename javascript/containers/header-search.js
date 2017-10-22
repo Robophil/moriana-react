@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getItems } from 'items'
+import { getItems, searchItems } from 'items'
 import { getLocations } from 'locations'
 import h from 'helpers'
 import StockcardLink, {buildStockCardHref} from 'stockcard-link'
@@ -22,10 +22,7 @@ const HeaderSearch = class extends React.Component {
   runSearch = (e) => {
     const query = e.currentTarget.value
     const cleanedQuery = query.toLowerCase().trim()
-    const itemResults = this.props.items.items.filter(item =>
-      item.item.toLowerCase().indexOf(cleanedQuery) !== -1 ||
-      item.category.toLowerCase().indexOf(cleanedQuery) !== -1
-    )
+    const itemResults = searchItems(this.props.items.items, cleanedQuery)
     this.setState({ query, itemResults, currIndex: 0 })
   }
 

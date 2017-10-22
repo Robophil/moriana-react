@@ -114,8 +114,7 @@ const StockCardPage = class extends React.Component {
                 ))}
               </tbody>
             </table>
-            <a href={`/#d/${dbName}/stock/`}>Go to all items</a>
-            <div className='pull-right'>
+            <div className='text-right'>
               Showing {h.num(transactions.length)} of {h.num(totalTransactions)} transaction
               {h.soronos(totalTransactions)}. &nbsp;
               {!showAll && transactions.length === totalTransactions
@@ -124,7 +123,9 @@ const StockCardPage = class extends React.Component {
                 <a href='#' onClick={this.scrollToTop}>Scroll To Top</a>
               )}
             </div>
-            <br /><br /><br /><br />
+            <div className='footer-link'>
+              <a href={`/#d/${dbName}/stock/`}>Go to all items</a>
+            </div>
           </div>
         )}
       </div>

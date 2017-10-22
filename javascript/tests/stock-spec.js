@@ -1,5 +1,6 @@
 import {getTransactions} from 'test-utils'
 import { getBatches, parseResponse } from 'stock'
+import { searchItems } from 'items'
 
 import chai from 'chai'
 const expect = chai.expect
@@ -42,5 +43,18 @@ export default {
       expect(parsed.totalTransactions).eq(1)
       expect(parsed.transactions[0].lot).eq('test lot')
     }
+  },
+
+  'search items': {
+    'should return items where the search query is at the zero position of the item name first' () {
+      const items = [
+        { item: 'abcmet', category: 'test cat'},
+        { item: 'met', category: 'test cat'},
+      ]
+      const query = 'met'
+      const response = searchItems(items, query)
+      expect(response[0].item.indexOf(query)).eq(0)
+    }
   }
+
 }

@@ -68,7 +68,6 @@ export default class extends React.Component {
                 </div>
               </div>
               <button className='btn btn-default date-range-select'>Run Dates</button>
-              <br /><br />
               <p className='help-block'>Or select a month:</p>
             </div>
             <div className='row text-center dates-filters filters'>
