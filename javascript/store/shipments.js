@@ -56,7 +56,10 @@ const defaultShipments = {
   apiError: null,
   currentShipment: null,
   shipmentsCount: 0,
-  offsetLoaded: null
+  offsetLoaded: null,
+  shipmentType: null,
+  displayType: null,
+  shipmentName: null
 }
 
 export default (state = defaultShipments, action) => {
@@ -92,16 +95,19 @@ const parseShipments = (response) => {
   return objectFromKeys(['date', 'from', 'to', 'updated', 'totalTransactions', 'username'], response)
 }
 
+// TODO: refactor out grabbing currentLocationName all over the place
 const decorate = (ship, dbName) => {
-  const shipmentType = getType(ship, dbName)
+  const currentLocationName = db.getNamefromDBName(dbName)
+  const shipmentType = getType(ship, currentLocationName)
+  const allowEdit = !(shipmentType === 'transfer' && ship.to &&
+    ship.to.toLowerCase() === currentLocationName)
   const displayType = shipmentType.split('-').join(' ')
   const shipmentName = `${ship.from} to ${ship.to} on ${h.formatDate(ship.date)}`
-  return { shipmentType, displayType, shipmentName }
+  return { shipmentType, displayType, shipmentName, allowEdit }
 }
 
-const getType = (ship, dbName) => {
-  // TODO: refactor out grabbing currentLocationName all over the place
-  if (ship.from === db.getNamefromDBName(dbName)) {
+const getType = (ship, currentLocationName) => {
+  if (ship.from === currentLocationName) {
     if (ship.toType === 'I') return 'transfer'
     if (ship.toType === 'P') return 'dispense'
     return 'transfer-out'
@@ -111,9 +117,3 @@ const getType = (ship, dbName) => {
     return 'receive'
   }
 }
-
-// if an internal transfer to this location, don't allow edit
-// isReceiveFromInternal (ship, currentLocation) {
-//   return ship.type === 'transfer' && ship.to &&
-//     ship.to.toLowerCase() === currentLocation
-// }

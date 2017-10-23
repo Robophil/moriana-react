@@ -52,6 +52,7 @@ const SiteHeader = class extends React.Component {
     const { user, route } = this.props
     if (user.getUserFailed) window.location.hash = '#/login'
     const { dbName, currentLocationName } = route
+    const watermarkLetters = currentLocationName.split(' ').map(a => a[0])
     const headerLink = dbName ? `/#d/${dbName}/` : '/'
     const links = hl.getLinks(user, config.isLocal, currentLocationName)
     const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, dbName)
@@ -102,6 +103,7 @@ const SiteHeader = class extends React.Component {
             notifications={this.props.notifications}
           />
         </ClickOutHandler>
+        {/* <span className='watermark'>{watermarkLetters}</span> */}
       </div>
     )
   }

@@ -1,4 +1,5 @@
 import config from 'config'
+import {removeExtraWhiteSpace} from 'utils'
 
 export default {
   getNamefromDBName (input, deploymentName = config ? config.deploymentName : 'moriana') {
@@ -28,6 +29,33 @@ export default {
     // without '/', because that broke things...
     const safeDBNameRegex = /^[a-z][a-z0-9_$()+-]*$/
     return safeDBNameRegex.test(input)
+  },
+
+  getDBName (input) {
+    const inputWithoutExtraSpaces = removeExtraWhiteSpace(input);
+    const spaceEscapedInput = this.escapeSpacesAndLowercase(inputWithoutExtraSpaces);
+    // dbname won't be safe if first char is number
+    if (this.isDBSafeName(spaceEscapedInput)) {
+      return this.addDeploymentPrefix(spaceEscapedInput);
+    } else {
+      // doesn't handle non bmp characters
+      const charCodeName = _.reduce(input.split(''), (memo, char) => {
+        if (memo) {
+          memo += '-';
+        }
+        memo += char.charCodeAt(0);
+        return memo;
+      }, null);
+      return this.addDeploymentPrefix(charCodeName);
+    }
+  },
+
+  escapeSpacesAndLowercase(input) {
+    return input.replace(/ /g, '_').toLowerCase();
+  },
+
+  addDeploymentPrefix(input) {
+    return config.deploymentName + '_' + input;
   }
 
 }

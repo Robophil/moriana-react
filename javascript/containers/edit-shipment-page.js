@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getShipment } from 'shipments'
-import { updateShipment, startNewShipmentAction } from 'editshipment'
+import { startNewShipmentAction } from 'editshipment'
+import { updateShipment } from 'update-shipment'
 import { getStockForEdit } from 'stock'
 import { getLocations } from 'locations'
 import { getItems, addItem } from 'items'
@@ -34,24 +35,15 @@ const EditShipmentPage = class extends React.Component {
   }
 
   componentWillReceiveProps = (newProps) => {
-    const {shipment, isNew} = newProps.editshipment
-    const {currentLocationName, dbName} = this.props.route
-    if (!this.props.route.params.id && this.props.editshipment.isNew && !isNew) {
-      const newHash = window.location.hash + '/' + shipment._id
+    const { isNew, deleted, savingShipment } = this.props.editshipment
+    if (isNew && !newProps.editshipment.isNew && !this.props.route.params.id) {
+      const newHash = window.location.hash + '/' + newProps.editshipment.shipment._id
       window.history.replaceState(undefined, undefined, newHash)
     }
-    if (!this.props.editshipment.savingShipment && newProps.editshipment.savingShipment) {
-      const savingOrDeleting = newProps.editshipment.deleted ? 'Deleting' : 'Saving'
-      this.props.showNote(`${savingOrDeleting} shipment at ${currentLocationName}`)
-    } else if (this.props.editshipment.savingShipment && !newProps.editshipment.savingShipment) {
-      const {deleted} = this.props.editshipment
-      const savedOrDeleted = deleted ? 'deleted' : 'saved'
-      this.props.showNote(`Shipment ${savedOrDeleted} at ${currentLocationName}`)
-      if (deleted) {
-        setTimeout(() => {
-          window.location.href = `/#d/${dbName}`
-        }, 500)
-      }
+    if (deleted && savingShipment && !newProps.editshipment.savingShipment) {
+      setTimeout(() => {
+        window.location.href = `/#d/${this.props.route.dbName}`
+      }, 500)
     }
   }
 
@@ -161,7 +153,7 @@ const EditShipmentPage = class extends React.Component {
             </ShipmentLink>
           </div>
         )}
-        {this.state.showDeleteModal && (
+        {this.state.showDeleteModal && !this.props.editshipment.deleted && (
           <DeleteShipmentModal
             onConfirm={this.deleteShipment}
             shipmentName={shipmentName}

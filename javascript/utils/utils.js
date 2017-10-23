@@ -26,7 +26,7 @@ export const empty = (input) => {
   return (removeExtraWhiteSpace(input) === '')
 }
 
-const removeExtraWhiteSpace = (input) => {
+export const removeExtraWhiteSpace = (input) => {
   return input ? input.replace(/\s+/g, ' ').trim() : ''
 }
 

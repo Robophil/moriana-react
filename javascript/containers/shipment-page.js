@@ -19,7 +19,7 @@ const ShipmentPage = class extends React.Component {
 
   render () {
     const ship = this.props.currentShipment || { transactions: [] }
-    const {displayType, shipmentType} = this.props
+    const {displayType, shipmentType, allowEdit } = this.props
     const { dbName } = this.props.route
     return (
       <div className='shipment-page'>
@@ -31,15 +31,32 @@ const ShipmentPage = class extends React.Component {
               {displayType}: {ship.from} to {ship.to}
             </h5>
             <div>
-              <strong>{h.formatDate(ship.date)}</strong> ({h.dateFromNow(ship.date)})
-              <strong> {ship.totalTransactions}</strong> transactions
-              total value <strong>{h.currency(ship.totalValue)} </strong>
-
-               | created by <strong>{ship.username} </strong>
-                {ship.updated ? (<span>latest edited <strong>{h.dateFromNow(ship.updated)} </strong></span>) : '' }
-                |&nbsp; <ShipmentLink linkType='edit' className='button button-small' shipmentType={shipmentType} id={ship._id} dbName={dbName} > edit</ShipmentLink>&nbsp;
-                | <ShipmentLink linkType='print' id={ship._id} dbName={dbName} > print</ShipmentLink>
-                | <ShipmentLink linkType='print' id={`${ship._id}/reversed`} dbName={dbName} > print reversed </ShipmentLink>
+              <strong>{h.formatDate(ship.date)}</strong> ({h.dateFromNow(ship.date)}) |
+              <strong> {ship.totalTransactions}</strong> transactions |
+              total value <strong>{h.currency(ship.totalValue)} </strong> |
+              created by <strong>{ship.username} </strong> |
+              {ship.updated ? (<span> latest edited <strong>{h.dateFromNow(ship.updated)}</strong></span>) : '' }
+              <br /><br />
+              <div>
+                <ShipmentLink linkType='print' id={ship._id} dbName={dbName} >
+                  print
+                </ShipmentLink> |
+                <ShipmentLink linkType='print' id={`${ship._id}/reversed`} dbName={dbName} >
+                  print reversed
+                </ShipmentLink> | &nbsp;
+                {allowEdit ? (
+                  <span>
+                    <ShipmentLink
+                      linkType='edit'
+                      className='button'
+                      shipmentType={shipmentType}
+                      id={ship._id}
+                      dbName={dbName} >
+                      edit
+                    </ShipmentLink>
+                  </span>
+                ) : (<span>(editing only available on <span className='text-capitalize'>{ship.from}</span> database)</span>)}
+              </div>
             </div>
             <hr />
             <table>

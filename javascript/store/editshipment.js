@@ -1,12 +1,9 @@
 // actions and reducer for editing a shipment
+// thunks are in utils/update-shipment
 
-import client from 'client'
 import {clone, generateId} from 'utils'
-
 import { validateShipment } from 'validation'
-
-// actions
-
+import { updateShipment } from 'update-shipment'
 import { REQUEST_SHIPMENT, RECEIVED_SHIPMENT, SHIPMENTS_ERROR } from 'shipments'
 
 export const START_NEW_SHIPMENT = 'START_NEW_SHIPMENT'
@@ -14,6 +11,7 @@ export const UPDATE_SHIPMENT = 'UPDATE_SHIPMENT'
 export const SAVING_SHIPMENT = 'SAVING_SHIPMENT'
 export const SAVED_SHIPMENT = 'SAVED_SHIPMENT'
 export const SAVE_ERROR = 'SAVE_ERROR'
+export const PREVIOUS_TARGET_REMOVED = 'PREVIOUS_TARGET_REMOVED'
 
 export const startNewShipmentAction = (currentLocationName, dbName, shipmentType) => {
   return { type: START_NEW_SHIPMENT, currentLocationName, dbName, shipmentType }
@@ -21,28 +19,6 @@ export const startNewShipmentAction = (currentLocationName, dbName, shipmentType
 
 export const updateShipmentAction = (key, value, username) => {
   return { type: UPDATE_SHIPMENT, key, value, username }
-}
-
-// thunkettes
-
-export const updateShipment = (key, value) => {
-  return (dispatch, getState) => {
-    dispatch(updateShipmentAction(key, value, getState().user.name))
-    const state = getState().editshipment
-    if (state.isValid) {
-      // don't save a new shipment until there are transactions
-      if (state.isNew && state.shipment.transactions.length === 0) return
-      dispatch({ type: SAVING_SHIPMENT })
-      client.put(`${state.dbName}/${state.shipment._id}`, state.shipment)
-      .then(response => {
-        if (response.status >= 400) {
-          dispatch({ type: SAVE_ERROR, error: response.body })
-        } else {
-          dispatch({ type: SAVED_SHIPMENT, rev: response.body.rev })
-        }
-      })
-    }
-  }
 }
 
 // reducers
@@ -53,10 +29,13 @@ const defaultEditShipment = {
   apiError: null,
   shipment: {},
   dbName: null,
-  type: null,
   isNew: true,
   isValid: false,
-  deleted: false
+  deleted: false,
+  shipmentType: null,
+  displayType: null,
+  shipmentName: null,
+  previousTarget: null
 }
 
 export default (state = defaultEditShipment, action) => {
@@ -100,6 +79,9 @@ export default (state = defaultEditShipment, action) => {
           break
         }
         case 'to': {
+          if (!newState.isNew) {
+            newState.previousTarget = newState.shipment.to
+          }
           Object.assign(newState.shipment, getTargetDetails('to', action.value, state.shipmentType))
           break
         }
@@ -162,6 +144,11 @@ export default (state = defaultEditShipment, action) => {
     case SAVE_ERROR: {
       const shipment = clone(state.shipment)
       return { ...state, shipment, apiError: action.error, savingShipment: false }
+    }
+
+    case PREVIOUS_TARGET_REMOVED: {
+      const newState = clone(state)
+      return { ...state, previousTarget: null }
     }
 
     default: {

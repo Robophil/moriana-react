@@ -22,7 +22,6 @@ export default class extends React.Component {
             <th>To</th>
             <th>Transactions</th>
             <th>Value</th>
-            <th>Edit</th>
             <th>Last Edited</th>
             <th>Creator</th>
           </tr>
@@ -35,11 +34,6 @@ export default class extends React.Component {
               <td className='text-capitalize'>{row.to}</td>
               <td>{row.totalTransactions}</td>
               <td>{h.num(row.value)}</td>
-              <td>
-                <ShipmentLink id={row.id} linkType='edit/generic' dbName={dbName}className='button button-small'>
-                  edit
-                </ShipmentLink>
-              </td>
               <td><small>{h.dateFromNow(row.updated || row.date)}</small></td>
               <td>{row.username}</td>
             </tr>
