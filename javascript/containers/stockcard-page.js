@@ -76,13 +76,13 @@ const StockCardPage = class extends React.Component {
                   <th>Relative</th>
                   <th>Shipment Date</th>
                   <th>Expiration</th>
+                  <th>Item Lot</th>
                   <th>Unit Price</th>
                   <th>Total Value</th>
                   <th className='no-print'>filter</th>
-                  <th>Item Lot</th>
+                  <th>User</th>
                   <th>From</th>
                   <th>To</th>
-                  <th>User</th>
                   <th>Quantity</th>
                   <th>Result</th>
                 </tr>
@@ -93,8 +93,10 @@ const StockCardPage = class extends React.Component {
                     <td>{h.dateFromNow(row.date)}</td>
                     <td>{h.formatDate(row.date)}</td>
                     <td className={`${atBatch ? 'info' : ''}`}>{h.expiration(row.expiration)}</td>
+                    <td className={`${atBatch ? 'info' : ''}`}>{row.lot}</td>
                     <td className={`${atBatch ? 'info' : ''}`}>{h.currency(row.unitPrice)}</td>
                     <td className={`${atBatch ? 'info' : ''}`}>{h.currency(row.totalValue)}</td>
+                    <td>{row.username}</td>
                     <td className={`action no-print ${atBatch ? 'info' : ''}`}>
                       <StockCardLink
                         dbName={dbName}
@@ -104,10 +106,8 @@ const StockCardPage = class extends React.Component {
                         {atBatch ? 'remove' : 'filter'}
                       </StockCardLink>
                     </td>
-                    <td className={`${atBatch ? 'info' : ''}`}>{row.lot}</td>
                     <td className='text-capitalize'>{row.from}</td>
                     <td className='text-capitalize'>{row.to}</td>
-                    <td>{row.username}</td>
                     <td>{h.num(row.quantity)}</td>
                     <td>{h.num(row.result)}</td>
                   </tr>

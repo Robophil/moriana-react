@@ -48,7 +48,7 @@ const ShipmentPage = class extends React.Component {
                   <span>
                     <ShipmentLink
                       linkType='edit'
-                      className='button'
+                      className='button button-small'
                       shipmentType={shipmentType}
                       id={ship._id}
                       dbName={dbName} >
@@ -79,7 +79,7 @@ const ShipmentPage = class extends React.Component {
                     <td>{t.category}</td>
                     <td>{t.lotNum}</td>
                     <td>{h.expiration(t.expiration)}</td>
-                    <td>{t.quantity}</td>
+                    <td>{h.num(t.quantity)}</td>
                     <td>{h.currency(t.unitPrice)}</td>
                     <td>{h.currency(t.totalValue)}</td>
                     <td>{t.username}</td>

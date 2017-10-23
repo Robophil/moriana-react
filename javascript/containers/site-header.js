@@ -15,7 +15,6 @@ import h from 'helpers'
 
 const SiteHeader = class extends React.Component {
   state = { openSection: null }
-  // state = { openSection: 'database' }
 
   componentDidMount = () => {
     this.props.getUser()
@@ -74,7 +73,7 @@ const SiteHeader = class extends React.Component {
     return (
       <div className='site-header'>
         <ClickOutHandler onClickOut={this.hideLink}>
-          <a href={headerLink}><Logo /></a>
+          <a className='logo' href={headerLink}><Logo /></a>
           {(links.leftLinks.length !==0) && (
             <ul>
             {links.leftLinks.map((link, i) => (
