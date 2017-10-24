@@ -98,7 +98,7 @@ export default class EditShipmentDetails extends React.Component {
       <span>
         <StaticInput className='text-capitalize' label='From Location' value={shipment.from} />
         <SearchDrop
-          rows={locations.externalLocations}
+          rows={locations.patients}
           loading={locations.loading}
           value={shipmentToValue}
           valueSelected={this.locationSelected}
