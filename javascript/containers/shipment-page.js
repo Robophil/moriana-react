@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { getShipment } from 'shipments'
 import h from 'helpers'
 import ShipmentLink from 'shipment-link'
+import StaticShipmentDetails from 'static-shipment-details'
 import {buildStockCardHref} from 'stockcard-link'
 
 const ShipmentPage = class extends React.Component {
@@ -31,12 +32,8 @@ const ShipmentPage = class extends React.Component {
               {displayType}: {ship.from} to {ship.to}
             </h5>
             <div>
-              <strong>{h.formatDate(ship.date)}</strong> ({h.dateFromNow(ship.date)}) |
-              <strong> {ship.totalTransactions}</strong> transactions |
-              total value <strong>{h.currency(ship.totalValue)} </strong> |
-              created by <strong>{ship.username} </strong> |
-              {ship.updated ? (<span> latest edited <strong>{h.dateFromNow(ship.updated)}</strong></span>) : '' }
-              <br /><br />
+              <StaticShipmentDetails shipment={ship} />
+              <br />
               <div>
                 <ShipmentLink linkType='print' id={ship._id} dbName={dbName} >
                   print

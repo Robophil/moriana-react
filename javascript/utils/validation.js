@@ -45,6 +45,15 @@ export const expirationIsValid = (input) => {
   }
 }
 
+// dob can be given in years, see input-transformations
+export const dobIsValid = (input) => {
+  if (input) {
+    return isNumeric(input) || dateIsValid(input)
+  } else {
+    return true
+  }
+}
+
 // '4', 4, and null are OK
 export const numberInputIsValid = (input) => {
   if (!input) {
@@ -133,7 +142,7 @@ export const validateTransaction = (transaction) => {
   if (!isNumber(transaction.quantity)) {
     return 'Invalid transaction: quantity must be a number'
   }
-  if (!isNumeric(transaction.quantity)) {
+  if (!isNumber(transaction.quantity)) {
     return 'Quantity must be numeric'
   }
   if (transaction.quantity < 1) {

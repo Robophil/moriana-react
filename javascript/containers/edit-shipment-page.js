@@ -136,6 +136,8 @@ const EditShipmentPage = class extends React.Component {
             updateShipment={updateShipment}
             shipment={shipment}
             shipmentType={shipmentType}
+            districts={this.props.locations.districts}
+            districtsLoading={this.props.locations.loading}
           />
         ) : (
           <StaticShipmentDetails shipment={shipment}>

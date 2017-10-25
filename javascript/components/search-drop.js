@@ -28,9 +28,10 @@ export default class SearchDrop extends React.Component {
     return this.props.displayFunction ? this.props.displayFunction(value) : value.name
   }
 
-  onKeyUp = (event) => {
+  onKeyDown = (event) => {
     switch (h.keyMap(event.keyCode)) {
       case 'ENTER': {
+        event.preventDefault()
         this.rowSelected(this.state.currIndex)
         break
       }
@@ -118,9 +119,10 @@ export default class SearchDrop extends React.Component {
   render () {
     const { inputValue, showEdit, currIndex, visibleRows, showSearch } = this.state
     const { value, label, resourceName, rows, onNewSelected, loading, autoFocus } = this.props
+    const patientDisplayed = this.displayFunction(value)
     if (!showEdit) {
       return (
-        <StaticInput label={label} value={this.displayFunction(value)} onEditClick={this.open} />
+        <StaticInput label={label} value={patientDisplayed} onEditClick={this.open} />
       )
     }
     const detailsLinkClasses = currIndex === visibleRows.length ? 'active' : ''
@@ -134,7 +136,7 @@ export default class SearchDrop extends React.Component {
             <input
               onBlur={this.onBlur}
               value={inputValue}
-              onKeyUp={this.onKeyUp}
+              onKeyDown={this.onKeyDown}
               onChange={this.onChange}
               onFocus={this.showSearch}
               autoFocus={autoFocus}

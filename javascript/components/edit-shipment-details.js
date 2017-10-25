@@ -4,13 +4,14 @@ import DateInput from 'date-input'
 import SearchDrop from 'search-drop'
 import VendorIdInput from 'vendor-id-input'
 import NewLocation from 'new-location'
+import NewPatient from 'new-patient'
 import StaticInput from 'static-input'
 import displayPatient from 'display-patient'
 import displayLocation from 'display-location'
 
 export default class EditShipmentDetails extends React.Component {
   state = {
-    showNewLocation: false,
+    showNewLocation: true,
     newLocationName: '',
   }
 
@@ -22,8 +23,13 @@ export default class EditShipmentDetails extends React.Component {
   }
 
   locationSelected = (value) => {
-    const fromOrTo = this.props.shipmentType === 'receive' ? 'from' : 'to'
-    this.props.updateShipment(fromOrTo, value)
+    let updateValue = 'to'
+    if (this.props.shipmentType === 'receive') {
+      updateValue = 'from'
+    } else if (this.props.shipmentType === 'dispense') {
+      updateValue = 'patient'
+    }
+    this.props.updateShipment(updateValue, value)
   }
 
   toggleNewReceiveLocation = (inputValue) => {
@@ -100,7 +106,7 @@ export default class EditShipmentDetails extends React.Component {
         <SearchDrop
           rows={locations.patients}
           loading={locations.loading}
-          value={shipmentToValue}
+          value={shipment.patient || {}}
           valueSelected={this.locationSelected}
           onNewSelected={this.toggleNewReceiveLocation}
           label='Patient'
@@ -111,6 +117,22 @@ export default class EditShipmentDetails extends React.Component {
         />
       </span>
     )
+
+    let newLocationElement = shipmentType === 'dispense' ?
+      <NewPatient
+        value={this.state.newLocationName}
+        valueUpdated={updateShipment}
+        closeClicked={this.toggleNewReceiveLocation}
+        districts={this.props.districts}
+        districtsLoading={this.props.districtsLoading}
+      />
+    : (
+      <NewLocation
+        value={this.state.newLocationName}
+        valueKey={targetFromOrTo}
+        valueUpdated={updateShipment}
+        closeClicked={this.toggleNewReceiveLocation}
+      />)
 
     let detailsElement
     let targetFromOrTo = 'to'
@@ -124,7 +146,6 @@ export default class EditShipmentDetails extends React.Component {
     } else if (shipmentType === 'dispense') {
       detailsElement = dispenseDetails
     }
-
     return (
       <div className='edit-details'>
         <form onSubmit={onDone}>
@@ -135,13 +156,7 @@ export default class EditShipmentDetails extends React.Component {
           {detailsElement}
         </form>
         <button className='save-details' onClick={onDone}>Done</button>
-        {this.state.showNewLocation && (
-          <NewLocation
-            value={this.state.newLocationName}
-            valueKey={targetFromOrTo}
-            valueUpdated={updateShipment}
-            closeClicked={this.toggleNewReceiveLocation}
-          />)}
+        {this.state.showNewLocation && newLocationElement}
       </div>
     )
   }

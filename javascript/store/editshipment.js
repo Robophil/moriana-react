@@ -85,6 +85,12 @@ export default (state = defaultEditShipment, action) => {
           Object.assign(newState.shipment, getTargetDetails('to', action.value, state.shipmentType))
           break
         }
+        case 'patient': {
+          newState.shipment.to = action.value.name
+          newState.shipment.toType = 'P'
+          newState.shipment.patient = action.value
+          break
+        }
         case 'vendorId': {
           newState.shipment.vendorId = action.value
           break
@@ -185,15 +191,7 @@ const getTargetDetails = (fromOrTo, value, shipmentType) => {
   details[fromOrTo] = value.name
   details[`${fromOrTo}Type`] = value.type || getTargetType(shipmentType)
   details[`${fromOrTo}Attributes`] = value.attributes
-  if (shipmentType === 'dispense') {
-    details.patient = getPatientForShipment(value)
-  }
   return details
-}
-
-const getPatientForShipment = (patient) => {
-  const { identifier, gender, dob, district } = patient
-  return { identifier, gender, dob, district }
 }
 
 const getTargetType = (shipmentType) => {

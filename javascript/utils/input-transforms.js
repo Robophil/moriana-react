@@ -68,3 +68,16 @@ export const mergeTransferQuantityWithStock = (quantity, stock) => {
 export const getTransferTransactionsFromDisplay = (displayTransactions) => {
   return clone(displayTransactions).filter(t => t.quantity)
 }
+
+export const getDobFromInput = (input) => {
+  if (input && input !== "" && Number.isInteger(Number(input))) {
+    return Moment().subtract(input, 'years').toISOString()
+  } else if (input) {
+    return getISODateFromInput(input)
+  }
+}
+
+export const getPatientForShipment = (formState) => {
+  const { identifier, gender, dob, district, name } = formState
+  return { identifier, gender, dob, district, name }
+}

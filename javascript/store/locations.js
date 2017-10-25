@@ -10,14 +10,14 @@ export const getLocations = (dbName) => {
   return dispatch => {
     dispatch({ type: REQUEST_LOCATIONS })
     let locations
-    let patients
+    let patientsResponse
     return client.getDesignDoc(dbName, 'locations', { reduce: true, group: true })
     .then(locationsResponse => {
       locations = locationsResponse.body
       return client.getDesignDoc(dbName, 'patients', { reduce: true, group: true })
     })
-    .then(patientsResponse => {
-      patients = patientsResponse.body
+    .then(response => {
+      patientsResponse = response.body
       return client.getDesignDoc(dbName, 'types', {
         key: '"extension"',
         include_docs: true,
@@ -27,9 +27,10 @@ export const getLocations = (dbName) => {
     })
     .then(extensionsResponse => {
       const extensions = extensionsResponse.body
+      const {patients, districts} = parsePatients(patientsResponse)
       dispatch({
         type: RECEIVED_LOCATIONS,
-        response: { ...parseLocations(locations, extensions), patients: parsePatients(patients) }
+        response: { ...parseLocations(locations, extensions), patients, districts }
       })
     })
   }
@@ -43,7 +44,8 @@ const defaultLocations = {
   locationsExcludedFromConsumption: {},
   externalLocations: [],
   patients: [],
-  roles: []
+  districts: [],
+  roles: [],
 }
 
 export default (state = defaultLocations, action) => {
@@ -107,11 +109,14 @@ export const searchLocations = (rows, input) => {
 }
 
 export const parsePatients = (patientsResponse) => {
-  return patientsResponse.rows.map(row => {
+  const districts = new Set()
+  const patients = patientsResponse.rows.map(row => {
     const attributes = row.key[1] || {}
+    if (attributes.district) districts.add(attributes.district)
     return {
       name: row.key[0],
       ...attributes
     }
   })
+  return { patients, districts: [...districts].map(d => { return { name: d } })}
 }
