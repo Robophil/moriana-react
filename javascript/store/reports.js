@@ -23,22 +23,27 @@ export const runReportAction = (reportType, filterType = null, filterIndex = 0, 
 export const getReportInfo = (dbName, currentLocationName, excludedLocations = {}) => {
   return dispatch => {
     dispatch({ type: REQUEST_ALL_TRANSACTIONS })
-    return new Promise((resolve, reject) => {
-      fetchAllShipments(dbName, resolve, reject)
-    }).then((shipments) => {
+    return fetchAllShipments(dbName).then(shipments => {
       dispatch(receivedAllAction(shipments, currentLocationName, excludedLocations))
     })
   }
 }
 
-const fetchAllShipments = (dbName, resolve, reject, limit = 1000, skip = 0, shipments = []) => {
+export const fetchAllShipments = (dbName) => {
+  const promise = new Promise((resolve, reject) => {
+    fetchShipmentsRecursively(dbName, resolve, reject)
+  })
+  return promise
+}
+
+const fetchShipmentsRecursively = (dbName, resolve, reject, limit = 1000, skip = 0, shipments = []) => {
   client.getDesignDoc(dbName, 'shipments', { skip, limit, include_docs: true }).then(response => {
     shipments = shipments.concat(response.body.rows.map(ship => ship.doc))
     if (response.body.rows.length !== limit) {
       resolve(shipments)
     } else {
       skip += limit
-      fetchAllShipments(dbName, resolve, reject, limit, skip, shipments)
+      fetchShipmentsRecursively(dbName, resolve, reject, limit, skip, shipments)
     }
   })
 }

@@ -86,6 +86,15 @@ export default {
       191: 'FORWARD_SLASH'
     }
     return keys[keyCode]
+  },
+
+  capitalize (name) {
+    if (!name || typeof(name) !== 'string') return name
+    return name.split(' ')
+      .map(word => word.split('')
+      .map((letter, i) => {
+        return (i === 0) ? letter.toUpperCase() : letter
+      }).join('')).join(' ')
   }
 
 }

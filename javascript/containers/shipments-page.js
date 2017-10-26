@@ -1,21 +1,44 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import {getShipments} from 'shipments'
+import {fetchAllShipments} from 'reports'
 import ShipmentsTable from 'shipments-table'
 import Pagination from 'pagination'
+import download from 'download'
 
 export class ShipmentsPage extends React.Component {
-  state = { limit: 100 }
+  state = { limit: 100, loadingAllShipments: false }
   componentDidMount = () => {
     const { dbName, params } = this.props.route
     const {offset} = params
     if (dbName) this.props.getShipments(dbName, offset, this.state.limit)
   }
 
+  downloadShipments = (event) => {
+    event.preventDefault()
+    this.setState({ loadingAllShipments: true })
+    const { dbName, currentLocationName } = this.props.route
+    const fileName = 'Shipments at: ' + currentLocationName
+    const headers = [
+      { name: 'Shipment Date', key: 'date' },
+      { name: 'From', key: 'from' },
+      { name: 'To', key: 'to' },
+      { name: 'Transactions', key: 'totalTransactions' },
+      { name: 'Value', key: 'totalValue' },
+      { name: 'Last Edited', key: 'updated' },
+      { name: 'Creator', key: 'username' },
+    ]
+    fetchAllShipments(dbName).then((shipments) => {
+      this.setState({ loadingAllShipments: false })
+      download(shipments, headers, fileName)
+    })
+  }
+
   render () {
     const { loading, route, shipments } = this.props
     const { dbName, currentLocationName, params } = route
     const {offset} = params
+    const { loadingAllShipments } = this.state
     const pagination = (<Pagination
       offset={offset}
       count={this.props.shipmentsCount}
@@ -25,7 +48,7 @@ export class ShipmentsPage extends React.Component {
     />)
     return (
       <div className='shipments-page'>
-        {loading ? (
+        {(loading || loadingAllShipments) ? (
           <div className='loader' />
         ) : dbName ? (
           <div>
@@ -34,7 +57,7 @@ export class ShipmentsPage extends React.Component {
                 Shipments: <span>{currentLocationName}</span>
               </h5>
               <div className='pull-right'>
-                <a href='#' >Download</a>
+                <a href='#' onClick={this.downloadShipments} >Download</a>
                 {pagination}
               </div>
             </div>

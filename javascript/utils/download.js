@@ -11,7 +11,6 @@ export default function (rows, headers, fileName) {
     }).join('\t')
   })
   tsvRows.unshift(headers.map(header => header.name).join('\t'))
-  console.log(JSON.stringify(tsvRows, null, 2))
   const blob = new Blob([tsvRows.join('\n')], { type: 'text/plain' })
   a.href = URL.createObjectURL(blob)
   a.target = '_blank'
@@ -22,5 +21,8 @@ export default function (rows, headers, fileName) {
 
 const transforms = {
   expiration: h.expiration,
-  date: h.formatDate
+  date: h.formatDate,
+  updated: h.formatDate,
+  from: h.capitalize,
+  to: h.capitalize
 }
