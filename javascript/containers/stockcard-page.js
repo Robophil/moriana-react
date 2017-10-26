@@ -6,6 +6,7 @@ import AMCTable from 'amc-table'
 import {buildHref} from 'shipment-link'
 import StockCardLink from 'stockcard-link'
 import h from 'helpers'
+import download from 'download'
 
 const StockCardPage = class extends React.Component {
   state = { showAll: false }
@@ -32,6 +33,25 @@ const StockCardPage = class extends React.Component {
   scrollToTop = (event) => {
     event.preventDefault()
     window.scrollTo(0, 0)
+  }
+
+  downloadStock = (event) => {
+    event.preventDefault()
+    const { item, category } = this.props
+    const fileName = item + ' ' + category
+    const headers = [
+      { name: 'Shipment Date', key: 'date' },
+      { name: 'Expiration', key: 'expiration' },
+      { name: 'Item Lot', key: 'lot' },
+      { name: 'Unit Price', key: 'unitPrice' },
+      { name: 'Total Value', key: 'totalValue' },
+      { name: 'User', key: 'username' },
+      { name: 'From', key: 'from' },
+      { name: 'To', key: 'to' },
+      { name: 'Quantity', key: 'quantity' },
+      { name: 'Result', key: 'result' }
+    ]
+    download(this.props.transactions, headers, fileName)
   }
 
   render () {
@@ -68,7 +88,7 @@ const StockCardPage = class extends React.Component {
               )}
               <AMCTable amcDetails={amcDetails} />
             </div>
-            <a href='#' className='pull-right'>Download</a>
+            <a href='#' onClick={this.downloadStock} className='pull-right'>Download</a>
             <h5>{totalTransactions} Transaction{h.soronos(totalTransactions)}</h5>
             <table>
               <thead>
