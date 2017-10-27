@@ -1,100 +1,83 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getItems, searchItems } from 'items'
-import { getLocations } from 'locations'
+import { getItems, searchItems, displayItemName } from 'items'
+import { getLocations, searchLocations } from 'locations'
+import displayLocation from 'display-location'
 import h from 'helpers'
-import StockcardLink, {buildStockCardHref} from 'stockcard-link'
+import {buildStockCardHref} from 'stockcard-link'
+import SearchDrop from 'search-drop'
 
 const HeaderSearch = class extends React.Component {
-  state = { limit: 50, openButton: 'items', query: '', currIndex: 0, itemResults: [] }
+  state = { itemsOpen: true }
 
   componentDidMount = () => {
     this.props.getItems(this.props.dbName, this.props.currentLocationName)
     this.props.getLocations(this.props.dbName, this.props.currentLocationName)
   }
 
-  componentWillReceiveProps = (newProps) => {
-    this.setState({
-      itemResults: newProps.items.items.slice(0, this.state.limit)
-    })
+  itemSelected = (resource) => {
+    const {item, category} = resource
+    window.location.href = buildStockCardHref(this.props.dbName, {item, category})
+    this.props.closeClicked()
   }
 
-  runSearch = (e) => {
-    const query = e.currentTarget.value
-    const cleanedQuery = query.toLowerCase().trim()
-    const itemResults = searchItems(this.props.items.items, cleanedQuery)
-    this.setState({ query, itemResults, currIndex: 0 })
+  switchSearch = (event) => {
+    event.stopPropagation()
+    event.preventDefault()
+    this.setState({ itemsOpen: !this.state.itemsOpen })
   }
 
-  checkKeys = (e) => {
-    switch (h.keyMap(e.keyCode)) {
-      case 'ENTER': {
-        const item = this.state.itemResults[this.state.currIndex]
-        window.location.href = buildStockCardHref(this.props.dbName, item)
-        this.props.closeClicked()
-        break
-      }
-      case 'ESCAPE': {
-        this.props.closeClicked()
-        break
-      }
-      case 'ARROW_DOWN': {
-        if (this.state.currIndex === (this.state.itemResults.length - 1)) {
-          this.setState({ currIndex: 0 })
-        } else {
-          this.setState({ currIndex: this.state.currIndex + 1 })
-        }
-        break
-      }
-      case 'ARROW_UP': {
-        if (this.state.currIndex < 0) {
-          this.setState({ currIndex: this.state.itemResults.length - 1 })
-        } else {
-          this.setState({ currIndex: this.state.currIndex - 1 })
-        }
-        break
-      }
-    }
+  closeClicked = (event) => {
+    this.props.closeClicked()
   }
 
-  setCurrIndex = (e) => {
-    this.setState({ currIndex: Number(e.target.dataset.index) })
+  locationSelected = (location) => {
+    const link = `/#d/${this.props.dbName}/locations/${encodeURIComponent(location.name)}/`
+    window.location.href = link
+    this.props.closeClicked()
   }
 
   render () {
-    const { dbName } = this.props
-    const { loading, items } = this.props.items
-    const { query, itemResults, currIndex } = this.state
+    const { items } = this.props.items
+    const loadingItems = this.props.items.loading
+    const { locations } = this.props.locations
+    const loadingLocations = this.props.locations.loading
+    const { itemsOpen } = this.state
     return (
       <div className='header-search'>
-        {items.length === 0 && loading ? (
-          <div className='loader' />
-        ) : (
-          <div className='search-view-container'>
-            <h5>Search<button onClick={this.props.closeClicked} className='close'><span>×</span></button></h5>
-            <input type='text' autoFocus ref='query' value={query} onKeyUp={this.checkKeys} onChange={this.runSearch} />
-            <div>
-              <button className='button-primary' data-search-field='items'>Search Items</button>
-              <button data-search-field='locations'>Search Locations</button>
-            </div>
-            <div className='search-drop-results'>
-              {itemResults.map((item, i) => (
-                <StockcardLink
-                  className={`${currIndex === i ? 'active' : ''}`}
-                  key={i}
-                  dbName={dbName}
-                  transaction={item}
-                  onClick={this.props.closeClicked}
-                  onMouseEnter={this.setCurrIndex}
-                  dataIndex={i}
-                  >
-                  {item.item} {item.category}
-                </StockcardLink>
-              ))}
-              <p>
-                items: {query && (<span><strong>{query} </strong> found </span>)} {itemResults.length} of {h.num(items.length)}
-              </p>
-            </div>
+        <button className='close' onClick={this.closeClicked}><span>×</span></button>
+        {itemsOpen ? (
+          <div>
+            <button className='button-primary'>Search Items</button>
+            <button onMouseDown={this.switchSearch}>Search Locations</button>
+            <SearchDrop
+              rows={items}
+              loading={loadingItems}
+              value={{}}
+              valueSelected={this.itemSelected}
+              resourceName={'item'}
+              displayFunction={displayItemName}
+              searchFilterFunction={searchItems}
+              stayOpen
+              autoFocus
+            />
+          </div>
+        )
+        : (
+          <div>
+            <button onMouseDown={this.switchSearch}>Search Items</button>
+            <button className='button-primary'>Search Locations</button>
+            <SearchDrop
+              rows={locations}
+              loading={loadingLocations}
+              value={{}}
+              valueSelected={this.locationSelected}
+              resourceName={'location'}
+              displayFunction={displayLocation}
+              searchFilterFunction={searchLocations}
+              stayOpen
+              autoFocus
+            />
           </div>
         )}
       </div>

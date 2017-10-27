@@ -3,6 +3,8 @@ import h from 'helpers'
 import ClickOutHandler from 'react-onclickout'
 import StaticInput from 'static-input'
 
+const LIMIT = 25
+
 export default class SearchDrop extends React.Component {
   state = {
     showEdit: true,
@@ -14,13 +16,13 @@ export default class SearchDrop extends React.Component {
   }
 
   componentDidMount = () => {
-    this.setState({ visibleRows: this.props.rows.slice(0, 25), showEdit: !this.props.value.name })
+    this.setState({ visibleRows: this.props.rows.slice(0, LIMIT), showEdit: !this.props.value.name })
   }
 
   componentWillReceiveProps = (newProps) => {
     this.setState({ showEdit: !newProps.value.name })
     if (newProps.rows) {
-      this.setState({ visibleRows: newProps.rows.slice(0, 25) })
+      this.setState({ visibleRows: newProps.rows.slice(0, LIMIT) })
     }
   }
 
@@ -95,7 +97,7 @@ export default class SearchDrop extends React.Component {
     }
   }
 
-  hideSearch = () => {
+  hideSearch = (event) => {
     if (this.state.showSearch) this.setState({ showSearch: false })
   }
 
@@ -118,11 +120,11 @@ export default class SearchDrop extends React.Component {
 
   render () {
     const { inputValue, showEdit, currIndex, visibleRows, showSearch } = this.state
-    const { value, label, resourceName, rows, onNewSelected, loading, autoFocus } = this.props
-    const patientDisplayed = this.displayFunction(value)
+    const { value, label, resourceName, rows, onNewSelected, loading, autoFocus, stayOpen } = this.props
+    const staticValue = this.displayFunction(value)
     if (!showEdit) {
       return (
-        <StaticInput label={label} value={patientDisplayed} onEditClick={this.open} />
+        <StaticInput label={label} value={staticValue} onEditClick={this.open} />
       )
     }
     const detailsLinkClasses = currIndex === visibleRows.length ? 'active' : ''
@@ -141,7 +143,7 @@ export default class SearchDrop extends React.Component {
               onFocus={this.showSearch}
               autoFocus={autoFocus}
               type='text' />
-            {showSearch && (
+            {(showSearch || stayOpen) && (
               <div className='search-drop-results'>
                 {loading
                 ? (<div className='loader' />)

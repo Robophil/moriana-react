@@ -3,9 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import store from 'store'
-
 import { parseHash } from 'routing'
-
 import SiteHeader from 'site-header'
 import SiteFooter from 'site-footer'
 import ShipmentsPage from 'shipments-page'
@@ -14,6 +12,7 @@ import ShipmentPage from 'shipment-page'
 import StockCardPage from 'stockcard-page'
 import ReportsPage from 'reports-page'
 import EditShipmentPage from 'edit-shipment-page'
+import LocationsPage from 'locations-page'
 
 require('./styles/app.less')
 
@@ -26,7 +25,8 @@ const PAGES = {
   'shipment': { component: ShipmentPage, paramKeys: ['id'] },
   'shipment/edit': { component: EditShipmentPage, paramKeys: ['shipmentType', 'id'] },
   'stockcard': { component: StockCardPage, paramKeys: ['category', 'item', 'atBatch'] },
-  'reports': { component: ReportsPage, paramKeys: ['reportType'] }
+  'reports': { component: ReportsPage, paramKeys: ['reportType'] },
+  'locations': { component: LocationsPage, paramKeys: ['name'] }
 }
 
 class App extends React.Component {

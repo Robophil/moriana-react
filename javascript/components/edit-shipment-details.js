@@ -11,7 +11,7 @@ import displayLocation from 'display-location'
 
 export default class EditShipmentDetails extends React.Component {
   state = {
-    showNewLocation: true,
+    showNewLocation: false,
     newLocationName: '',
   }
 

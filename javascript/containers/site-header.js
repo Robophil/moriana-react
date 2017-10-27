@@ -45,7 +45,9 @@ const SiteHeader = class extends React.Component {
     this.hideLink()
   }
 
-  hideLink = () => { this.setState({ openSection: false }) }
+  hideLink = (event) => {
+    this.setState({ openSection: false })
+  }
 
   render () {
     const { user, route } = this.props
