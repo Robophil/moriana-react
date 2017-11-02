@@ -8,7 +8,8 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "build": "webpack -p --config ./webpack.production.config.js"
+    "build": "webpack -p --config ./webpack.production.config.js",
+    "deploy": "npm build; ./scripts/deploy.js"
   },
   "dependencies": {
     "babel-core": "^6.26.0",
