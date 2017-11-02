@@ -32,7 +32,9 @@ export const getShipment = (dbName, id) => {
 export const getShipments = (dbName, offset, limit) => {
   return dispatch => {
     dispatch({ type: REQUEST_SHIPMENTS, offset })
-    return client.getDesignDoc(dbName, 'shipments', { skip: offset || 0, limit }).then(response => {
+    const options = { skip: offset || 0, limit }
+    if (!limit) delete options.limit
+    return client.getDesignDoc(dbName, 'shipments', options).then(response => {
       const { body } = response
       if (response.status >= 400) {
         dispatch({ type: SHIPMENTS_ERROR, error: body })
@@ -116,4 +118,11 @@ const getType = (ship, currentLocationName) => {
   } else {
     return 'receive'
   }
+}
+
+export const getShipmentsByLocation = (shipments, location) => {
+  const l = location.toLowerCase()
+  return shipments.filter(ship => {
+    return ship.to.toLowerCase() === l || ship.from.toLowerCase() === l
+  })
 }

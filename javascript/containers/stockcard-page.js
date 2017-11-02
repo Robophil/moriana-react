@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getStock } from 'stock'
+import { getLocations } from 'locations'
 import QuantityByBatch from 'quantity-by-batch'
 import AMCTable from 'amc-table'
 import {buildHref} from 'shipment-link'
@@ -8,15 +9,25 @@ import StockCardLink from 'stockcard-link'
 import h from 'helpers'
 import download from 'download'
 
+const VISIBLE_TRANSACTIONS_LIMIT = 100
+
 const StockCardPage = class extends React.Component {
-  state = { showAll: false }
+  state = { showAll: false, amcResourcesLoading: true }
 
   componentDidMount = () => {
+    console.log('componentDidMount')
     const { dbName, currentLocationName, params } = this.props.route
     let { category, item, atBatch } = params
     category = decodeURIComponent(category)
     item = decodeURIComponent(item)
     this.props.getStock(dbName, currentLocationName, category, item, atBatch)
+    this.props.getLocations(dbName, currentLocationName)
+  }
+
+  componentWillReceiveProps = (newProps) => {
+    if (!newProps.stock.loading && !newProps.locations.loading) {
+      this.setState({ amcResourcesLoading: false })
+    }
   }
 
   showAllRows = (event) => {
@@ -26,7 +37,8 @@ const StockCardPage = class extends React.Component {
 
   rowSelected = (event) => {
     if (event.target.nodeName !== 'A') {
-      window.location.href = buildHref(event.currentTarget.dataset.id, this.props.route.dbName)
+      const {id} = event.currentTarget.dataset
+      window.location.href = buildHref(id, this.props.route.dbName)
     }
   }
 
@@ -37,7 +49,7 @@ const StockCardPage = class extends React.Component {
 
   downloadStock = (event) => {
     event.preventDefault()
-    const { item, category } = this.props
+    const { item, category, transactions } = this.props.stock
     const fileName = item + ' ' + category
     const headers = [
       { name: 'Shipment Date', key: 'date' },
@@ -51,18 +63,29 @@ const StockCardPage = class extends React.Component {
       { name: 'Quantity', key: 'quantity' },
       { name: 'Result', key: 'result' }
     ]
-    download(this.props.transactions, headers, fileName)
+    download(transactions, headers, fileName)
   }
 
   render () {
-    const { totalTransactions, batches, atBatch, amcDetails, item, category, expiration, lot } = this.props
+    const {
+      transactions,
+      totalTransactions,
+      batches,
+      atBatch,
+      item,
+      amcDetails,
+      category,
+      expiration,
+      lot,
+      loading
+    } = this.props.stock
+    const {locations} = this.props.locations
     const { dbName } = this.props.route
-    const { showAll } = this.state
-    let transactions = this.props.transactions || []
-    if (!showAll) transactions = transactions.slice(0, 100)
+    const { showAll, amcResourcesLoading } = this.state
+    let visibleTransactions = showAll ? transactions : transactions.slice(0, VISIBLE_TRANSACTIONS_LIMIT)
     return (
       <div className='stockcard-page'>
-        {this.props.loading ? (
+        {loading ? (
           <div className='loader' />
         ) : (
           <div>
@@ -86,7 +109,7 @@ const StockCardPage = class extends React.Component {
               ) : (
                 <QuantityByBatch dbName={dbName} batches={batches} />
               )}
-              <AMCTable amcDetails={amcDetails} />
+              {!amcResourcesLoading && (<AMCTable locations={locations} transactions={transactions} />)}
             </div>
             <a href='#' onClick={this.downloadStock} className='pull-right'>Download</a>
             <h5>{totalTransactions} Transaction{h.soronos(totalTransactions)}</h5>
@@ -108,7 +131,7 @@ const StockCardPage = class extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                {transactions.map((row, i) => (
+                {visibleTransactions.map((row, i) => (
                   <tr key={i} onClick={this.rowSelected} data-id={row.id}>
                     <td>{h.dateFromNow(row.date)}</td>
                     <td>{h.formatDate(row.date)}</td>
@@ -135,9 +158,9 @@ const StockCardPage = class extends React.Component {
               </tbody>
             </table>
             <div className='text-right'>
-              Showing {h.num(transactions.length)} of {h.num(totalTransactions)} transaction
+              Showing {h.num(visibleTransactions.length)} of {h.num(totalTransactions)} transaction
               {h.soronos(totalTransactions)}. &nbsp;
-              {!showAll && transactions.length === totalTransactions
+              {!showAll && visibleTransactions.length === totalTransactions
               ? (<span />)
               : !showAll ? (<a href='#' onClick={this.showAllRows}>Show All Transactions</a>) : (
                 <a href='#' onClick={this.scrollToTop}>Scroll To Top</a>
@@ -154,6 +177,11 @@ const StockCardPage = class extends React.Component {
 }
 
 export default connect(
-  state => state.stock,
-  { getStock }
+  state => {
+    return {
+      stock: state.stock,
+      locations: state.locations
+    }
+  },
+  { getStock, getLocations }
 )(StockCardPage)

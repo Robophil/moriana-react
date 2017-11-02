@@ -10,6 +10,7 @@ import ShipmentsPage from 'shipments-page'
 import LoginPage from 'login-page'
 import ShipmentPage from 'shipment-page'
 import StockCardPage from 'stockcard-page'
+// import CurrentStockPage from 'current-stock-page'
 import ReportsPage from 'reports-page'
 import EditShipmentPage from 'edit-shipment-page'
 import LocationsPage from 'locations-page'
@@ -26,7 +27,7 @@ const PAGES = {
   'shipment/edit': { component: EditShipmentPage, paramKeys: ['shipmentType', 'id'] },
   'stockcard': { component: StockCardPage, paramKeys: ['category', 'item', 'atBatch'] },
   'reports': { component: ReportsPage, paramKeys: ['reportType'] },
-  'locations': { component: LocationsPage, paramKeys: ['name'] }
+  'locations': { component: LocationsPage, paramKeys: ['location'] }
 }
 
 class App extends React.Component {

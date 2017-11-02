@@ -1,24 +1,34 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import {getShipments} from 'shipments'
+import {getShipments, getShipmentsByLocation} from 'shipments'
 import {fetchAllShipments} from 'reports'
 import ShipmentsTable from 'shipments-table'
 import Pagination from 'pagination'
 import download from 'download'
 
 export class LocationsPage extends React.Component {
-  state = { limit: 100, loadingAllShipments: false }
+  state = { pageName: '', shipmentsAtThisLocation: [] }
+
   componentDidMount = () => {
-    const { dbName, params } = this.props.route
-    const {offset} = params
-    if (dbName) this.props.getShipments(dbName, offset, this.state.limit)
+    const { dbName, params, currentLocationName } = this.props.route
+    const {location} = params
+    this.setState({
+      pageName: `${currentLocationName}: Shipments from or to ${location}`
+    })
+    if (dbName) this.props.getShipments(dbName)
+  }
+
+  componentWillReceiveProps = (newProps) => {
+    const {location} = this.props.route.params
+    this.setState({
+      shipmentsAtThisLocation: getShipmentsByLocation(newProps.shipments, location),
+    })
   }
 
   downloadShipments = (event) => {
     event.preventDefault()
-    this.setState({ loadingAllShipments: true })
-    const { dbName, currentLocationName } = this.props.route
-    const fileName = 'Shipments at: ' + currentLocationName
+    const {currentLocationName} = this.props.route
+    const {location} = this.props.route.params
     const headers = [
       { name: 'Shipment Date', key: 'date' },
       { name: 'From', key: 'from' },
@@ -28,17 +38,14 @@ export class LocationsPage extends React.Component {
       { name: 'Last Edited', key: 'updated' },
       { name: 'Creator', key: 'username' },
     ]
-    fetchAllShipments(dbName).then((shipments) => {
-      this.setState({ loadingAllShipments: false })
-      download(shipments, headers, fileName)
-    })
+    download(shipments, headers, this.state.name)
   }
 
   render () {
     const { loading, route, shipments } = this.props
-    const { dbName, currentLocationName, params } = route
+    const { dbName, params } = route
     const {offset} = params
-    const { loadingAllShipments } = this.state
+    const { loadingAllShipments, shipmentsAtThisLocation, pageName } = this.state
     const pagination = (<Pagination
       offset={offset}
       count={this.props.shipmentsCount}
@@ -53,15 +60,16 @@ export class LocationsPage extends React.Component {
         ) : dbName ? (
           <div>
             <div className='shipments-header'>
-              <h5>
-                Shipments: <span>{currentLocationName}</span>
-              </h5>
+              <h5>{pageName}</h5>
+              <div>
+                <a href={`/#d/${dbName}/`}>Back to all shipments</a>
+              </div>
               <div className='pull-right'>
                 <a href='#' onClick={this.downloadShipments} >Download</a>
                 {pagination}
               </div>
             </div>
-            <ShipmentsTable dbName={dbName} shipments={shipments} />
+            <ShipmentsTable dbName={dbName} shipments={shipmentsAtThisLocation} />
             <div className='pull-right'>
               {pagination}
             </div>

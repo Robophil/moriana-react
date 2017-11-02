@@ -39,7 +39,7 @@ function buildParams (paramKeys, paramValues) {
     if (paramValue === undefined) {
       paramValue = 0
     } else {
-      paramValue = isNaN(Number(paramValue)) ? paramValue : Number(paramValue)
+      paramValue = isNaN(Number(paramValue)) ? decodeURIComponent(paramValue) : Number(paramValue)
     }
     paramsMapped[paramName] = paramValue
   })

@@ -1,5 +1,6 @@
 import React from 'react'
 import h from 'helpers'
+import {getAMCDetails} from 'amc'
 
 export default class extends React.Component {
   state = { show: false }
@@ -9,7 +10,8 @@ export default class extends React.Component {
     this.setState({ showTable: !this.state.showTable })
   }
   render () {
-    const { amcDetails } = this.props
+    const {transactions, locations} = this.props
+    const amcDetails = getAMCDetails(transactions, locations)
     const {showTable} = this.state
     return (
       <div className='six columns'>
