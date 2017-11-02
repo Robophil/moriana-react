@@ -371,7 +371,29 @@ const buildExpired = (allItems, batchFilter, dateFilter) => {
 }
 
 const buildShortList = (allItems) => {
-  return { reportRows: [], reportHeaders: [] }
+  const reportRows = []
+  const nextMonthStart = Moment.utc().add(1, 'months').startOf('month')
+  const startDate = nextMonthStart.toISOString()
+  const endDate = nextMonthStart.add(6, 'months').toISOString()
+  Object.keys(allItems).forEach(key => {
+    Object.keys(allItems[key]).forEach(batchKey => {
+      const row = Object.assign(getItemFromkey(key), getBatchFromKey(batchKey))
+      if (row.expiration >= startDate && row.expiration < endDate) {
+        row.quantity = 0
+        row.totalValue = 0
+        allItems[key][batchKey].forEach(t => {
+          row.quantity += t.quantity
+          row.totalValue += t.totalValue
+        })
+        reportRows.push(row)
+      }
+    })
+  })
+  const reportHeaders = getItemHeaders(false).concat([
+    { name: 'Quantity', key: 'quantity'},
+    { name: 'Total Value', key: 'totalValue'}
+  ])
+  return { reportRows, reportHeaders }
 }
 
 const buildOutOfStock = (allItems) => {
