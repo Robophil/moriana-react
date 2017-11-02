@@ -149,9 +149,6 @@ export default (state = defaultReportsState, action) => {
       }
 
       let { reportRows, reportHeaders } = reportBuilder(items, batchFilter, dateFilter, categoryFilter)
-
-      reportRows = reportRows.sort((a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase()))
-
       return { ...state, currentReport, dateFilter, categoryFilter, batchFilter, reportRows, reportHeaders }
     }
     default: {
@@ -289,6 +286,7 @@ const buildConsumption = (allItems, batchFilter, dateFilter, categoryFilter) => 
       }
     })
   }
+  sortByItemName(reportRows)
   return { reportRows, reportHeaders: getItemHeaders(itemLevel).concat(reportHeaders) }
 }
 
@@ -345,6 +343,7 @@ const buildQuality = (allItems) => {
   const reportHeaders = getItemHeaders(false).concat([
     { name: 'Quantity', key: 'quantity'},
   ])
+  sortByItemName(reportRows)
   return { reportRows, reportHeaders }
 }
 
@@ -367,6 +366,7 @@ const buildExpired = (allItems, batchFilter, dateFilter) => {
     { name: 'Unit Price', key: 'unitPrice'},
     { name: 'Total Value', key: 'totalValue'}
   ])
+  sortByItemName(reportRows)
   return { reportRows, reportHeaders }
 }
 
@@ -374,7 +374,7 @@ const buildShortList = (allItems) => {
   const reportRows = []
   const nextMonthStart = Moment.utc().add(1, 'months').startOf('month')
   const startDate = nextMonthStart.toISOString()
-  const endDate = nextMonthStart.add(6, 'months').toISOString()
+  const endDate = nextMonthStart.add(5, 'months').toISOString()
   Object.keys(allItems).forEach(key => {
     Object.keys(allItems[key]).forEach(batchKey => {
       const row = Object.assign(getItemFromkey(key), getBatchFromKey(batchKey))
@@ -385,10 +385,13 @@ const buildShortList = (allItems) => {
           row.quantity += t.quantity
           row.totalValue += t.totalValue
         })
-        reportRows.push(row)
+        if (row.quantity > 0) {
+          reportRows.push(row)
+        }
       }
     })
   })
+  sortOnDate(reportRows, 'expiration')
   const reportHeaders = getItemHeaders(false).concat([
     { name: 'Quantity', key: 'quantity'},
     { name: 'Total Value', key: 'totalValue'}
@@ -417,6 +420,7 @@ const buildOutOfStock = (allItems) => {
       reportRows.push({ categories: itemsWithoutCategories[key].categories, since, item: key })
     }
   })
+  sortOnDate(reportRows, 'since')
   const reportHeaders = [
     { name: 'Item', key: 'item'},
     { name: 'Categories', key: 'categories'},
@@ -436,4 +440,22 @@ const justItems = (allItems) => {
     })
     return memo
   }, {})
+}
+
+const sortByItemName = (rows) => {
+  rows.sort(sortOnName)
+}
+
+const sortOnName = (a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase())
+
+const sortOnDate = (rows, dateKeyName) => {
+  rows.sort((a, b) => {
+    if (a[dateKeyName] < b[dateKeyName]) {
+      return -1
+    } else if (a[dateKeyName] > b[dateKeyName]) {
+      return 1
+    } else {
+      return sortOnName(a, b)
+    }
+  })
 }
