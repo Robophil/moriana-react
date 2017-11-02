@@ -20,8 +20,12 @@ export default class extends React.Component {
   render () {
     const { openFilter } = this.state
     const {
-      dateFilter, categoryFilter, batchFilter,
-      allDateFilters, allCategoryFilters, allBatchFilters
+      dateFilter,
+      categoryFilter,
+      batchFilter,
+      allDateFilters,
+      allCategoryFilters,
+      allBatchFilters
     } = this.props
     const availableFilters = { date: dateFilter, category: categoryFilter, batch: batchFilter }
     return (
@@ -30,7 +34,7 @@ export default class extends React.Component {
           {Object.keys(availableFilters).map((key, i) => {
             const btnClass = (key === openFilter) ? 'active' : ''
             return (
-              <a key={i} href onClick={this.showFilter} data-filter-name={key} className={`${btnClass}`}>
+              <a key={i} href='#' onClick={this.showFilter} data-filter-name={key} className={`${btnClass}`}>
                 {availableFilters[key].name}
               </a>
             )

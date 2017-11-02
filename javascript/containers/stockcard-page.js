@@ -15,7 +15,6 @@ const StockCardPage = class extends React.Component {
   state = { showAll: false, amcResourcesLoading: true }
 
   componentDidMount = () => {
-    console.log('componentDidMount')
     const { dbName, currentLocationName, params } = this.props.route
     let { category, item, atBatch } = params
     category = decodeURIComponent(category)

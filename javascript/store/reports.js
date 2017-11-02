@@ -2,20 +2,21 @@
 import Moment from 'moment'
 import client from 'client'
 import { getCategories } from 'items'
+import clone from 'clone'
 
 // actions
 
 export const REQUEST_ALL_TRANSACTIONS = 'REQUEST_ALL_TRANSACTIONS'
 export const RECEIVED_ALL_TRANSACTIONS = 'RECEIVED_ALL_TRANSACTIONS'
-export const RUN_FILTERED_REPORT = 'RUN_FILTERED_REPORT'
+export const RUN_REPORT = 'RUN_REPORT'
 export const TRANSACTIONS_ERROR = 'TRANSACTIONS_ERROR'
 
 export const receivedAllAction = (shipments, currentLocationName, excludedLocations) => {
   return { type: RECEIVED_ALL_TRANSACTIONS, shipments, currentLocationName, excludedLocations }
 }
 
-export const runReportAction = (reportType, filterType = null, filterIndex = 0, customDateRange = null) => {
-  return { type: RUN_FILTERED_REPORT, reportType, filterType, filterIndex, customDateRange }
+export const runReportAction = (currentReport, filterType = null, filterIndex = 0, customDateRange = null) => {
+  return { type: RUN_REPORT, currentReport, filterType, filterIndex, customDateRange }
 }
 
 // thunkettes
@@ -48,9 +49,9 @@ const fetchShipmentsRecursively = (dbName, resolve, reject, limit = 1000, skip =
   })
 }
 
-export const runReport = (reportType, filterType = null, filterIndex = null, customDateRange = null) => {
+export const runReport = (currentReport, filterType = null, filterIndex = null, customDateRange = null) => {
   return dispatch => {
-    dispatch(runReportAction(reportType, filterType, filterIndex, customDateRange))
+    dispatch(runReportAction(currentReport, filterType, filterIndex, customDateRange))
   }
 }
 
@@ -112,8 +113,8 @@ export default (state = defaultReportsState, action) => {
         allDateFilters
       }
     }
-    case RUN_FILTERED_REPORT: {
-      const {reportType} = action
+    case RUN_REPORT: {
+      const currentReport = action.currentReport || 'consumption'
       const reportBuilders = {
         consumption: buildConsumption,
         quality: buildQuality,
@@ -121,7 +122,7 @@ export default (state = defaultReportsState, action) => {
         short: buildShortList,
         out: buildOutOfStock
       }
-      const reportBuilder = reportBuilders[reportType]
+      const reportBuilder = reportBuilders[currentReport]
 
       let { dateFilter, categoryFilter, batchFilter } = state
 
@@ -151,7 +152,7 @@ export default (state = defaultReportsState, action) => {
 
       reportRows = reportRows.sort((a, b) => a.item.toLowerCase().localeCompare(b.item.toLowerCase()))
 
-      return { ...state, reportType, dateFilter, categoryFilter, batchFilter, reportRows, reportHeaders }
+      return { ...state, currentReport, dateFilter, categoryFilter, batchFilter, reportRows, reportHeaders }
     }
     default: {
       return state
@@ -330,17 +331,33 @@ const allColumnsAreZeros = (row) => {
 }
 
 const buildQuality = (allItems) => {
+  const reportRows = []
+  Object.keys(allItems).forEach(key => {
+    Object.keys(allItems[key]).forEach(batchKey => {
+      let quantity = 0
+      allItems[key][batchKey].forEach(t => { quantity += t.quantity })
+      if (quantity < 0) {
+        const row = Object.assign({quantity}, getItemFromkey(key), getBatchFromKey(batchKey))
+        reportRows.push(row)
+      }
+    })
+  })
 
+  const reportHeaders = getItemHeaders(false).concat([
+    { name: 'Quantity', key: 'quantity'},
+  ])
+
+  return { reportRows, reportHeaders }
 }
 
 const buildExpired = (allItems) => {
-
+  return { reportRows: [], reportHeaders: [] }
 }
 
 const buildShortList = (allItems) => {
-
+  return { reportRows: [], reportHeaders: [] }
 }
 
 const buildOutOfStock = (allItems) => {
-
+  return { reportRows: [], reportHeaders: [] }
 }

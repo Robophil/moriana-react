@@ -10,7 +10,7 @@ import ShipmentsPage from 'shipments-page'
 import LoginPage from 'login-page'
 import ShipmentPage from 'shipment-page'
 import StockCardPage from 'stockcard-page'
-// import CurrentStockPage from 'current-stock-page'
+import CurrentStockPage from 'current-stock-page'
 import ReportsPage from 'reports-page'
 import EditShipmentPage from 'edit-shipment-page'
 import LocationsPage from 'locations-page'
@@ -22,12 +22,13 @@ require('./styles/app.less')
 
 const PAGES = {
   '/': { component: ShipmentsPage, paramKeys: ['offset'] },
-  'login': { component: LoginPage, paramKeys: [] },
+  'login': { component: LoginPage },
   'shipment': { component: ShipmentPage, paramKeys: ['id'] },
   'shipment/edit': { component: EditShipmentPage, paramKeys: ['shipmentType', 'id'] },
   'stockcard': { component: StockCardPage, paramKeys: ['category', 'item', 'atBatch'] },
-  'reports': { component: ReportsPage, paramKeys: ['reportType'] },
-  'locations': { component: LocationsPage, paramKeys: ['location'] }
+  'reports': { component: ReportsPage, paramKeys: ['currentReport'] },
+  'locations': { component: LocationsPage, paramKeys: ['location'] },
+  'stock': { component: CurrentStockPage }
 }
 
 class App extends React.Component {
@@ -50,12 +51,11 @@ class App extends React.Component {
     const pageName = this.state.route.path
     const page = PAGES[pageName]
     const Handler = page ? page.component : ShipmentsPage
-    const classes = pageName === 'reports' ? '' : 'container'
 
     return (
       <div>
         <SiteHeader route={this.state.route} />
-        <div className={classes}>
+        <div className={'container'}>
           <Handler key={window.location.hash} route={this.state.route} />
         </div>
         <SiteFooter />

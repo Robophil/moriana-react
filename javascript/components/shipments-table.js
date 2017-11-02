@@ -14,7 +14,7 @@ export default class extends React.Component {
   render () {
     const {dbName} = this.props
     return (
-      <table className='u-full-width'>
+      <table>
         <thead>
           <tr>
             <th>Date</th>

@@ -28,6 +28,14 @@ a {
   }
 }
 
+.disabled-link {
+  color: black;
+  text-decoration: none;
+  &:hover {
+    cursor: default;
+  }
+}
+
 input {
   width: 100%;
 }
@@ -83,13 +91,6 @@ input {
   a {
     font-size: 1.5em;
     margin: 0 15px;
-  }
-  .disabled-link a {
-  color: black;
-    text-decoration: none;
-    &:hover {
-      cursor: default;
-    }
   }
 }
 
@@ -211,6 +212,10 @@ table.no-hover tbody tr:hover {
   text-align: right;
 }
 
+.text-center {
+  text-align: center;
+}
+
 .stockcard-page {
   th, td {
     padding: 4px 0px;
@@ -231,6 +236,19 @@ form .input-group.radio {
     span {
       margin-left: 25px;
       font-weight: normal;
+    }
+  }
+}
+
+.current-stock-page {
+  h5 {
+    float: left;
+  }
+  .pull-right {
+    margin-top: 15px;
+    float: right;
+    a {
+      margin-left: 10px;
     }
   }
 }

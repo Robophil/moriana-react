@@ -6,39 +6,62 @@ import ReportTable from 'report-table'
 import h from 'helpers'
 
 export class ReportsPage extends React.Component {
-  state = { reportType: null }
 
   componentDidMount = () => {
-    this.setState({ reportType: this.props.route.params.reportType || 'consumption' })
-    this.props.getReportInfo(this.props.route.dbName, this.props.route.currentLocationName).then(() => {
-      this.props.runReport(this.state.reportType)
+    const {dbName, currentLocationName, params} = this.props.route
+    this.props.getReportInfo(dbName, currentLocationName).then(() => {
+      this.props.runReport()
     })
   }
 
   filterSet = (filterType, filterIndex) => {
-    this.props.runReport(this.state.reportType, filterType, filterIndex)
+    this.props.runReport(this.state.currentReport, filterType, filterIndex)
   }
 
   changeReport = (event) => {
     event.preventDefault(event)
+    const currentReport = event.target.dataset.type
     const locationSplit = window.location.href.split('/')
-    locationSplit[locationSplit.length - 1] = event.target.dataset.type
+    locationSplit[locationSplit.length - 1] = currentReport
     window.history.replaceState(null, null, locationSplit.join('/'))
-    this.setState({ reportType: event.target.dataset.type })
+    this.props.runReport(currentReport)
+  }
+
+  download = (event) => {
+    event.preventDefault()
   }
 
   render () {
-    const { allItemsFetched, reportTypes, reportHeaders, reportRows } = this.props
+    const {
+      currentReport,
+      allItemsFetched,
+      reportTypes,
+      reportHeaders,
+      reportRows,
+      allDateFilters,
+      allCategoryFilters,
+      allBatchFilters,
+      dateFilter,
+      categoryFilter,
+      batchFilter
+    } = this.props
+
     if (!allItemsFetched) return (<div className='loader' />)
+
     return (
       <div className='reports-page'>
         <h5>Reports</h5>
         <span className='links'>
           {Object.keys(reportTypes).map((slug, i) => {
-            const activeClass = (slug === this.state.reportType) ? 'active' : ''
+            const activeClass = (slug === currentReport) ? 'disabled-link' : ''
             return (
-              <a key={i} href className={`${activeClass}`} onClick={this.changeReport} data-type={slug}>
-                {reportTypes[slug].name}
+              <a
+                key={i}
+                href='#'
+                className={activeClass}
+                onClick={this.changeReport}
+                data-type={slug}>
+                  {reportTypes[slug].name}
               </a>
             )
           })}
@@ -47,17 +70,17 @@ export class ReportsPage extends React.Component {
         ? (
           <div>
             <ReportFilters
-              allDateFilters={this.props.allDateFilters}
-              allCategoryFilters={this.props.allCategoryFilters}
-              allBatchFilters={this.props.allBatchFilters}
-              dateFilter={this.props.dateFilter}
-              categoryFilter={this.props.categoryFilter}
-              batchFilter={this.props.batchFilter}
+              allDateFilters={allDateFilters}
+              allCategoryFilters={allCategoryFilters}
+              allBatchFilters={allBatchFilters}
+              dateFilter={dateFilter}
+              categoryFilter={categoryFilter}
+              batchFilter={batchFilter}
               filterSet={this.filterSet}
             />
             <div className='report'>
               <div className='pull-right'>
-                <a href className='button-small'>Download</a>
+                <a href='#' onClick={this.download}>Download</a>
                 <span>Rows: {h.num(reportRows.length)}</span>
               </div>
               <ReportTable headers={reportHeaders} rows={reportRows} />

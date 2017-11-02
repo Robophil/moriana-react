@@ -5,7 +5,7 @@ export default class extends React.Component {
   render () {
     const {headers, rows} = this.props
     return (
-      <table className='table table-fixed table-striped table-small table-hover table-condensed'>
+      <table>
         <thead>
           <tr>{headers.map((header, i) => (<th key={i}>{header.name}</th>))}</tr>
         </thead>

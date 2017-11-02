@@ -33,6 +33,7 @@ export const parseHash = (hash, PAGES) => {
 }
 
 function buildParams (paramKeys, paramValues) {
+  if (!paramKeys) return {}
   const paramsMapped = {}
   paramKeys.forEach((paramName, i) => {
     let paramValue = paramValues[i]
