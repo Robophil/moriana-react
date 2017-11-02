@@ -397,5 +397,43 @@ const buildShortList = (allItems) => {
 }
 
 const buildOutOfStock = (allItems) => {
-  return { reportRows: [], reportHeaders: [] }
+  const reportRows = []
+  const itemsWithoutCategories = justItems(allItems)
+  Object.keys(itemsWithoutCategories).forEach(key => {
+    let quantity = 0
+    let since = null
+    itemsWithoutCategories[key].transactions.forEach(t => {
+      quantity += t.quantity
+      // if quantity is less than zero and we have not set `since` yet
+      if (quantity <= 0) {
+        if (!since) {
+          since = t.date
+        }
+      } else {
+        since = null
+      }
+    })
+    if (quantity <= 0) {
+      reportRows.push({ categories: itemsWithoutCategories[key].categories, since, item: key })
+    }
+  })
+  const reportHeaders = [
+    { name: 'Item', key: 'item'},
+    { name: 'Categories', key: 'categories'},
+    { name: 'Out of Stock Since', key: 'since'}
+  ]
+  return { reportRows, reportHeaders }
+}
+
+// items without categories
+const justItems = (allItems) => {
+  return Object.keys(allItems).reduce((memo, key) => {
+    const {item, category} = getItemFromkey(key)
+    memo[item] = memo[item] || { item, transactions: [], categories: [] }
+    memo[item].categories.push(category)
+    Object.keys(allItems[key]).forEach(batchKey => {
+      memo[item].transactions = memo[item].transactions.concat(allItems[key][batchKey])
+    })
+    return memo
+  }, {})
 }

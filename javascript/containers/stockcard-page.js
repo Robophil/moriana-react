@@ -17,8 +17,6 @@ const StockCardPage = class extends React.Component {
   componentDidMount = () => {
     const { dbName, currentLocationName, params } = this.props.route
     let { category, item, atBatch } = params
-    category = decodeURIComponent(category)
-    item = decodeURIComponent(item)
     this.props.getStock(dbName, currentLocationName, category, item, atBatch)
     this.props.getLocations(dbName, currentLocationName)
   }
