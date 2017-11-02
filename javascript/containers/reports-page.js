@@ -9,8 +9,9 @@ export class ReportsPage extends React.Component {
 
   componentDidMount = () => {
     const {dbName, currentLocationName, params} = this.props.route
+    const {currentReport} = params
     this.props.getReportInfo(dbName, currentLocationName).then(() => {
-      this.props.runReport()
+      this.props.runReport(currentReport)
     })
   }
 

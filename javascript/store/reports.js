@@ -342,16 +342,32 @@ const buildQuality = (allItems) => {
       }
     })
   })
-
   const reportHeaders = getItemHeaders(false).concat([
     { name: 'Quantity', key: 'quantity'},
   ])
-
   return { reportRows, reportHeaders }
 }
 
-const buildExpired = (allItems) => {
-  return { reportRows: [], reportHeaders: [] }
+const buildExpired = (allItems, batchFilter, dateFilter) => {
+  const reportRows = []
+  const {startDate, endDate} = dateFilter
+  Object.keys(allItems).forEach(key => {
+    Object.keys(allItems[key]).forEach(batchKey => {
+      allItems[key][batchKey].forEach(t => {
+        if (t.to.toLowerCase() == 'expired' && t.date >= startDate && t.date < endDate) {
+          const expiredTransaction = clone(t)
+          expiredTransaction.quantity = Math.abs(expiredTransaction.quantity)
+          reportRows.push(expiredTransaction)
+        }
+      })
+    })
+  })
+  const reportHeaders = getItemHeaders(false).concat([
+    { name: 'Quantity', key: 'quantity'},
+    { name: 'Unit Price', key: 'unitPrice'},
+    { name: 'Total Value', key: 'totalValue'}
+  ])
+  return { reportRows, reportHeaders }
 }
 
 const buildShortList = (allItems) => {

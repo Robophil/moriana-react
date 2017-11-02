@@ -118,6 +118,19 @@ export default class EditShipmentDetails extends React.Component {
       </span>
     )
 
+    let detailsElement
+    let targetFromOrTo = 'to'
+    if (shipmentType === 'receive') {
+      detailsElement = receiveDetails
+      targetFromOrTo = 'from'
+    } else if (shipmentType === 'transfer') {
+      detailsElement = transferDetails
+    } else if (shipmentType === 'transfer-out') {
+      detailsElement = transferOutDetails
+    } else if (shipmentType === 'dispense') {
+      detailsElement = dispenseDetails
+    }
+
     let newLocationElement = shipmentType === 'dispense' ?
       <NewPatient
         value={this.state.newLocationName}
@@ -134,18 +147,6 @@ export default class EditShipmentDetails extends React.Component {
         closeClicked={this.toggleNewReceiveLocation}
       />)
 
-    let detailsElement
-    let targetFromOrTo = 'to'
-    if (shipmentType === 'receive') {
-      detailsElement = receiveDetails
-      targetFromOrTo = 'from'
-    } else if (shipmentType === 'transfer') {
-      detailsElement = transferDetails
-    } else if (shipmentType === 'transfer-out') {
-      detailsElement = transferOutDetails
-    } else if (shipmentType === 'dispense') {
-      detailsElement = dispenseDetails
-    }
     return (
       <div className='edit-details'>
         <form onSubmit={onDone}>
