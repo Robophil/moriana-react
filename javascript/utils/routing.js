@@ -36,13 +36,14 @@ function buildParams (paramKeys, paramValues) {
   if (!paramKeys) return {}
   const paramsMapped = {}
   paramKeys.forEach((paramName, i) => {
-    let paramValue = paramValues[i]
-    if (paramValue === undefined) {
-      paramValue = 0
+    const rawValue = paramValues[i]
+    if (!rawValue && rawValue !== 0) {
+      paramsMapped[paramName] = null
+    } else if (isNaN(Number(rawValue))) {
+      paramsMapped[paramName] = decodeURIComponent(rawValue)
     } else {
-      paramValue = isNaN(Number(paramValue)) ? decodeURIComponent(paramValue) : Number(paramValue)
+      paramsMapped[paramName] = Number(rawValue)
     }
-    paramsMapped[paramName] = paramValue
   })
   return paramsMapped
 }

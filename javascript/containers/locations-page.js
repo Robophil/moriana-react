@@ -1,10 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import {getShipments, getShipmentsByLocation} from 'shipments'
-import {fetchAllShipments} from 'reports'
+import {getShipments, filterShipmentsByLocation} from 'shipments'
 import ShipmentsTable from 'shipments-table'
-import Pagination from 'pagination'
 import download from 'download'
+import {shipmentsDownloadHeaders} from 'shipments-page'
 
 export class LocationsPage extends React.Component {
   state = { pageName: '', shipmentsAtThisLocation: [] }
@@ -21,24 +20,26 @@ export class LocationsPage extends React.Component {
   componentWillReceiveProps = (newProps) => {
     const {location} = this.props.route.params
     this.setState({
-      shipmentsAtThisLocation: getShipmentsByLocation(newProps.shipments, location),
+      shipmentsAtThisLocation: filterShipmentsByLocation(newProps.shipments, location),
     })
   }
 
   downloadShipments = (event) => {
     event.preventDefault()
-    const {currentLocationName} = this.props.route
-    const {location} = this.props.route.params
+    const { currentLocationName } = this.props.route
+    const { location } = this.props.route.params
+    const { shipmentsAtThisLocation, pageName } = this.state
+    // headers difference from shipments page: value vs totalValue
     const headers = [
       { name: 'Shipment Date', key: 'date' },
       { name: 'From', key: 'from' },
       { name: 'To', key: 'to' },
       { name: 'Transactions', key: 'totalTransactions' },
-      { name: 'Value', key: 'totalValue' },
+      { name: 'Value', key: 'value' },
       { name: 'Last Edited', key: 'updated' },
       { name: 'Creator', key: 'username' },
     ]
-    download(shipments, headers, this.state.name)
+    download(shipmentsAtThisLocation, headers, pageName)
   }
 
   render () {
@@ -46,13 +47,6 @@ export class LocationsPage extends React.Component {
     const { dbName, params } = route
     const {offset} = params
     const { loadingAllShipments, shipmentsAtThisLocation, pageName } = this.state
-    const pagination = (<Pagination
-      offset={offset}
-      count={this.props.shipmentsCount}
-      dbName={dbName}
-      limit={this.state.limit}
-      displayedCount={shipments.length}
-    />)
     return (
       <div className='shipments-page'>
         {(loading || loadingAllShipments) ? (
@@ -66,13 +60,9 @@ export class LocationsPage extends React.Component {
               </div>
               <div className='pull-right'>
                 <a href='#' onClick={this.downloadShipments} >Download</a>
-                {pagination}
               </div>
             </div>
             <ShipmentsTable dbName={dbName} shipments={shipmentsAtThisLocation} />
-            <div className='pull-right'>
-              {pagination}
-            </div>
           </div>
         ) : (<div />)
       }

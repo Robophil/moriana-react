@@ -120,7 +120,7 @@ const getType = (ship, currentLocationName) => {
   }
 }
 
-export const getShipmentsByLocation = (shipments, location) => {
+export const filterShipmentsByLocation = (shipments, location) => {
   const l = location.toLowerCase()
   return shipments.filter(ship => {
     return ship.to.toLowerCase() === l || ship.from.toLowerCase() === l

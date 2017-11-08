@@ -18,7 +18,7 @@ export default {
       expect(route.path).eq('/')
       expect(route.dbName).eq('moriana_loc')
       expect(route.currentLocationName).eq('Loc')
-      expect(route.params.offset).eq(0)
+      expect(route.params.offset).eq(null)
     },
     'should turn "" into a route object of { path: "/", dbName: null, currentLocationName: null, params: []}' () {
       const route = parseHash('', PAGES)
@@ -34,7 +34,7 @@ export default {
     },
     'should return route = test/shipment on test/shipment' () {
       const route = parseHash('#d/moriana_loc/test/shipment', PAGES)
-      expect(route.params.abc).eq(0)
+      expect(route.params.abc).eq(null)
       expect(route.path).eq('test/shipment')
     },
     'should return params on nested routes' () {

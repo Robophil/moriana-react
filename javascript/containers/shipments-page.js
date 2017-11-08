@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import {getShipments} from 'shipments'
-import {fetchAllShipments} from 'reports'
+import {fetchAllShipments} from 'alldocs'
 import ShipmentsTable from 'shipments-table'
 import Pagination from 'pagination'
 import download from 'download'
@@ -19,17 +19,17 @@ export class ShipmentsPage extends React.Component {
     this.setState({ loadingAllShipments: true })
     const { dbName, currentLocationName } = this.props.route
     const fileName = 'Shipments at: ' + currentLocationName
-    const headers = [
-      { name: 'Shipment Date', key: 'date' },
-      { name: 'From', key: 'from' },
-      { name: 'To', key: 'to' },
-      { name: 'Transactions', key: 'totalTransactions' },
-      { name: 'Value', key: 'totalValue' },
-      { name: 'Last Edited', key: 'updated' },
-      { name: 'Creator', key: 'username' },
-    ]
     fetchAllShipments(dbName).then((shipments) => {
       this.setState({ loadingAllShipments: false })
+      const headers = [
+        { name: 'Shipment Date', key: 'date' },
+        { name: 'From', key: 'from' },
+        { name: 'To', key: 'to' },
+        { name: 'Transactions', key: 'totalTransactions' },
+        { name: 'Value', key: 'totalValue' },
+        { name: 'Last Edited', key: 'updated' },
+        { name: 'Creator', key: 'username' },
+      ]
       download(shipments, headers, fileName)
     })
   }

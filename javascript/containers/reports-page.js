@@ -1,100 +1,187 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getReportInfo, runReport } from 'reports'
-import ReportFilters from 'report-filters'
+import { getAllDocs } from 'alldocs'
+import { consumptionReport } from 'consumption-report'
+import { shortDatedReport, expiredReport, outOfStockReport, dataQualityReport } from 'other-reports'
+import {DateFilters, CategoryFilteres} from 'report-filters'
 import ReportTable from 'report-table'
-import h from 'helpers'
+import h, {buildDateFilters} from 'helpers'
+
+const REPORT_TYPES = [
+  { name: 'Monthly Consumption', slug: 'consumption' },
+  { name: 'Short Dated', slug: 'shortdated' },
+  { name: 'Expired', slug: 'expired' },
+  { name: 'Out of Stock', slug: 'outofstock' },
+  { name: 'Data Quality', slug: 'dataquality' }
+]
+
+const DATE_FILTERS = buildDateFilters()
 
 export class ReportsPage extends React.Component {
+  state = {
+    currentReport: null,
+    atBatchLevel: true,
+    dateRange: null,
+    selectedCategory: null,
+    displayRows: [],
+    displayHeaders: [],
+    openFilter: null
+  }
 
   componentDidMount = () => {
     const {dbName, currentLocationName, params} = this.props.route
-    const {currentReport} = params
-    this.props.getReportInfo(dbName, currentLocationName).then(() => {
-      this.props.runReport(currentReport)
+    const {reportView} = params
+    this.setState({ dateRange: DATE_FILTERS[0] })
+    this.props.getAllDocs(dbName, currentLocationName).then(() => {
+      this.setState({ currentReport: reportView || 'consumption' }, () => {
+        this.runReport()
+      })
     })
   }
 
-  filterSet = (filterType, filterIndex) => {
-    this.props.runReport(this.state.currentReport, filterType, filterIndex)
+  runReport = () => {
+    const { allItemsMap } = this.props
+    const { atBatchLevel, dateRange, selectedCategory, currentReport } = this.state
+    let result
+    if (currentReport === 'consumption') {
+      result = consumptionReport(allItemsMap, atBatchLevel, dateRange, selectedCategory)
+      } else if (currentReport === 'shortdated') {
+        result = shortDatedReport(allItemsMap)
+      } else if (currentReport === 'expired') {
+        result = expiredReport(allItemsMap, dateRange)
+      } else if (currentReport === 'outofstock') {
+        result = outOfStockReport(allItemsMap)
+      } else if (currentReport === 'dataquality') {
+        result = dataQualityReport(allItemsMap)
+    }
+    const { displayRows, displayHeaders } = result
+    this.setState({ displayRows, displayHeaders })
   }
 
-  changeReport = (event) => {
+  onClickReportLink = (event) => {
     event.preventDefault(event)
-    const currentReport = event.target.dataset.type
-    const locationSplit = window.location.href.split('/')
-    locationSplit[locationSplit.length - 1] = currentReport
-    window.history.replaceState(null, null, locationSplit.join('/'))
-    this.props.runReport(currentReport)
+    const {currentReport} = this.state
+    const {reportType} = event.target.dataset
+    if (reportType !== currentReport) {
+      const locationSplit = window.location.href.split('/')
+      locationSplit[locationSplit.length - 1] = reportType
+      window.history.replaceState(null, null, locationSplit.join('/'))
+      this.setState({ currentReport: reportType }, () => {
+        this.runReport()
+      })
+    }
   }
 
-  download = (event) => {
+  onFilterClick = (event) => {
     event.preventDefault()
+    const {filter} = event.target.dataset
+    const openFilter = this.state.openFilter === filter ? null : filter
+    if (openFilter === 'batch') {
+      this.setState({ atBatchLevel: !this.state.atBatchLevel, openFilter: false }, () => {
+        this.runReport()
+      })
+    } else {
+      this.setState({ openFilter })
+    }
+  }
+
+  onDateRangeChange = (dateRange) => {
+    this.setState({ dateRange, openFilter: false }, () => {
+      this.runReport()
+    })
+  }
+
+  onCategoryFilterChange = (value) => {
+    this.setState({ selectedCategory: value, openFilter: false }, () => {
+      this.runReport()
+    })
+  }
+
+  onDownload = (event) => {
+    event.preventDefault()
+    console.log('download')
   }
 
   render () {
+    const { allDocsFetched, categories } = this.props
     const {
       currentReport,
-      allItemsFetched,
-      reportTypes,
-      reportHeaders,
-      reportRows,
-      allDateFilters,
-      allCategoryFilters,
-      allBatchFilters,
-      dateFilter,
-      categoryFilter,
-      batchFilter
-    } = this.props
+      displayRows,
+      displayHeaders,
+      atBatchLevel,
+      dateRange,
+      openFilter,
+      selectedCategory
+    } = this.state
 
-    if (!allItemsFetched) return (<div className='loader' />)
+    if (!allDocsFetched) return (<div className='loader' />)
+
+    const filterLinks = []
+    const currentCategory = selectedCategory || 'All Categories'
+    if (currentReport === 'consumption' || currentReport === 'expired') {
+      filterLinks.push({ filter: 'dates', name: dateRange.name })
+      if (currentReport === 'consumption') {
+        filterLinks.push({ filter: 'categories', name: currentCategory })
+        filterLinks.push({ filter: 'batch', name: atBatchLevel ? 'At Batch Level' : 'At Item Level' })
+      }
+    }
 
     return (
       <div className='reports-page'>
-        <h5>Reports</h5>
-        <span className='links'>
-          {Object.keys(reportTypes).map((slug, i) => {
-            const activeClass = (slug === currentReport) ? 'disabled-link' : ''
+        <h6 className='text-center'>
+          {REPORT_TYPES.map((report, i) => {
+            const activeClass = (report.slug === currentReport) ? 'disabled-link' : ''
             return (
-              <a
-                key={i}
-                href='#'
-                className={activeClass}
-                onClick={this.changeReport}
-                data-type={slug}>
-                  {reportTypes[slug].name}
-              </a>
+              <span key={i}>
+                {(i !== 0) && (<span> | </span>)}
+                <a
+                  href='#'
+                  className={activeClass}
+                  onClick={this.onClickReportLink}
+                  data-report-type={report.slug}>
+                    {report.name}
+                </a>
+              </span>
             )
           })}
-        </span>
-        {allItemsFetched
-        ? (
-          <div>
-            <ReportFilters
-              allDateFilters={allDateFilters}
-              allCategoryFilters={allCategoryFilters}
-              allBatchFilters={allBatchFilters}
-              dateFilter={dateFilter}
-              categoryFilter={categoryFilter}
-              batchFilter={batchFilter}
-              filterSet={this.filterSet}
-            />
-            <div className='report'>
-              <div className='pull-right'>
-                <a href='#' onClick={this.download}>Download</a>
-                <span>Rows: {h.num(reportRows.length)}</span>
-              </div>
-              <ReportTable headers={reportHeaders} rows={reportRows} />
-            </div>
+        </h6>
+        <hr />
+        <div className='text-center filter-toggles'>
+          {filterLinks.map((link, i) => {
+            const classes = link.filter === openFilter ? 'disabled-link' : null
+            return (
+              <span key={i}>
+                {(i !== 0) && (<span> | </span>)}
+                <a
+                  href='#'
+                  className={classes}
+                  onClick={this.onFilterClick}
+                  data-filter={link.filter}>
+                    {link.name}
+                </a>
+              </span>
+            )
+          })}
+        </div>
+        {openFilter === 'dates' && (
+          <DateFilters dates={DATE_FILTERS} onSelect={this.onDateRangeChange} />
+        )}
+        {openFilter === 'categories' && (
+          <CategoryFilteres categories={categories} onSelect={this.onCategoryFilterChange} />
+        )}
+        <div className='report'>
+          <div className='pull-right'>
+            <a href='#' onClick={this.download}>Download</a>
+            <span>Rows: {h.num(displayRows.length)}</span>
           </div>
-        )
-        : (<div className='loader' />)}
+          <ReportTable headers={displayHeaders} rows={displayRows} />
+        </div>
       </div>
     )
   }
 }
 
 export default connect(
-  state => state.reports,
-  { getReportInfo, runReport }
+  state => state.alldocs,
+  { getAllDocs }
 )(ReportsPage)

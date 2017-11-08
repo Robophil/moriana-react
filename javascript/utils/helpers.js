@@ -109,3 +109,13 @@ export const setCursorAtEnd = (event) => {
 export const preventDefault = (event) => {
     event.preventDefault()
 }
+
+export const buildDateFilters = () => {
+  const twelveMonths = [...Array(12).keys()]
+  return twelveMonths.map(i => {
+    const beginningOfMonth = Moment.utc().startOf('month').subtract(i + 1, 'month').startOf('day')
+    const startDate = beginningOfMonth.toISOString()
+    const endDate = beginningOfMonth.endOf('month').toISOString()
+    return { name: Moment.utc(startDate).endOf('day').format('MMMM YYYY'), startDate, endDate }
+  })
+}

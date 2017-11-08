@@ -152,6 +152,7 @@ export default class EditShipmentDetails extends React.Component {
         <form onSubmit={onDone}>
           <DateInput
             value={shipment.date}
+            autoFocus
             valueUpdated={updateShipment}
           />
           {detailsElement}

@@ -26,7 +26,7 @@ const PAGES = {
   'shipment': { component: ShipmentPage, paramKeys: ['id'] },
   'shipment/edit': { component: EditShipmentPage, paramKeys: ['shipmentType', 'id'] },
   'stockcard': { component: StockCardPage, paramKeys: ['category', 'item', 'atBatch'] },
-  'reports': { component: ReportsPage, paramKeys: ['currentReport'] },
+  'reports': { component: ReportsPage, paramKeys: ['reportView'] },
   'locations': { component: LocationsPage, paramKeys: ['location'] },
   'stock': { component: CurrentStockPage }
 }

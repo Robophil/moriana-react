@@ -1,124 +1,93 @@
 import React from 'react'
+import Moment from 'moment'
+import DateInput from 'date-input'
+import h from 'helpers'
 
-export default class extends React.Component {
-  state = { openFilter: null }
+export class DateFilters extends React.Component {
+  state = { startDate: '', endDate: '', chronologyError: false }
 
-  showFilter = (event) => {
+  onFilterChange = (event) => {
     event.preventDefault()
-    let selectedFilter = event.target.dataset.filterName
-    if (selectedFilter === this.state.openFilter) {
-      selectedFilter = null
-    }
-    this.setState({ openFilter: selectedFilter })
+    this.props.onSelect(this.props.dates[event.target.dataset.index])
   }
 
-  filterClicked = (event) => {
-    this.props.filterSet(event.target.dataset.filterType, event.target.dataset.index)
-    this.setState({ openFilter: null })
+  onDateChange = (key, value) => {
+    const newState = { chronologyError: false }
+    newState[key] = value
+    this.setState(newState)
+  }
+
+  runDates = () => {
+    const {startDate, endDate} = this.state
+    if (startDate && endDate) {
+      if (startDate >= endDate) {
+        this.setState({ chronologyError: true })
+      } else {
+        const name = `${h.formatDate(startDate)} - ${h.formatDate(endDate)}`
+        this.props.onSelect({ name, startDate, endDate })
+      }
+    }
   }
 
   render () {
-    const { openFilter } = this.state
-    const {
-      dateFilter,
-      categoryFilter,
-      batchFilter,
-      allDateFilters,
-      allCategoryFilters,
-      allBatchFilters
-    } = this.props
-    const availableFilters = { date: dateFilter, category: categoryFilter, batch: batchFilter }
+    const {dates} = this.props
+    const {startDate, endDate, chronologyError} = this.state
     return (
-      <div className='filters'>
-        <div className='links'>
-          {Object.keys(availableFilters).map((key, i) => {
-            const btnClass = (key === openFilter) ? 'active' : ''
-            return (
-              <a key={i} href='#' onClick={this.showFilter} data-filter-name={key} className={`${btnClass}`}>
-                {availableFilters[key].name}
-              </a>
-            )
-          })}
+      <div className='text-center'>
+        <p className='filter-header'>Select a month:</p>
+        {dates.map((month, i) => (
+          <a
+            onClick={this.onFilterChange}
+            href='#'
+            key={i}
+            data-index={i}>
+            {month.name}
+          </a>
+        ))}
+        <p className='filter-header'>Or specific dates:</p>
+        <div>
+          <div className='row date-inputs'>
+            <div className='four columns'>
+              <DateInput value={startDate} valueUpdated={this.onDateChange} updateKey='startDate' label='Start Date' />
+            </div>
+            <div className='four columns'>
+              <DateInput value={endDate} valueUpdated={this.onDateChange} updateKey='endDate' label='End Date' />
+            </div>
+          </div>
+          {chronologyError && (<p className='error'>Start date must be before end date.</p>)}
+          <button onClick={this.runDates}>Run Dates</button>
         </div>
-        {this.state.openFilter === 'date' && (
-          <div>
-            <div className='row dates-filters filters text-center'>
-              <br />
-              <h5>Select Dates</h5>
-              <p className='help-block'>Runs report from the beginning of the day of the start date
-                 to the end of the day of the end date.</p>
-              <div className='form-group field start-date validate-on-blur text-left'>
-                <label className='col-lg-2 control-label'>Start Date</label>
-                <div className='col-sm-9 input-group'>
-                  <div className='form-control-static hidden'>
-                    {/* <span className='static-value'></span> */}
-                    (<a href='#' data-fieldname='start-date' className='edit-field text-no-transform'>
-                      edit</a>)
-                  </div>
-                  <input className='form-control form-input ' type='text' data-fieldname='start-date' />
-                  {/* <p className='error help-block hidden'></p> */}
-                </div>
-              </div>
-              <div className='form-group field end-date validate-on-blur text-left'>
-                <label className='col-lg-2 control-label'>End Date</label>
-                <div className='col-sm-9 input-group'>
-                  <div className='form-control-static hidden'>
-                    {/* <span className='static-value'></span> */}
-                    (<a href='#' data-fieldname='end-date' className='edit-field text-no-transform'>
-                      edit</a>)
-                  </div>
-                  <input className='form-control form-input ' type='text' data-fieldname='end-date' />
-                  {/* <p className='error help-block hidden'></p> */}
-                </div>
-              </div>
-              <button className='btn btn-default date-range-select'>Run Dates</button>
-              <p className='help-block'>Or select a month:</p>
-            </div>
-            <div className='row text-center dates-filters filters'>
-              <br />
-              {allDateFilters.map((month, i) => (
-                <button
-                  onClick={this.filterClicked}
-                  key={i}
-                  data-index={i}
-                  className='col-md-3 filter btn btn-default'
-                  data-filter-type='dates'>
-                  {month.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        {this.state.openFilter === 'category' && (
-          <div className='row text-center categories-filters filters'>
-            <br />
-            {allCategoryFilters.map((cat, i) => (
-              <button
-                onClick={this.filterClicked}
-                key={i}
-                data-index={i}
-                className='col-md-3 filter btn btn-default'
-                data-filter-type='categories'>
-                {cat.name}
-              </button>
-            ))}
-          </div>
-        )}
-        {this.state.openFilter === 'batch' && (
-          <div className='row text-center batches-filters filters'>
-            <br />
-            {allBatchFilters.map((b, i) => (
-              <button
-                onClick={this.filterClicked}
-                key={i}
-                data-index={i}
-                className='col-md-3 filter btn btn-default'
-                data-filter-type='batches'>
-                {b.name}
-              </button>
-            ))}
-          </div>
-        )}
+        <p>Runs report from the beginning of the day of the start date to the end of the day of the end date.</p>
+      </div>
+    )
+  }
+}
+
+export class CategoryFilteres extends React.Component {
+  onClickCategory = (event) => {
+    event.preventDefault()
+    const {name} = event.target.dataset
+    if (name === 'All Categories') {
+      this.props.onSelect(null)
+    } else {
+      this.props.onSelect(name)
+    }
+  }
+
+  render () {
+    const {categories} = this.props
+    return (
+      <div className='text-center'>
+        <p className='filter-header'>Select a category:</p>
+        {categories.map((cat, i) => {
+          return (<a
+            onClick={this.onClickCategory}
+            href='#'
+            key={i}
+            data-name={cat.name}>
+            {cat.name}
+          </a>)
+        })}
       </div>
     )
   }

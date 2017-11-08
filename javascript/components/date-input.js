@@ -5,7 +5,7 @@ import {dateIsValid} from 'validation'
 import {getISODateFromInput} from 'input-transforms'
 
 export default class DateInput extends React.Component {
-  state = { showEdit: false, inputValue: '', error: false }
+  state = { showEdit: true, inputValue: '', error: false }
 
   toggleEdit = (event) => {
     if (event) event.preventDefault()
@@ -25,10 +25,13 @@ export default class DateInput extends React.Component {
 
   onBlur = (event) => {
     const {inputValue} = this.state
-    const isValid = dateIsValid(this.state.inputValue)
-    if (isValid) {
+    const { updateKey = 'date' } = this.props
+    const isValid = dateIsValid(inputValue)
+    if (!inputValue) {
+      return
+    } else if (isValid) {
       const isoDate = getISODateFromInput(inputValue)
-      this.props.valueUpdated('date', isoDate)
+      this.props.valueUpdated(updateKey, isoDate)
     } else {
       this.setState({ error: true })
     }
@@ -36,19 +39,19 @@ export default class DateInput extends React.Component {
 
   render () {
     const { inputValue, error, showEdit } = this.state
-    const { value } = this.props
+    const { value, autoFocus, label = 'Date' } = this.props
     const classes = error ? 'row error' : 'row'
     if (showEdit) {
       return (
         <div className={classes}>
-          <label>Date</label>
+          <label>{label}</label>
           <div className='input-group'>
             <input
               onBlur={this.onBlur}
               value={inputValue}
               onKeyUp={this.onKeyUp}
               onChange={this.onChange}
-              autoFocus
+              autoFocus={autoFocus}
               type='text' />
             {error && (<p className='error'>
               Date must be format "YYYY-MM-DD or "t-1" or "t+1" (e.g. today - 1, today + 1)"
@@ -57,7 +60,7 @@ export default class DateInput extends React.Component {
         </div>
       )
     } else {
-      return (<StaticInput label={'Date'} value={h.formatDate(value)} onEditClick={this.toggleEdit} />)
+      return (<StaticInput label={label} value={h.formatDate(value)} onEditClick={this.toggleEdit} />)
     }
   }
 }
