@@ -58,27 +58,27 @@ export const outOfStockReport = (allItemsMap) => {
   const itemsWithoutCategories = justItems(allItemsMap)
   Object.keys(itemsWithoutCategories).forEach(key => {
     let quantity = 0
-    let since = null
+    let date = null
     itemsWithoutCategories[key].transactions.forEach(t => {
       quantity += t.quantity
-      // if quantity is less than zero and we have not set `since` yet
+      // if quantity is less than zero and we have not set `date` yet
       if (quantity <= 0) {
-        if (!since) {
-          since = t.date
+        if (!date) {
+          date = t.date
         }
       } else {
-        since = null
+        date = null
       }
     })
     if (quantity <= 0) {
-      displayRows.push({ categories: itemsWithoutCategories[key].categories, since, item: key })
+      displayRows.push({ categories: itemsWithoutCategories[key].categories, date, item: key })
     }
   })
-  sortOnDate(displayRows, 'since')
+  sortOnDate(displayRows, 'date')
   const displayHeaders = [
     { name: 'Item', key: 'item'},
     { name: 'Categories', key: 'categories'},
-    { name: 'Out of Stock Since', key: 'since'}
+    { name: 'Out of Stock Since', key: 'date'}
   ]
   return { displayRows, displayHeaders }
 }

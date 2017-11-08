@@ -6,6 +6,7 @@ import { shortDatedReport, expiredReport, outOfStockReport, dataQualityReport } 
 import {DateFilters, CategoryFilteres} from 'report-filters'
 import ReportTable from 'report-table'
 import h, {buildDateFilters} from 'helpers'
+import download from 'download'
 
 const REPORT_TYPES = [
   { name: 'Monthly Consumption', slug: 'consumption' },
@@ -97,26 +98,9 @@ export class ReportsPage extends React.Component {
     })
   }
 
-  onDownload = (event) => {
-    event.preventDefault()
-    console.log('download')
-  }
-
-  render () {
-    const { allDocsFetched, categories } = this.props
-    const {
-      currentReport,
-      displayRows,
-      displayHeaders,
-      atBatchLevel,
-      dateRange,
-      openFilter,
-      selectedCategory
-    } = this.state
-
-    if (!allDocsFetched) return (<div className='loader' />)
-
-    const filterLinks = []
+  getFilterLinks = () => {
+    const { currentReport, selectedCategory, dateRange, atBatchLevel } = this.state
+    let filterLinks = []
     const currentCategory = selectedCategory || 'All Categories'
     if (currentReport === 'consumption' || currentReport === 'expired') {
       filterLinks.push({ filter: 'dates', name: dateRange.name })
@@ -125,6 +109,34 @@ export class ReportsPage extends React.Component {
         filterLinks.push({ filter: 'batch', name: atBatchLevel ? 'At Batch Level' : 'At Item Level' })
       }
     }
+    return filterLinks
+  }
+
+  onClickDownload = (event) => {
+    event.preventDefault()
+    const filters = this.getFilterLinks()
+    const { currentReport, displayHeaders, displayRows } = this.state
+    let fileName = REPORT_TYPES.find(report=> report.slug === currentReport).name
+    fileName += filters.reduce((fileName, filter) => {
+      fileName += ' ' + filter.name
+      return fileName
+    }, '')
+    download(displayRows, displayHeaders, fileName)
+  }
+
+  render () {
+    const { allDocsFetched, categories, route } = this.props
+    const { dbName } = route
+    const {
+      currentReport,
+      displayRows,
+      displayHeaders,
+      openFilter
+    } = this.state
+
+    if (!allDocsFetched) return (<div className='loader' />)
+
+    const filterLinks = this.getFilterLinks()
 
     return (
       <div className='reports-page'>
@@ -171,10 +183,10 @@ export class ReportsPage extends React.Component {
         )}
         <div className='report'>
           <div className='pull-right'>
-            <a href='#' onClick={this.download}>Download</a>
+            <a href='#' onClick={this.onClickDownload}>Download</a>
             <span>Rows: {h.num(displayRows.length)}</span>
           </div>
-          <ReportTable headers={displayHeaders} rows={displayRows} />
+          <ReportTable dbName={dbName} headers={displayHeaders} rows={displayRows} />
         </div>
       </div>
     )

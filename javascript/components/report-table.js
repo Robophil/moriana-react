@@ -1,7 +1,13 @@
 import React from 'react'
 import h from 'helpers'
+import {buildStockCardHref} from 'stockcard-link'
 
 export default class extends React.Component {
+  stockLinkClicked = (event) => {
+    const {item, category} = event.currentTarget.dataset
+    window.location.href = buildStockCardHref(this.props.dbName, {item, category})
+  }
+
   render () {
     const {headers, rows} = this.props
     return (
@@ -12,11 +18,19 @@ export default class extends React.Component {
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={i}>{headers.map((header, j) => (<td key={j}>{
-                (header.key === 'expiration')
-                ? h.expiration(row[header.key])
-                : h.num(row[header.key])
-              }</td>))}</tr>
+              <tr key={i} data-item={row.item} data-category={row.category} onClick={this.stockLinkClicked}>
+                {headers.map((header, j) => {
+                  let value
+                  if (header.key === 'expiration') {
+                    value = h.expiration(row[header.key])
+                  } else if (header.key === 'date') {
+                    value = h.formatDate(row[header.key])
+                  } else {
+                    value = h.num(row[header.key])
+                  }
+                  return (<td key={j}>{value}</td>)
+                })}
+              </tr>
             ))}
           </tbody>
         </table>
