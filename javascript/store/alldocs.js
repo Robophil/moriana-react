@@ -48,9 +48,9 @@ const fetchShipmentsRecursively = (dbName, resolve, reject, limit = 1000, skip =
 
 export const defaultAllDocs = {
   loading: false,
-  allDocsFetched: false,
+  initialRequestComplete: false,
   apiError: null,
-  allItemsMap: [],
+  allItems: [],
   categories: []
 }
 
@@ -62,14 +62,14 @@ export default (state = defaultAllDocs, action) => {
     case RECEIVED_ALL_DOCS: {
       const {shipments, currentLocationName}  = action
       const transactions = getTransactionsFromShipments(shipments, currentLocationName)
-      const allItemsMap = buildItemsMap(transactions)
+      const allItems = buildItems(transactions)
       const categories = getCategories(transactions)
       categories.unshift({ name: 'All Categories' })
       return {
         loading: false,
-        allDocsFetched: true,
+        initialRequestComplete: true,
         categories,
-        allItemsMap
+        allItems
       }
     }
     default: {
@@ -95,13 +95,34 @@ const getTransactionsFromShipments = (shipments, currentLocationName) => {
   return transactions
 }
 
-const buildItemsMap = (transactions) => {
-  return transactions.reduce((memo, t) => {
-    const itemKey = `${t.item}__${t.category}`
-    const batchKey = `${t.expiration || null}__${t.lot || null}`
-    memo[itemKey] = memo[itemKey] || {}
-    memo[itemKey][batchKey] = memo[itemKey][batchKey] || []
-    memo[itemKey][batchKey].push(t)
-    return memo
-  }, {})
+/*
+allItems = {
+  byItem: [
+    { item: , category, transactions: [] }
+  ],
+  byBatch: [
+    { item: , category, lot, expiration, transactions: [] }
+  ]
+}
+*/
+
+const buildItems = (transactions) => {
+  const itemsMap = {}
+  const batchesMap = {}
+  transactions.forEach(t => {
+    const { item, category, expiration, lot } = t
+    const itemKey = `${item}__${category}`
+    const batchKey = `${itemKey}__${expiration || null}__${lot || null}`
+    itemsMap[itemKey] = itemsMap[itemKey] || { item, category, transactions: [] }
+    itemsMap[itemKey].transactions.push(t)
+    batchesMap[batchKey] = batchesMap[batchKey] || { item, category, expiration, lot, transactions: []}
+    batchesMap[batchKey].transactions.push(t)
+  })
+  const byItem = mapToList(itemsMap)
+  const byBatch = mapToList(batchesMap)
+  return { byItem, byBatch }
+}
+
+const mapToList = (obj) => {
+  return Object.keys(obj).map(key => obj[key])
 }

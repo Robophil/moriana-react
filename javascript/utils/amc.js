@@ -1,7 +1,7 @@
 import Moment from 'moment'
 
-export const getAMCDetails = (rawTransactions, locations) => {
-  const transactions = mergeLocationAttributesIntoTransactions(rawTransactions, locations)
+export const getAMCDetails = (rawTransactions, excludedLocations) => {
+  const transactions = mergeLocationAttributesIntoTransactions(rawTransactions, excludedLocations)
   const monthSums = getQuantitySumsByMonth(transactions)
   const byYear = byYearByMonth(monthSums)
   const amcSixMonths = getAMCByMonths(transactions, 6)
@@ -17,15 +17,9 @@ export const getAMCDetails = (rawTransactions, locations) => {
 }
 
 // don't count receive transactions (positive) or locations excluded from consumption, including Expired
-const mergeLocationAttributesIntoTransactions = (transactions, locations) => {
-  const locationsByExcludedFromConsumption = locations.reduce((memo, l) => {
-    if (l.attributes && l.attributes.excludeFromConsumption || l.type === 'EV') {
-      memo[l.name] = true
-    }
-    return memo
-  }, {})
+const mergeLocationAttributesIntoTransactions = (transactions, excludedLocations) => {
   return transactions.map(t => {
-    if (locationsByExcludedFromConsumption[t.to]) {
+    if (excludedLocations[t.to]) {
       t.toExcludedFromConsumption = true
     }
     return t
@@ -79,7 +73,7 @@ const getMinAndMaxOnMonths = (monthSums) => {
   return { min, max }
 }
 
-const getAMCByMonths = (transactions, numberOfMonths, upUntilDate) => {
+export const getAMCByMonths = (transactions, numberOfMonths, upUntilDate) => {
   if (!numberOfMonths) return 0
   upUntilDate = upUntilDate ? Moment(upUntilDate) : Moment()
   const earliestMonth = upUntilDate.clone().subtract(numberOfMonths, 'months')

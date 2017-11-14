@@ -10,8 +10,8 @@ export default class extends React.Component {
     this.setState({ showTable: !this.state.showTable })
   }
   render () {
-    const {transactions, locations} = this.props
-    const amcDetails = getAMCDetails(transactions, locations)
+    const {transactions, excludedLocations} = this.props
+    const amcDetails = getAMCDetails(transactions, excludedLocations)
     const {showTable} = this.state
     return (
       <div className='six columns'>

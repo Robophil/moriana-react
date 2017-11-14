@@ -1,7 +1,11 @@
-// actions and reducer for locations
+/* actions and reducer for locations
+- requests locations design doc & extensions docs
+- also, on user received action, adds user roles for internal locations
+- doesn't request user as that's always done on app init
+*/
 import client from 'client'
 import {objectFromKeys} from 'utils'
-import { REQUEST_USER, RECEIVED_USER, parseRoles } from 'user'
+import { RECEIVED_USER, parseRoles } from 'user'
 
 export const REQUEST_LOCATIONS = 'REQUEST_LOCATIONS'
 export const RECEIVED_LOCATIONS = 'RECEIVED_LOCATIONS'
@@ -38,7 +42,7 @@ export const getLocations = (dbName) => {
 
 const defaultLocations = {
   loading: false,
-  loadingRoles: false,
+  initialRequestComplete: false,
   apiError: false,
   locations: [],
   locationsExcludedFromConsumption: {},
@@ -53,14 +57,11 @@ export default (state = defaultLocations, action) => {
     case REQUEST_LOCATIONS: {
       return { ...state, loading: true, apiError: null }
     }
-    case REQUEST_USER: {
-      return { ...state, loadingRoles: true }
-    }
     case RECEIVED_USER: {
-      return { ...state, roles: parseRoles(action.userCtx.roles), loadingRoles: false }
+      return { ...state, roles: parseRoles(action.userCtx.roles) }
     }
     case RECEIVED_LOCATIONS: {
-      return { ...state, loading: false, ...action.response }
+      return { ...state, loading: false, initialRequestComplete: true, ...action.response }
     }
     default: {
       return state

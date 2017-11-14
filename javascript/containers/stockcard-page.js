@@ -76,7 +76,7 @@ const StockCardPage = class extends React.Component {
       lot,
       loading
     } = this.props.stock
-    const {locations} = this.props.locations
+    const {locationsExcludedFromConsumption} = this.props.locations
     const { dbName } = this.props.route
     const { showAll, amcResourcesLoading } = this.state
     let visibleTransactions = showAll ? transactions : transactions.slice(0, VISIBLE_TRANSACTIONS_LIMIT)
@@ -106,7 +106,7 @@ const StockCardPage = class extends React.Component {
               ) : (
                 <QuantityByBatch dbName={dbName} batches={batches} />
               )}
-              {!amcResourcesLoading && (<AMCTable locations={locations} transactions={transactions} />)}
+              {!amcResourcesLoading && (<AMCTable excludedLocations={locationsExcludedFromConsumption} transactions={transactions} />)}
             </div>
             <a href='#' onClick={this.downloadStock} className='pull-right'>Download</a>
             <h5>{totalTransactions} Transaction{h.soronos(totalTransactions)}</h5>

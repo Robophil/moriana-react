@@ -2,10 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getAllDocs } from 'alldocs'
 import { consumptionReport } from 'consumption-report'
+import { getLocations } from 'locations'
 import { shortDatedReport, expiredReport, outOfStockReport, dataQualityReport } from 'other-reports'
-import {DateFilters, CategoryFilteres} from 'report-filters'
+import { DateFilters, CategoryFilteres } from 'report-filters'
 import ReportTable from 'report-table'
-import h, {buildDateFilters} from 'helpers'
+import h, { buildDateFilters } from 'helpers'
 import download from 'download'
 
 const REPORT_TYPES = [
@@ -19,41 +20,47 @@ const REPORT_TYPES = [
 const DATE_FILTERS = buildDateFilters()
 
 export class ReportsPage extends React.Component {
-  state = {
-    currentReport: null,
-    atBatchLevel: true,
-    dateRange: null,
-    selectedCategory: null,
-    displayRows: [],
-    displayHeaders: [],
-    openFilter: null
+  constructor(props) {
+    super(props)
+    const {reportView} = props.route.params
+    this.state = {
+      currentReport: reportView || 'consumption',
+      atBatchLevel: true,
+      dateRange: DATE_FILTERS[0],
+      selectedCategory: null,
+      displayRows: [],
+      displayHeaders: [],
+      openFilter: null
+    }
   }
 
   componentDidMount = () => {
-    const {dbName, currentLocationName, params} = this.props.route
-    const {reportView} = params
-    this.setState({ dateRange: DATE_FILTERS[0] })
-    this.props.getAllDocs(dbName, currentLocationName).then(() => {
-      this.setState({ currentReport: reportView || 'consumption' }, () => {
-        this.runReport()
-      })
-    })
+    const { dbName, currentLocationName } = this.props.route
+    this.props.getAllDocs(dbName, currentLocationName)
+    this.props.getLocations(dbName, currentLocationName)
   }
 
-  runReport = () => {
-    const { allItemsMap } = this.props
+  componentWillReceiveProps = (newProps) => {
+    if (newProps.alldocs.initialRequestComplete && newProps.locations.initialRequestComplete) {
+      this.runReport(newProps.alldocs.allItems, newProps.locations.locationsExcludedFromConsumption)
+    }
+  }
+
+  runReport = (allItems, excludedLocations) => {
+    allItems = allItems || this.props.alldocs.allItems
+    excludedLocations = excludedLocations || this.props.locations.locationsExcludedFromConsumption
     const { atBatchLevel, dateRange, selectedCategory, currentReport } = this.state
     let result
     if (currentReport === 'consumption') {
-      result = consumptionReport(allItemsMap, atBatchLevel, dateRange, selectedCategory)
+      result = consumptionReport(allItems, atBatchLevel, dateRange, selectedCategory, excludedLocations)
       } else if (currentReport === 'shortdated') {
-        result = shortDatedReport(allItemsMap)
+        result = shortDatedReport(allItems)
       } else if (currentReport === 'expired') {
-        result = expiredReport(allItemsMap, dateRange)
+        result = expiredReport(allItems, dateRange)
       } else if (currentReport === 'outofstock') {
-        result = outOfStockReport(allItemsMap)
+        result = outOfStockReport(allItems)
       } else if (currentReport === 'dataquality') {
-        result = dataQualityReport(allItemsMap)
+        result = dataQualityReport(allItems)
     }
     const { displayRows, displayHeaders } = result
     this.setState({ displayRows, displayHeaders })
@@ -125,8 +132,10 @@ export class ReportsPage extends React.Component {
   }
 
   render () {
-    const { allDocsFetched, categories, route } = this.props
-    const { dbName } = route
+    const { categories } = this.props.alldocs
+    const alldocsLoaded = this.props.alldocs.initialRequestComplete
+    const locationsLoaded = this.props.locations.initialRequestComplete
+    const { dbName } = this.props.route
     const {
       currentReport,
       displayRows,
@@ -134,7 +143,7 @@ export class ReportsPage extends React.Component {
       openFilter
     } = this.state
 
-    if (!allDocsFetched) return (<div className='loader' />)
+    if (!alldocsLoaded || !locationsLoaded) return (<div className='loader' />)
 
     const filterLinks = this.getFilterLinks()
 
@@ -194,6 +203,11 @@ export class ReportsPage extends React.Component {
 }
 
 export default connect(
-  state => state.alldocs,
-  { getAllDocs }
+  state => {
+    return {
+      alldocs: state.alldocs,
+      locations: state.locations
+    }
+  },
+  { getAllDocs, getLocations }
 )(ReportsPage)
