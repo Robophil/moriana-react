@@ -10,7 +10,7 @@ import {buildStockCardHref} from 'stockcard-link'
 const T_PER_PAGE = 10
 
 const PaperShipmentPage = (props) => {
-  const {shipment, transactions} = props
+  const {shipment, transactions, toName} = props
   const { deploymentName, backendUrl } = config
   return (
     <div className='page-break'>
@@ -19,7 +19,7 @@ const PaperShipmentPage = (props) => {
       </div>
       <div>
         <p><strong>Issuing Facility:</strong> <span className='text-capitalize'>{shipment.from}</span></p>
-        <p><strong>Issued To:</strong> <span className='text-capitalize'>{shipment.to}</span></p>
+        <p><strong>Issued To:</strong> <span className='text-capitalize'>{toName}</span></p>
         <p><strong>Date of Issue:</strong>{h.formatDate(shipment.date)}</p>
         {shipment.vendorId && (<p><strong>Vendor ID: </strong>{shipment.vendorId}</p>)}
         <p><strong>Total Price (ZAR): </strong>{h.num(shipment.totalValue)}</p>
@@ -88,6 +88,15 @@ const ShipmentPage = class extends React.Component {
 
   render () {
     const shipment = this.props.currentShipment || { transactions: [] }
+    const {shipmentType} = this.props
+    let toName = shipment.to
+    if (shipmentType === 'dispense') {
+      if (shipment.patient && shipment.patient.identifier) {
+        toName = 'Patient Identifier: ' + shipment.patient.identifier
+      } else {
+        toName = 'Patient (No Identifier)'
+      }
+    }
     const { reversed } = this.props.route.params
     if (!reversed) shipment.transactions.reverse()
     const numberOfPages = Math.ceil(shipment.transactions.length / T_PER_PAGE)
@@ -101,7 +110,7 @@ const ShipmentPage = class extends React.Component {
       <div className='print-shipment-page'>
         {this.props.loading ? (
           <div className='loader' />
-        ) : pages.map((ts, i) => (<PaperShipmentPage key={i} shipment={shipment} transactions={ts} />)) }
+        ) : pages.map((ts, i) => (<PaperShipmentPage key={i} shipment={shipment} toName={toName} transactions={ts} />)) }
       </div>
     )
   }
