@@ -1,26 +1,24 @@
 import Moment from 'moment'
 import clone from 'clone'
 
-export const shortDatedReport = (allItemsMap) => {
+export const shortDatedReport = (itemsByBatch) => {
   const displayRows = []
   const nextMonthStart = Moment.utc().add(1, 'months').startOf('month')
   const startDate = nextMonthStart.toISOString()
   const endDate = nextMonthStart.add(5, 'months').toISOString()
-  Object.keys(allItemsMap).forEach(key => {
-    Object.keys(allItemsMap[key]).forEach(batchKey => {
-      const row = Object.assign(getItemFromkey(key), getBatchFromKey(batchKey))
-      if (row.expiration >= startDate && row.expiration < endDate) {
-        row.quantity = 0
-        row.totalValue = 0
-        allItemsMap[key][batchKey].forEach(t => {
-          row.quantity += t.quantity
-          row.totalValue += t.totalValue
-        })
-        if (row.quantity > 0) {
-          displayRows.push(row)
-        }
+  itemsByBatch.forEach(batch => {
+    const row = getBlankRow(batch)
+    if (batch.expiration >= startDate && batch.expiration < endDate) {
+      row.quantity = 0
+      row.totalValue = 0
+      batch.transactions.forEach(t => {
+        row.quantity += t.quantity
+        row.totalValue += t.totalValue
+      })
+      if (row.quantity > 0) {
+        displayRows.push(row)
       }
-    })
+    }
   })
   sortOnDate(displayRows, 'expiration')
   const displayHeaders = getItemHeaders(true).concat([
@@ -30,18 +28,16 @@ export const shortDatedReport = (allItemsMap) => {
   return { displayRows, displayHeaders }
 }
 
-export const expiredReport = (allItemsMap, dateFilter) => {
+export const expiredReport = (itemsByBatch, dateFilter) => {
   const displayRows = []
   const {startDate, endDate} = dateFilter || {}
-  Object.keys(allItemsMap).forEach(key => {
-    Object.keys(allItemsMap[key]).forEach(batchKey => {
-      allItemsMap[key][batchKey].forEach(t => {
-        if (t.to.toLowerCase() == 'expired' && t.date >= startDate && t.date < endDate) {
-          const expiredTransaction = clone(t)
-          expiredTransaction.quantity = Math.abs(expiredTransaction.quantity)
-          displayRows.push(expiredTransaction)
-        }
-      })
+  itemsByBatch.forEach(batch => {
+    batch.transactions.forEach(t => {
+      if (t.to.toLowerCase() == 'expired' && t.date >= startDate && t.date < endDate) {
+        const expiredTransaction = clone(t)
+        expiredTransaction.quantity = Math.abs(expiredTransaction.quantity)
+        displayRows.push(expiredTransaction)
+      }
     })
   })
   const displayHeaders = getItemHeaders(true).concat([
@@ -53,9 +49,17 @@ export const expiredReport = (allItemsMap, dateFilter) => {
   return { displayRows, displayHeaders }
 }
 
-export const outOfStockReport = (allItemsMap) => {
+export const outOfStockReport = (items) => {
   const displayRows = []
-  const itemsWithoutCategories = justItems(allItemsMap)
+
+  const itemsWithoutCategories = items.reduce((memo, itemWithCategory) => {
+    const {item, category} = itemWithCategory
+    memo[item] = memo[item] || { item, transactions: [], categories: [] }
+    memo[item].categories.push(category)
+    memo[item].transactions.push(...itemWithCategory.transactions)
+    return memo
+  }, {})
+
   Object.keys(itemsWithoutCategories).forEach(key => {
     let quantity = 0
     let date = null
@@ -75,6 +79,7 @@ export const outOfStockReport = (allItemsMap) => {
     }
   })
   sortOnDate(displayRows, 'date')
+  displayRows.reverse()
   const displayHeaders = [
     { name: 'Item', key: 'item'},
     { name: 'Categories', key: 'categories'},
@@ -83,17 +88,14 @@ export const outOfStockReport = (allItemsMap) => {
   return { displayRows, displayHeaders }
 }
 
-export const dataQualityReport = (allItemsMap) => {
+export const dataQualityReport = (itemsByBatch) => {
   const displayRows = []
-  Object.keys(allItemsMap).forEach(key => {
-    Object.keys(allItemsMap[key]).forEach(batchKey => {
-      let quantity = 0
-      allItemsMap[key][batchKey].forEach(t => { quantity += t.quantity })
-      if (quantity < 0) {
-        const row = Object.assign({quantity}, getItemFromkey(key), getBatchFromKey(batchKey))
-        displayRows.push(row)
-      }
-    })
+  itemsByBatch.forEach(batch => {
+    let quantity = 0
+    batch.transactions.forEach(t => { quantity += t.quantity })
+    if (quantity < 0) {
+      displayRows.push(Object.assign({quantity}, getBlankRow(batch)))
+    }
   })
   const displayHeaders = getItemHeaders(true).concat([
     { name: 'Quantity', key: 'quantity'},
@@ -102,17 +104,9 @@ export const dataQualityReport = (allItemsMap) => {
   return { displayRows, displayHeaders }
 }
 
-// items without categories
-const justItems = (allItemsMap) => {
-  return Object.keys(allItemsMap).reduce((memo, key) => {
-    const {item, category} = getItemFromkey(key)
-    memo[item] = memo[item] || { item, transactions: [], categories: [] }
-    memo[item].categories.push(category)
-    Object.keys(allItemsMap[key]).forEach(batchKey => {
-      memo[item].transactions = memo[item].transactions.concat(allItemsMap[key][batchKey])
-    })
-    return memo
-  }, {})
+const getBlankRow = (batch) => {
+  const { item, category, lot, expiration } = batch
+  return { item, category, lot, expiration }
 }
 
 export const getItemHeaders = (atBatchLevel) => {
@@ -127,25 +121,6 @@ export const getItemHeaders = (atBatchLevel) => {
     ])
   }
   return headers
-}
-
-export const getItemFromkey = (itemKey) => {
-  const itemKeySplit = itemKey.split('__')
-  return {
-    item: itemKeySplit[0],
-    category: itemKeySplit[1]
-  }
-}
-
-export const getBatchFromKey = (batchKey) => {
-  const batchKeySplit = batchKey.split('__')
-  const batch = {
-    expiration: batchKeySplit[0],
-    lot: batchKeySplit[1]
-  }
-  batch.expiration = batch.expiration === 'null' ? null : batch.expiration
-  batch.lot = batch.lot === 'null' ? null : batch.lot
-  return batch
 }
 
 export const sortByItemName = (rows) => {

@@ -54,13 +54,13 @@ export class ReportsPage extends React.Component {
     if (currentReport === 'consumption') {
       result = consumptionReport(allItems, atBatchLevel, dateRange, selectedCategory, excludedLocations)
       } else if (currentReport === 'shortdated') {
-        result = shortDatedReport(allItems)
+        result = shortDatedReport(allItems.byBatch)
       } else if (currentReport === 'expired') {
-        result = expiredReport(allItems, dateRange)
+        result = expiredReport(allItems.byBatch, dateRange)
       } else if (currentReport === 'outofstock') {
-        result = outOfStockReport(allItems)
+        result = outOfStockReport(allItems.byItem)
       } else if (currentReport === 'dataquality') {
-        result = dataQualityReport(allItems)
+        result = dataQualityReport(allItems.byBatch)
     }
     const { displayRows, displayHeaders } = result
     this.setState({ displayRows, displayHeaders })

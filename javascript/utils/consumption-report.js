@@ -1,4 +1,4 @@
-import { getItemFromkey, getBatchFromKey, getItemHeaders, sortByItemName } from 'other-reports'
+import { getItemHeaders, sortByItemName } from 'other-reports'
 import { getAMCByMonths } from 'amc'
 
 const DISPLAY_HEADERS = [
@@ -50,58 +50,6 @@ const getBlankRow = ({ item, category, expiration, lot }) => {
     memo[header.key] = 0
     return memo
   }, {item, category, expiration, lot})
-}
-
-// export const consumptionReportOld = (allItemsMap, atBatchLevel, dateRange, categoryFilter, excludedLocations) => {
-//   let displayRows = []
-//   const {startDate, endDate} = dateRange || {}
-//   if (!atBatchLevel) {
-//     Object.keys(allItemsMap).forEach(itemKey => {
-//       const row = getBlankConsumptionRow(false, itemKey)
-//       Object.keys(allItemsMap[itemKey]).forEach(batchKey => {
-//         allItemsMap[itemKey][batchKey].forEach(t => addTransactionsConsumption(row, t, startDate, endDate, excludedLocations))
-//       })
-//       displayRows.push(row)
-//     })
-//   } else {
-//     Object.keys(allItemsMap).forEach(itemKey => {
-//       const itemsBatchKeys = Object.keys(allItemsMap[itemKey])
-//       let row
-//       let allBatchesAreZeros = true
-//       for (let i = 0; i < itemsBatchKeys.length; i++) {
-//         row = getBlankConsumptionRow(true, itemKey, itemsBatchKeys[i])
-//         allItemsMap[itemKey][itemsBatchKeys[i]].forEach(t => {
-//           addTransactionsConsumption(row, t, startDate, endDate, excludedLocations)
-//         })
-//         if (!allColumnsAreZeros(row)) {
-//           displayRows.push(row)
-//           allBatchesAreZeros = false
-//         }
-//       }
-//       if (allBatchesAreZeros) {
-//         delete row.expiration
-//         delete row.lot
-//         displayRows.push(row)
-//       }
-//     })
-//   }
-//
-//   sortByItemName(displayRows)
-//
-//   if (categoryFilter) {
-//     displayRows = displayRows.filter(row => (row.category === categoryFilter))
-//   }
-//
-//   return { displayRows, DISPLAY_HEADERS: getItemHeaders(atBatchLevel).concat(DISPLAY_HEADERS) }
-// }
-
-const getBlankConsumptionRow = (atBatchLevel, itemKey, batchKey) => {
-  const row = getItemFromkey(itemKey)
-  if (atBatchLevel) Object.assign(row, getBatchFromKey(batchKey))
-  return DISPLAY_HEADERS.reduce((memo, header) => {
-    memo[header.key] = 0
-    return memo
-  }, row)
 }
 
 const addConsumptionData = (row, t, startDate, endDate, excludedLocations) => {
