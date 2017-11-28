@@ -74,7 +74,7 @@ const ShipmentPage = class extends React.Component {
                   <tr key={i} data-item={t.item} data-category={t.category} onClick={this.stockLinkClicked}>
                     <td>{t.item}</td>
                     <td>{t.category}</td>
-                    <td>{t.lotNum}</td>
+                    <td>{t.lot}</td>
                     <td>{h.expiration(t.expiration)}</td>
                     <td>{h.num(t.quantity)}</td>
                     <td>{h.currency(t.unitPrice)}</td>

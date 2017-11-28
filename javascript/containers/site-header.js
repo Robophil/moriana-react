@@ -73,7 +73,7 @@ const SiteHeader = class extends React.Component {
       }
     }
     return (
-      <div className='site-header'>
+      <div className='site-header no-print'>
         <ClickOutHandler onClickOut={this.hideLink}>
           <a className='logo' href={headerLink}><Logo /></a>
           {(links.leftLinks.length !==0) && (

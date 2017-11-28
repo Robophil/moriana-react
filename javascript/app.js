@@ -9,6 +9,7 @@ import SiteFooter from 'site-footer'
 import ShipmentsPage from 'shipments-page'
 import LoginPage from 'login-page'
 import ShipmentPage from 'shipment-page'
+import PrintShipmentPage from 'print-shipment-page'
 import StockCardPage from 'stockcard-page'
 import CurrentStockPage from 'current-stock-page'
 import ReportsPage from 'reports-page'
@@ -23,8 +24,9 @@ require('./styles/app.less')
 const PAGES = {
   '/': { component: ShipmentsPage, paramKeys: ['offset'] },
   'login': { component: LoginPage },
-  'shipment': { component: ShipmentPage, paramKeys: ['id'] },
+  'shipment': { component: ShipmentPage, paramKeys: ['id', 'print'] },
   'shipment/edit': { component: EditShipmentPage, paramKeys: ['shipmentType', 'id'] },
+  'shipment/print': { component: PrintShipmentPage, paramKeys: ['id', 'reversed'] },
   'stockcard': { component: StockCardPage, paramKeys: ['category', 'item', 'atBatch'] },
   'reports': { component: ReportsPage, paramKeys: ['reportView'] },
   'locations': { component: LocationsPage, paramKeys: ['location'] },
