@@ -44,15 +44,11 @@ module.exports = {
     ]
   },
  plugins: [
-   new webpack.DefinePlugin({
-     'process.env': {
-       'NODE_ENV': JSON.stringify('production')
-     }
-   }),
+   new webpack.DefinePlugin({ 'MORIANA_ENVIRONMENT': '"production"' }),
    new webpack.optimize.UglifyJsPlugin({ sourceMap: true }),
    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   //  new webpack.optimize.CommonsChunkPlugin('common'),
-   new webpack.optimize.AggressiveMergingPlugin()
+   new webpack.optimize.AggressiveMergingPlugin(),
    new CompressionPlugin({
      asset: "[path].gz[query]",
      algorithm: "gzip",

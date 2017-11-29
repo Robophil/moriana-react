@@ -2,3 +2,5 @@ node_modules/
 dist/
 npm-debug.log
 scratch.*
+deployment_configs.js
+deployment_credentials.js

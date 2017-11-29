@@ -3,7 +3,6 @@ import runTests from 'run-tests'
 const config = {
   backendUrl: '/',
   deploymentName: 'moriana',
-  startDate: '2013-07-01',
   isLocal: (window.location.href.indexOf('localhost') !== -1 || window.location.href.indexOf('127.0.0.1') !== -1)
 }
 

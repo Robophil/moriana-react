@@ -68,6 +68,7 @@ module.exports = {
    clientLogLevel: 'none'
  },
  plugins: [
+   new webpack.DefinePlugin({ 'MORIANA_ENVIRONMENT': '"development"' }),
    new webpack.HotModuleReplacementPlugin()
  ]
 };
