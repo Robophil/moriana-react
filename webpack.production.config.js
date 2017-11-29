@@ -44,7 +44,7 @@ module.exports = {
     ]
   },
  plugins: [
-   new webpack.DefinePlugin({ 'MORIANA_ENVIRONMENT': '"production"' }),
+   new webpack.DefinePlugin({ 'process.env.NODE_ENV': JSON.stringify('production') }),
    new webpack.optimize.UglifyJsPlugin({ sourceMap: true }),
    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   //  new webpack.optimize.CommonsChunkPlugin('common'),
