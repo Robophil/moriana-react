@@ -32,7 +32,7 @@ const HeaderSearch = class extends React.Component {
   }
 
   locationSelected = (location) => {
-    const link = `/#d/${this.props.dbName}/locations/${encodeURIComponent(location.name)}/`
+    const link = `#d/${this.props.dbName}/locations/${encodeURIComponent(location.name)}/`
     window.location.href = link
     this.props.closeClicked()
   }

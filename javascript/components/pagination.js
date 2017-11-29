@@ -14,13 +14,13 @@ export default class Pagination extends React.Component {
       <span className='pagination'>
         <ul>
           <li>
-            <a className={previousLinkClasses} href={`/#d/${dbName}/${previousNumber}`}>&nbsp; « &nbsp;</a>
+            <a className={previousLinkClasses} href={`#d/${dbName}/${previousNumber}`}>&nbsp; « &nbsp;</a>
           </li>
           <li>
             {h.num(startingNumber)} - {h.num(offset + displayedCount)} of {h.num(count)}
           </li>
           <li>
-            <a className={nextLinkClasses} href={`/#d/${dbName}/${nextNumber || offset}`}>&nbsp; » &nbsp;</a>
+            <a className={nextLinkClasses} href={`#d/${dbName}/${nextNumber || offset}`}>&nbsp; » &nbsp;</a>
           </li>
         </ul>
       </span>

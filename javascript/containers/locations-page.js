@@ -57,7 +57,7 @@ export class LocationsPage extends React.Component {
             <div className='shipments-header'>
               <h5>{pageName}</h5>
               <div>
-                <a href={`/#d/${dbName}/`}>Back to all shipments</a>
+                <a href={`#d/${dbName}/`}>Back to all shipments</a>
               </div>
               <div className='pull-right'>
                 <a href='#' onClick={this.downloadShipments} >Download</a>

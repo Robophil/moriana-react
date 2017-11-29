@@ -52,7 +52,7 @@ const SiteHeader = class extends React.Component {
     if (user.getUserFailed) window.location.hash = '#/login'
     const { dbName, currentLocationName } = route
     // const watermarkLetters = currentLocationName ? currentLocationName.split(' ').map(a => a[0]) : ''
-    const headerLink = dbName ? `/#d/${dbName}/` : '/'
+    const headerLink = dbName ? `#d/${dbName}/` : '/'
     const links = hl.getLinks(user, config.isLocal, currentLocationName)
     const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, dbName)
     const {openSection} = this.state

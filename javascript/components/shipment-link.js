@@ -1,7 +1,7 @@
 import React from 'react'
 
 export const buildHref = (id, dbName, details='') => {
-  return `/#d/${dbName}/shipment/${details}${id}`
+  return `#d/${dbName}/shipment/${details}${id}`
 }
 
 export default class ShipmentLink extends React.Component {

@@ -43,7 +43,7 @@ const EditShipmentPage = class extends React.Component {
     }
     if (deleted && savingShipment && !newProps.editshipment.savingShipment) {
       setTimeout(() => {
-        window.location.href = `/#d/${this.props.route.dbName}`
+        window.location.href = `#d/${this.props.route.dbName}`
       }, 500)
     }
   }
@@ -80,7 +80,7 @@ const EditShipmentPage = class extends React.Component {
     if (apiError) {
       return (
         <div className='alert alert-warning text-center'>
-          This shipment does not exist at this location. <a href={`/#d/${dbName}/`}>back</a> <br />
+          This shipment does not exist at this location. <a href={`#d/${dbName}/`}>back</a> <br />
           Details: {h.json(apiError)}
         </div>
       )

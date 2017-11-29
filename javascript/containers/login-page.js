@@ -13,7 +13,7 @@ const LoginPage = class extends React.Component {
   render () {
     // if (this.props.authenticated) return (<Redirect to='/' />)
     if (this.props.authenticated) {
-      window.location.href = '/#/'
+      window.location.href = '#/'
     }
     return (
       <div className='login-page'>

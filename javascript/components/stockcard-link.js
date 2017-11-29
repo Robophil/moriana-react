@@ -16,7 +16,7 @@ export default class extends React.Component {
 
 export const buildStockCardHref = (dbName, transaction, atBatch = false) => {
   const { item, category } = transaction
-  let link = `/#d/${dbName}/stockcard/${encodeURIComponent(category)}/${encodeURIComponent(item)}/`
+  let link = `#d/${dbName}/stockcard/${encodeURIComponent(category)}/${encodeURIComponent(item)}/`
   if (atBatch) {
     let { expiration, lot } = transaction
     expiration = expiration === null ? '' : expiration

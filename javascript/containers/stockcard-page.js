@@ -165,7 +165,7 @@ const StockCardPage = class extends React.Component {
               )}
             </div>
             <div className='footer-link'>
-              <a href={`/#d/${dbName}/stock/`}>Go to all items</a>
+              <a href={`#d/${dbName}/stock/`}>Go to all items</a>
             </div>
           </div>
         )}
