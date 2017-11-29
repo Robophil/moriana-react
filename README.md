@@ -108,7 +108,7 @@ React/Redux app. Follows parts of [this article](https://medium.com/javascript-s
 
 ## Tests
 
-Tests always run in the console during local development. `tests/run-tests.js` is the starting point, and anything included as a -spec file in the tests dir will run.
+run `npm test` or `npm i -g jest` then `jest --watchAll`
 
 ## Styles
 

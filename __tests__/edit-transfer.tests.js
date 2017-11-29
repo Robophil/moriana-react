@@ -1,10 +1,7 @@
 import editshipmentReducer, {
   updateShipmentAction
-} from 'editshipment'
-import {getShipment} from 'test-utils'
-
-import chai from 'chai'
-const expect = chai.expect
+} from 'store/editshipment'
+import {getShipment} from './test-utils'
 
 const initialState = editshipmentReducer({ shipment: getShipment('transfer') }, {})
 
@@ -19,18 +16,10 @@ const editedTransactions = [
 const getEditAction = (editedTransactions) => {
   return updateShipmentAction('transfer_transactions', {editedTransactions, item: testitem, category: testCategory}, testusername )
 }
-
 const testusername = 'testusername'
 
-export default {
-
-  'Adding a transfer transaction:': {
-    'on an empty shipment should include it as the first item' () {
-      const editedState = editshipmentReducer(initialState, getEditAction(editedTransactions))
-      const transactions = editedState.shipment.transactions
-      expect(transactions.length).eq(1)
-    },
-
-  }
-
-}
+test('Adding a transfer transaction on an empty shipment should include it as the first item', () => {
+  const editedState = editshipmentReducer(initialState, getEditAction(editedTransactions))
+  const transactions = editedState.shipment.transactions
+  expect(transactions.length).toBe(1)
+})
