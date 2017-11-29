@@ -21,7 +21,7 @@ import {
 import client from 'utils/client'
 import db from 'utils/db'
 import {showNote} from 'store/notifications'
-import clone from 'utils/utils'
+import {clone} from 'utils/utils'
 
 export const updateShipment = (key, value) => {
   return (dispatch, getState) => {

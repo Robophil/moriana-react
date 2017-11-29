@@ -1,6 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
-var CompressionPlugin = require('compression-webpack-plugin')
+const path = require('path')
+const webpack = require('webpack')
+const CompressionPlugin = require('compression-webpack-plugin')
 
 module.exports = {
   entry: './javascript/app.js',
@@ -42,14 +42,6 @@ module.exports = {
    new webpack.DefinePlugin({ 'process.env.NODE_ENV': JSON.stringify('production') }),
    new webpack.optimize.UglifyJsPlugin({ sourceMap: true }),
    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-  //  new webpack.optimize.CommonsChunkPlugin('common'),
-   new webpack.optimize.AggressiveMergingPlugin(),
-   new CompressionPlugin({
-     asset: "[path].gz[query]",
-     algorithm: "gzip",
-     test: /\.js$|\.css$|\.html$/,
-     threshold: 10240,
-     minRatio: 0.8
-   })
+   new webpack.optimize.AggressiveMergingPlugin()
  ]
 }

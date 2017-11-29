@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
+const path = require('path')
 const fs = require('fs')
-const cp = require('child_process')
 const args = require('minimist')(process.argv)
 const fetch = require('isomorphic-fetch')
 const credentials = require('./deployment_credentials')[args.env || 'dev']
 const config = require('./deployment_configs')[args.env || 'dev']
 
-const BUILT_JS_PATH = './../dist/app.js'
-const INDEX_HTML_PATH = './../index.html'
+const BUILT_JS_PATH = path.resolve(__dirname, './../dist/app.js')
+const INDEX_HTML_PATH = path.resolve(__dirname, './../index.html')
 
 const indexFile = makeIndexFile()
 const designDocUrl = `${credentials.url}${config.appDatabase}/_design/${config.appDesignDoc}`
