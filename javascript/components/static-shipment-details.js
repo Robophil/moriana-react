@@ -1,6 +1,6 @@
 import React from 'react'
-import h from 'helpers'
-import displayPatient from 'display-patient'
+import h from 'utils/helpers'
+import displayPatient from 'components/display-patient'
 
 export default class StaticShipmentDetails extends React.Component {
   render () {

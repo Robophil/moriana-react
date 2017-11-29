@@ -1,6 +1,7 @@
 import React from 'react'
-import h from 'helpers'
-import {getAMCDetails} from 'amc'
+
+import h from 'utils/helpers'
+import {getAMCDetails} from 'utils/amc'
 
 export default class extends React.Component {
   state = { show: false }

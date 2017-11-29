@@ -1,13 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getAllDocs } from 'alldocs'
-import { consumptionReport } from 'consumption-report'
-import { getLocations } from 'locations'
-import { shortDatedReport, expiredReport, outOfStockReport, dataQualityReport } from 'other-reports'
-import { DateFilters, CategoryFilteres } from 'report-filters'
-import ReportTable from 'report-table'
-import h, { buildDateFilters } from 'helpers'
-import download from 'download'
+
+import { getAllDocs } from 'store/alldocs'
+import { getLocations } from 'store/locations'
+import { shortDatedReport, expiredReport, outOfStockReport, dataQualityReport } from 'utils/other-reports'
+import { consumptionReport } from 'utils/consumption-report'
+import download from 'utils/download'
+import h, { buildDateFilters } from 'utils/helpers'
+import { DateFilters, CategoryFilteres } from 'components/report-filters'
+import ReportTable from 'components/report-table'
 
 const REPORT_TYPES = [
   { name: 'Monthly Consumption', slug: 'consumption' },

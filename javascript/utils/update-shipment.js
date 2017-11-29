@@ -16,12 +16,12 @@ import {
   SAVE_ERROR,
   PREVIOUS_TARGET_REMOVED,
   updateShipmentAction
-} from 'editshipment'
+} from 'store/editshipment'
 
-import client from 'client'
-import db from 'db'
-import {showNote} from 'notifications'
-import clone from 'clone'
+import client from 'utils/client'
+import db from 'utils/db'
+import {showNote} from 'store/notifications'
+import clone from 'utils/utils'
 
 export const updateShipment = (key, value) => {
   return (dispatch, getState) => {

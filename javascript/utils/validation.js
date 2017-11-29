@@ -1,4 +1,4 @@
-import {isNumeric, empty, isNumber} from 'utils'
+import {isNumeric, empty, isNumber} from 'utils/utils'
 import Moment from 'moment'
 
 export const isISODate = (d) => {
@@ -45,7 +45,7 @@ export const expirationIsValid = (input) => {
   }
 }
 
-// dob can be given in years, see input-transformations
+// dob can be given in years, see utils/input-transformations
 export const dobIsValid = (input) => {
   if (input) {
     return isNumeric(input) || dateIsValid(input)

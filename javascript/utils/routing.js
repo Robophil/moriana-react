@@ -1,5 +1,5 @@
-import h from 'helpers'
-import db from 'db'
+import h from 'utils/helpers'
+import db from 'utils/db'
 
 export const parseHash = (hash, PAGES) => {
   const route = { dbName: null, currentLocationName: null, path: '/', params: {} }

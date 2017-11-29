@@ -2,16 +2,14 @@ import React from 'react'
 import { connect } from 'react-redux'
 import ClickOutHandler from 'react-onclickout'
 
-import { getUser, logout } from 'user'
-
-import hl from 'header-links'
-import HeaderSearch from 'header-search'
-import Logo from 'logo'
-import NotificationsList from 'notifications-list'
-import {clearNote} from 'notifications'
-
 import config from 'config'
-import h from 'helpers'
+import { getUser, logout } from 'store/user'
+import {clearNote} from 'store/notifications'
+import hl from 'utils/header-links'
+import h from 'utils/helpers'
+import HeaderSearch from 'containers/header-search'
+import NotificationsList from 'components/notifications-list'
+import Logo from 'components/logo'
 
 const SiteHeader = class extends React.Component {
   state = { openSection: null }

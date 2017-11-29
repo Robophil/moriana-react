@@ -1,10 +1,10 @@
 // actions and reducer for editing a shipment
 // thunks are in utils/update-shipment
 
-import {clone, generateId} from 'utils'
-import { validateShipment } from 'validation'
-import { updateShipment } from 'update-shipment'
-import { REQUEST_SHIPMENT, RECEIVED_SHIPMENT, SHIPMENTS_ERROR } from 'shipments'
+import {clone, generateId} from 'utils/utils'
+import { validateShipment } from 'utils/validation'
+import { updateShipment } from 'utils/update-shipment'
+import { REQUEST_SHIPMENT, RECEIVED_SHIPMENT, SHIPMENTS_ERROR } from 'store/shipments'
 
 export const START_NEW_SHIPMENT = 'START_NEW_SHIPMENT'
 export const UPDATE_SHIPMENT = 'UPDATE_SHIPMENT'

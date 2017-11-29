@@ -1,7 +1,7 @@
 // actions and reducer for viewing items
 
-import client from 'client'
-import clone from 'clone'
+import client from 'utils/client'
+import {clone} from 'utils/utils'
 
 export const REQUEST_ITEMS = 'REQUEST_ITEMS'
 export const RECEIVED_ITEMS = 'RECEIVED_ITEMS'

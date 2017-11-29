@@ -1,8 +1,9 @@
 import React from 'react'
-import h from 'helpers'
 import ClickOutHandler from 'react-onclickout'
-import SearchDrop from 'search-drop'
-import {searchCategories} from 'items'
+
+import {searchCategories} from 'store/items'
+import h from 'utils/helpers'
+import SearchDrop from 'components/search-drop'
 
 export default class NewItem extends React.Component {
   state = { item: '', category: '' }

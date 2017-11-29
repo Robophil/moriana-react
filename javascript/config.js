@@ -1,5 +1,3 @@
-import runTests from 'run-tests'
-
 const config = {
   backendUrl: '/',
   deploymentName: 'moriana',
@@ -8,7 +6,6 @@ const config = {
 
 if (process.env.NODE_ENV === 'development') {
   config.backendUrl = 'http://localhost:5984/'
-  runTests()
 }
 
 export default config

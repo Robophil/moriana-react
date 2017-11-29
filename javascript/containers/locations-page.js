@@ -1,9 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import {getShipments, filterShipmentsByLocation} from 'shipments'
-import ShipmentsTable from 'shipments-table'
-import download from 'download'
-import {shipmentsDownloadHeaders} from 'shipments-page'
+
+import {getShipments, filterShipmentsByLocation} from 'store/shipments'
+import ShipmentsTable from 'components/shipments-table'
+import download from 'utils/download'
+import {shipmentsDownloadHeaders} from 'containers/shipments-page'
 
 export class LocationsPage extends React.Component {
   state = { pageName: '', shipmentsAtThisLocation: [] }

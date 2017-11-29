@@ -1,4 +1,4 @@
-import client from 'client'
+import client from 'utils/client'
 
 export const REQUEST_STOCK = 'REQUEST_STOCK'
 export const RECEIVED_STOCK = 'RECEIVED_STOCK'

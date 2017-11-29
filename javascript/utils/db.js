@@ -1,5 +1,5 @@
 import config from 'config'
-import {removeExtraWhiteSpace} from 'utils'
+import {removeExtraWhiteSpace} from 'utils/utils'
 
 export default {
   getNamefromDBName (input, deploymentName = config ? config.deploymentName : 'moriana') {

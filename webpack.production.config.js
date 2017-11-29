@@ -12,11 +12,6 @@ module.exports = {
   resolve: {
     modules: [
       path.resolve(__dirname, 'javascript'),
-      path.resolve(__dirname, 'javascript', 'components'),
-      path.resolve(__dirname, 'javascript', 'containers'),
-      path.resolve(__dirname, 'javascript', 'store'),
-      path.resolve(__dirname, 'javascript', 'utils'),
-      path.resolve(__dirname, 'javascript', 'tests'),
       path.resolve(__dirname, 'node_modules')
     ]
   },

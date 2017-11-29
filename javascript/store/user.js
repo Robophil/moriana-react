@@ -1,8 +1,8 @@
 // actions and reducer for user
-import client from 'client'
-import h from 'helpers'
 import config from 'config'
-import db from 'db'
+import client from 'utils/client'
+import h from 'utils/helpers'
+import db from 'utils/db'
 
 export const REQUEST_USER = 'REQUEST_USER'
 export const RECEIVED_USER = 'RECEIVED_USER'

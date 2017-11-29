@@ -1,5 +1,5 @@
 // actions and reducer for notifications to user
-import clone from 'clone'
+import {clone} from 'utils/utils'
 
 // show note: clear all notes and only show this one
 // add note: add to the list of notifications

@@ -1,6 +1,6 @@
 import React from 'react'
-import h from 'helpers'
-import {buildStockCardHref} from 'stockcard-link'
+import h from 'utils/helpers'
+import {buildStockCardHref} from 'components/stockcard-link'
 
 export default class extends React.Component {
   filter = (event) => {

@@ -1,10 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import {getShipments} from 'shipments'
-import {fetchAllShipments} from 'alldocs'
-import ShipmentsTable from 'shipments-table'
-import Pagination from 'pagination'
-import download from 'download'
+
+import {getShipments} from 'store/shipments'
+import {fetchAllShipments} from 'store/alldocs'
+import download from 'utils/download'
+import ShipmentsTable from 'components/shipments-table'
+import Pagination from 'components/pagination'
 
 export class ShipmentsPage extends React.Component {
   state = { limit: 100, loadingAllShipments: false }

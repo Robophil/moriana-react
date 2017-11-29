@@ -1,6 +1,6 @@
 import React from 'react'
-import h from 'helpers'
 import ClickOutHandler from 'react-onclickout'
+import h from 'utils/helpers'
 
 export default class NewLocation extends React.Component {
   state = { name: '', checked: false }

@@ -1,8 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getItems } from 'items'
-import {buildStockCardHref} from 'stockcard-link'
-import h from 'helpers'
+import { getItems } from 'store/items'
+import h from 'utils/helpers'
+import {buildStockCardHref} from 'components/stockcard-link'
 
 const CurrentStockPage = class extends React.Component {
   state = { activeFilter: 'all', displayedItems: null }

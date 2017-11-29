@@ -1,8 +1,8 @@
 // actions and reducer for all docs
 import Moment from 'moment'
-import client from 'client'
-import { getCategories } from 'items'
-import clone from 'clone'
+import client from 'utils/client'
+import { getCategories } from 'store/items'
+import {clone} from 'utils/utils'
 
 // actions
 

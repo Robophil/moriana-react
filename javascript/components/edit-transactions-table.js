@@ -1,5 +1,5 @@
 import React from 'react'
-import h from 'helpers'
+import h from 'utils/helpers'
 
 export default class EditTransactionsTable extends React.Component {
   onClick = (event) => {

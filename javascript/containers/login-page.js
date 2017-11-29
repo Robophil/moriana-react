@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { login } from 'user'
+import { login } from 'store/user'
 
 const LoginPage = class extends React.Component {
   state = {}

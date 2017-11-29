@@ -1,7 +1,7 @@
 import React from 'react'
-import h from 'helpers'
-import ShipmentLink from 'shipment-link'
-import {buildHref} from 'shipment-link'
+import h from 'utils/helpers'
+import ShipmentLink from 'components/shipment-link'
+import {buildHref} from 'components/shipment-link'
 
 export default class extends React.Component {
   shipmentClicked = (event) => {

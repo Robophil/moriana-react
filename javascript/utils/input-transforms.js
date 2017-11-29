@@ -1,5 +1,5 @@
 import Moment from 'moment'
-import clone from 'clone'
+import {clone} from 'utils/utils'
 
 export const getISODateFromInput = (inputDate) => {
   let date = null

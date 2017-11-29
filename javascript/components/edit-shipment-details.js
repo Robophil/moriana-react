@@ -1,13 +1,14 @@
 import React from 'react'
-import { searchLocations } from 'locations'
-import DateInput from 'date-input'
-import SearchDrop from 'search-drop'
-import VendorIdInput from 'vendor-id-input'
-import NewLocation from 'new-location'
-import NewPatient from 'new-patient'
-import StaticInput from 'static-input'
-import displayPatient from 'display-patient'
-import displayLocation from 'display-location'
+
+import { searchLocations } from 'store/locations'
+import StaticInput from 'components/static-input'
+import DateInput from 'components/date-input'
+import SearchDrop from 'components/search-drop'
+import VendorIdInput from 'components/vendor-id-input'
+import NewLocation from 'components/new-location'
+import NewPatient from 'components/new-patient'
+import displayPatient from 'components/display-patient'
+import displayLocation from 'components/display-location'
 
 export default class EditShipmentDetails extends React.Component {
   state = {

@@ -1,11 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getItems, searchItems, displayItemName } from 'items'
-import { getLocations, searchLocations } from 'locations'
-import displayLocation from 'display-location'
-import h from 'helpers'
-import {buildStockCardHref} from 'stockcard-link'
-import SearchDrop from 'search-drop'
+import { getItems, searchItems, displayItemName } from 'store/items'
+import { getLocations, searchLocations } from 'store/locations'
+import h from 'utils/helpers'
+import displayLocation from 'components/display-location'
+import {buildStockCardHref} from 'components/stockcard-link'
+import SearchDrop from 'components/search-drop'
 
 const HeaderSearch = class extends React.Component {
   state = { itemsOpen: true }

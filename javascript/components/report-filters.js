@@ -1,7 +1,7 @@
 import React from 'react'
 import Moment from 'moment'
-import DateInput from 'date-input'
-import h from 'helpers'
+import h from 'utils/helpers'
+import DateInput from 'components/date-input'
 
 export class DateFilters extends React.Component {
   state = { startDate: '', endDate: '', chronologyError: false }

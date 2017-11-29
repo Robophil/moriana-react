@@ -3,9 +3,9 @@
 - also, on user received action, adds user roles for internal locations
 - doesn't request user as that's always done on app init
 */
-import client from 'client'
-import {objectFromKeys} from 'utils'
-import { RECEIVED_USER, parseRoles } from 'user'
+import client from 'utils/client'
+import {objectFromKeys} from 'utils/utils'
+import { RECEIVED_USER, parseRoles } from 'store/user'
 
 export const REQUEST_LOCATIONS = 'REQUEST_LOCATIONS'
 export const RECEIVED_LOCATIONS = 'RECEIVED_LOCATIONS'

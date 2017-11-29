@@ -1,8 +1,9 @@
 import React from 'react'
-import h from 'helpers'
-import StaticInput from 'static-input'
-import {dateIsValid} from 'validation'
-import {getISODateFromInput} from 'input-transforms'
+
+import h from 'utils/helpers'
+import StaticInput from 'components/static-input'
+import {dateIsValid} from 'utils/validation'
+import {getISODateFromInput} from 'utils/input-transforms'
 
 export default class DateInput extends React.Component {
   state = { showEdit: true, inputValue: '', error: false }

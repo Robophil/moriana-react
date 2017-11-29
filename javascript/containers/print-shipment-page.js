@@ -1,11 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import config from 'config'
-import { getShipment } from 'shipments'
-import h from 'helpers'
-import ShipmentLink from 'shipment-link'
-import StaticShipmentDetails from 'static-shipment-details'
-import {buildStockCardHref} from 'stockcard-link'
+import { getShipment } from 'store/shipments'
+import h from 'utils/helpers'
+import ShipmentLink from 'components/shipment-link'
+import StaticShipmentDetails from 'components/static-shipment-details'
+import {buildStockCardHref} from 'components/stockcard-link'
 
 const T_PER_PAGE = 10
 

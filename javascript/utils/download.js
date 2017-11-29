@@ -1,4 +1,4 @@
-import h from 'helpers'
+import h from 'utils/helpers'
 
 // headers are expected as ordered list of objects: { name: 'Shipment Date', key: 'date' }
 

@@ -1,13 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { getStock } from 'stock'
-import { getLocations } from 'locations'
-import QuantityByBatch from 'quantity-by-batch'
-import AMCTable from 'amc-table'
-import {buildHref} from 'shipment-link'
-import StockCardLink from 'stockcard-link'
-import h from 'helpers'
-import download from 'download'
+import { getStock } from 'store/stock'
+import { getLocations } from 'store/locations'
+import h from 'utils/helpers'
+import download from 'utils/download'
+import QuantityByBatch from 'components/quantity-by-batch'
+import AMCTable from 'components/amc-table'
+import {buildHref} from 'components/shipment-link'
+import StockCardLink from 'components/stockcard-link'
+
 
 const VISIBLE_TRANSACTIONS_LIMIT = 100
 

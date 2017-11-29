@@ -1,5 +1,5 @@
 // actions and reducer for admin
-import client from 'client'
+import client from 'utils/client'
 
 export const GET_USERS_REQUEST = 'GET_USERS_REQUEST'
 export const GET_USERS_SUCCESS = 'GET_USERS_SUCCESS'

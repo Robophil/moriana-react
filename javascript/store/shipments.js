@@ -1,8 +1,8 @@
 // actions and reducer for viewing shipments
-import client from 'client'
-import {objectFromKeys} from 'utils'
-import h from 'helpers'
-import db from 'db'
+import client from 'utils/client'
+import {objectFromKeys} from 'utils/utils'
+import h from 'utils/helpers'
+import db from 'utils/db'
 
 export const REQUEST_SHIPMENT = 'REQUEST_SHIPMENT'
 export const RECEIVED_SHIPMENT = 'RECEIVED_SHIPMENT'

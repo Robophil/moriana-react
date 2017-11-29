@@ -1,11 +1,12 @@
 import React from 'react'
-import h from 'helpers'
-import { searchLocations } from 'locations'
-import { getDobFromInput, getPatientForShipment } from 'input-transforms'
-import {dobIsValid} from 'validation'
 import ClickOutHandler from 'react-onclickout'
-import SearchDrop from 'search-drop'
-import StaticInput from 'static-input'
+
+import { searchLocations } from 'store/locations'
+import h from 'utils/helpers'
+import { getDobFromInput, getPatientForShipment } from 'utils/input-transforms'
+import {dobIsValid} from 'utils/validation'
+import SearchDrop from 'components/search-drop'
+import StaticInput from 'components/static-input'
 
 export default class NewLocation extends React.Component {
   state = {

@@ -1,7 +1,7 @@
 import React from 'react'
-import h from 'helpers'
 import ClickOutHandler from 'react-onclickout'
-import StaticInput from 'static-input'
+import h from 'utils/helpers'
+import StaticInput from 'components/static-input'
 
 const LIMIT = 25
 
