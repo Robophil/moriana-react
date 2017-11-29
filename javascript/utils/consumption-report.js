@@ -1,5 +1,5 @@
-import { getItemHeaders, sortByItemName } from 'other-reports'
-import { getAMCByMonths } from 'amc'
+import { getItemHeaders, sortByItemName } from 'utils/other-reports'
+import { getAMCByMonths } from 'utils/amc'
 
 const DISPLAY_HEADERS = [
   { key: 'amc', name: 'AMC' },
