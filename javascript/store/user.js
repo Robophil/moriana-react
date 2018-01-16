@@ -3,10 +3,15 @@ import config from 'config'
 import client from 'utils/client'
 import h from 'utils/helpers'
 import db from 'utils/db'
+import {clone} from 'utils/utils'
 
 export const REQUEST_USER = 'REQUEST_USER'
 export const RECEIVED_USER = 'RECEIVED_USER'
-export const FAILED_USER = 'FAILED_USER'
+export const USER_NOT_FOUND = 'USER_NOT_FOUND'
+export const UPDATE_USER = 'UPDATE_USER'
+export const UPDATED_USER = 'UPDATED_USER'
+export const API_ERROR = 'API_ERROR'
+
 export const RECEIVED_USERS = 'RECEIVED_USERS'
 export const SUCCESS_LOGIN = 'SUCCESS_LOGIN'
 export const FAILURE_LOGIN = 'FAILURE_LOGIN'
@@ -19,7 +24,7 @@ export const getUser = () => {
         if (userCtx.name) {
           dispatch({ type: RECEIVED_USER, userCtx })
         } else {
-          dispatch({ type: FAILED_USER })
+          dispatch({ type: USER_NOT_FOUND })
         }
       })
   }
@@ -34,6 +39,22 @@ export const getUsers = () => {
     ])
     .then(response => {
       dispatch({ type: RECEIVED_USERS, users: parseUsersWithDatabases(response) })
+    })
+  }
+}
+
+export const changeRole = (user, role) => {
+  return dispatch => {
+    dispatch({ type: UPDATE_USER })
+    const changedUser = withRoleChange(user, role)
+    client.put(`_users/${changedUser.doc._id}`, changedUser.doc)
+    .then(response => {
+      if (response.status < 300) {
+        changedUser.doc._rev = response.body.rev
+        dispatch({ type: UPDATED_USER, user: changedUser })
+      } else {
+        dispatch({ type: API_ERROR, error: response.body })
+      }
     })
   }
 }
@@ -73,19 +94,35 @@ const defaultAuth = {
   isAdmin: false,
   getUserFailed: false,
   dbName: null,
+  updatingUser: false,
   users: []
 }
 
 export default (state = defaultAuth, action) => {
   switch (action.type) {
     case REQUEST_USER: {
-      return { ...defaultAuth, loading: true }
+      return { ...defaultAuth, apiError: null, loading: true }
     }
     case RECEIVED_USER: {
-      return { ...state, ...parseUser(action.userCtx), loading: false, authenticated: true }
+      return { ...state, ...parseUser(action.userCtx), apiError: null, loading: false, authenticated: true }
     }
-    case FAILED_USER: {
-      return { ...defaultAuth, loading: false, getUserFailed: true }
+    case USER_NOT_FOUND: {
+      return { ...defaultAuth, loading: false, apiError: null, getUserFailed: true }
+    }
+    case UPDATE_USER: {
+      const newState = clone(state)
+      return { ...newState, apiError: null, updatingUser: true }
+    }
+    case UPDATED_USER: {
+      const newState = clone(state)
+      const { user } = action
+      const indexOfUser = newState.users.findIndex(u => u.doc._id === user.doc._id)
+      newState.users[indexOfUser] = user
+      return { ...newState, apiError: null, updatingUser: false }
+    }
+    case API_ERROR: {
+      const newState = clone(state)
+      return { ...newState, apiError: action.error, updatingUser: false, loading: false  }
     }
     case RECEIVED_USERS: {
       return { ...state, loading: false, users: action.users }
@@ -147,4 +184,23 @@ const mapRoles = (databases, roles) => {
     }
     return memo
   }, [])
+}
+
+export const withRoleChange = (inputUser, role) => {
+  const user = clone(inputUser)
+  const roleIndex = user.doc.roles.indexOf(role)
+  if (roleIndex === -1) {
+    user.doc.roles.push(role)
+  } else {
+    user.doc.roles.splice(roleIndex, 1)
+  }
+
+  user.databases = user.databases.map(database => {
+    if (database.dbName === role) {
+      database.hasAccess = (roleIndex === -1)
+    }
+    return database
+  })
+
+  return user
 }

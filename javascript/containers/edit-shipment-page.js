@@ -7,7 +7,6 @@ import { updateShipment } from 'utils/update-shipment'
 import { getStockForEdit } from 'store/stock'
 import { getLocations } from 'store/locations'
 import { getItems, addItem } from 'store/items'
-import { showNote } from 'store/notifications'
 import h from 'utils/helpers'
 import ShipmentLink from 'components/shipment-link'
 import DeleteShipmentModal from 'components/delete-shipment-modal'
@@ -185,7 +184,6 @@ export default connect(
     getItems,
     addItem,
     getLocations,
-    showNote,
     getStockForEdit
   }
 )(EditShipmentPage)

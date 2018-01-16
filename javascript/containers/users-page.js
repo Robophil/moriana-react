@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { getUsers } from 'store/user'
+import { getUsers, changeRole } from 'store/user'
+import { showNote, clearNotes } from 'store/notifications'
 
 export class UsersPage extends React.Component {
   componentDidMount = () => {
@@ -9,7 +10,16 @@ export class UsersPage extends React.Component {
   }
 
   changeAccess = (user, dbName) => {
-    console.log(user, dbName)
+    this.props.changeRole(user, dbName)
+  }
+
+  componentWillReceiveProps = (newProps) => {
+    if (!this.props.apiError && newProps.apiError) {
+      const error = JSON.stringify(newProps.apiError)
+      this.props.showNote(`Error editing user: ${error}`, false)
+    } else if (this.props.apiError && !newProps.apiError) {
+      this.props.clearNotes()
+    }
   }
 
   render () {
@@ -40,7 +50,7 @@ export class UsersPage extends React.Component {
                       return (
                         <button
                           key={j}
-                          onClick={(e) => this.changeAccess(user.doc, db.dbName)}
+                          onClick={(e) => this.changeAccess(user, db.dbName)}
                           className={classes}
                         >
                           {db.name}
@@ -60,5 +70,5 @@ export class UsersPage extends React.Component {
 
 export default connect(
   state => state.user,
-  { getUsers }
+  { getUsers, changeRole, showNote, clearNotes }
 )(UsersPage)
