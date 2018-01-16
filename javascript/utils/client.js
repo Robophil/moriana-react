@@ -4,8 +4,10 @@ import fetch from 'isomorphic-fetch'
 import config from 'config'
 
 export default {
-  get (url, params) {
-    return fetch(config.backendUrl + url, { credentials: 'include', body: params })
+  get (resource, params) {
+    let url = config.backendUrl + resource
+    if (params) url = `${url}?${getParams(params)}`
+    return fetch(url, { credentials: 'include' })
     .then(parseJSON)
     .catch(parseError)
   },

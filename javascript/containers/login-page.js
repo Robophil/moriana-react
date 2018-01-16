@@ -11,7 +11,6 @@ const LoginPage = class extends React.Component {
   }
 
   render () {
-    // if (this.props.authenticated) return (<Redirect to='/' />)
     if (this.props.authenticated) {
       window.location.href = '#/'
     }
@@ -20,11 +19,11 @@ const LoginPage = class extends React.Component {
         <h1>Login to Moriana</h1>
         <form onSubmit={this.onSubmit}>
           <div>
-            {/* <label>Username</label> */}
+            <label>Username</label>
             <input type='text' placeholder='Username' ref='username' autoFocus />
           </div>
           <div>
-            {/* <label>Password</label> */}
+            <label>Password</label>
             <input type='password' placeholder='Password' ref='password' />
             {this.props.authError && ( <p className='error'>Incorrect username or password.</p> )}
           </div>

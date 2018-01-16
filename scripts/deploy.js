@@ -1,10 +1,12 @@
 #!/usr/bin/env node
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
 const path = require('path')
 const fs = require('fs')
-const args = require('minimist')(process.argv)
+const args = require('minimist')(process.argv.slice(2))
 const fetch = require('isomorphic-fetch')
 const credentials = require('./deployment_credentials')[args.env || 'dev']
+console.log(credentials)
 const config = require('./deployment_configs')[args.env || 'dev']
 
 const BUILT_JS_PATH = path.resolve(__dirname, './../dist/app.js')

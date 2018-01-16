@@ -73,8 +73,7 @@ export default (state = defaultShipments, action) => {
       return { ...state, loading: false, currentShipment: action.shipment, ...action.meta }
     }
     case REQUEST_SHIPMENTS: {
-      const loading = (action.offset !== state.offsetLoaded)
-      return { ...state, loading, apiError: null }
+      return { ...state, loading: true, apiError: null }
     }
     case RECEIVED_SHIPMENTS: {
       const offsetLoaded = action.response.offset

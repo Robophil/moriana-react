@@ -3,16 +3,16 @@ export default {
   getSublinks (prettyRoles, isLocal, dbName) {
     const subLinks = {
       account: [
-        { title: 'Account', url: '/account' },
-        { title: 'Status', url: '/status/' },
+        { title: 'Account', url: '#/account' },
+        { title: 'Status', url: '#/status/' },
         { title: 'Log Out', url: '/logout' }
       ],
       admin: [
-        { title: 'Users', url: '/admin/users/' },
-        { title: 'Databases', url: '/admin/databases/' },
-        { title: 'Queries', url: '/admin/queries/' },
-        { title: 'Replicate', url: '/admin/replicate/' },
-        { title: 'Delete Doc', url: '/admin/delete-doc/' }
+        { title: 'Users', url: '#/admin/users/' },
+        { title: 'Databases', url: '#/admin/databases/' },
+        { title: 'Queries', url: '#/admin/queries/' },
+        { title: 'Replicate', url: '#/admin/replicate/' },
+        { title: 'Delete Doc', url: '#/admin/delete-doc/' }
       ],
       view: [
         { title: 'Shipments', url: `#d/${dbName}/` },

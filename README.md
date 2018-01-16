@@ -115,3 +115,27 @@ run `npm test` or `npm i -g jest` then `jest --watchAll`
 Moriana uses Less, normalize 3.0.2, and a modified version of the skeleton css boilerplate (getskeleton.com). Skeleton un-minified is 11KB and is not under active development. In Moriana it is (a) not included through a package manager and (b) slightly modified to quickly fit the project needs. Other frameworks (Bootstrap, Semantic, Material) were found to be too heavy and complicated to be as useful as skeleton.
 
 Icons and animations added development time and file size without much end user benefit and were removed.
+
+## Deploying to an environment
+
+npm run deploy -- --env [dev or production or whatever you have setup in deployment_config.js & deployment_credentials.js]
+
+
+## Preact
+
+Switching to Preact took the total HTML5 app size from 378KB to 299KB. However, components started calling componentDidMount twice. Maybe user error, but was not worth always worrying about the difference, and switched back to React for the time being.
+
+webpack config to change to preact, in `resolve` after `modules`
+
+    alias: {
+      'react': 'preact-compat',
+      'react-dom': 'preact-compat'
+    }
+
+
+and in package.json:
+
+    "moduleNameMapper": {
+      "^react$": "preact-compat",
+      "^react-dom$": "preact-compat"
+    }

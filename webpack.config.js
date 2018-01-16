@@ -13,11 +13,11 @@ module.exports = {
     modules: [
       path.resolve(__dirname, 'javascript'),
       path.resolve(__dirname, 'node_modules')
-    ],
-    alias: {
-        'react': 'preact-compat',
-        'react-dom': 'preact-compat'
-    }
+    ]
+    // alias: {
+    //   'react': 'preact-compat',
+    //   'react-dom': 'preact-compat'
+    // }
   },
   module: {
     rules: [

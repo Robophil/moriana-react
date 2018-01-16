@@ -14,6 +14,7 @@ import CurrentStockPage from 'containers/current-stock-page'
 import ReportsPage from 'containers/reports-page'
 import EditShipmentPage from 'containers/edit-shipment-page'
 import LocationsPage from 'containers/locations-page'
+import UsersPage from 'containers/users-page'
 import SiteFooter from 'components/site-footer'
 
 require('./styles/app.less')
@@ -30,25 +31,28 @@ const PAGES = {
   'stockcard': { component: StockCardPage, paramKeys: ['category', 'item', 'atBatch'] },
   'reports': { component: ReportsPage, paramKeys: ['reportView'] },
   'locations': { component: LocationsPage, paramKeys: ['location'] },
-  'stock': { component: CurrentStockPage }
+  'stock': { component: CurrentStockPage },
+  'admin/users': { component: UsersPage }
 }
 
 class App extends React.Component {
   state = {
     route: parseHash(window.location.hash, PAGES)
   }
-  componentDidMount = () => {
-    window.addEventListener('hashchange', (event) => {
-      // reset state on db change
-      const newRoute = parseHash(window.location.hash, PAGES)
-      const { dbName } = this.state.route
-      if (newRoute.dbName !== dbName && dbName !== null) {
-        // reload page instead of clear store; for occassional application updates.
-        window.location.reload()
-      }
-      this.setState({ route: newRoute })
-    })
+
+  onHashChange = (event) => {
+    const newRoute = parseHash(window.location.hash, PAGES)
+    this.setState({ route: newRoute })
   }
+
+  componentDidMount = () => {
+    window.addEventListener('hashchange', this.onHashChange)
+  }
+
+  componentWillUnmount = () => {
+    window.removeEventListener('hashchange', this.onHashChange)
+  }
+
   render () {
     const pageName = this.state.route.path
     const page = PAGES[pageName]

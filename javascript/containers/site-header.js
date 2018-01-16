@@ -4,7 +4,7 @@ import ClickOutHandler from 'react-onclickout'
 
 import config from 'config'
 import { getUser, logout } from 'store/user'
-import {clearNote} from 'store/notifications'
+import { clearNote } from 'store/notifications'
 import hl from 'utils/header-links'
 import h from 'utils/helpers'
 import HeaderSearch from 'containers/header-search'
@@ -14,18 +14,28 @@ import Logo from 'components/logo'
 const SiteHeader = class extends React.Component {
   state = { openSection: null }
 
+  checkAndHandleForwardSlash = (event) => {
+    if (event.target.nodeName === 'BODY' && h.keyMap(event.keyCode) === 'FORWARD_SLASH') {
+      this.setState({ openSection: 'search' })
+    }
+  }
+
   componentDidMount = () => {
     this.props.getUser()
-    const { dbName, path } = this.props.route
-    if (!dbName && path === '/') {
-      this.setState({ openSection: 'database' })
-    }
-    document.addEventListener('keyup', (event) => {
-      if (event.target.nodeName === 'BODY' && h.keyMap(event.keyCode) === 'FORWARD_SLASH') {
-        this.setState({ openSection: 'search' })
-      }
-    })
+    document.addEventListener('keyup', this.checkAndHandleForwardSlash)
   }
+
+  componentWillUnmount = () => {
+    document.removeEventListener('keyup', this.checkAndHandleForwardSlash)
+  }
+
+  componentWillReceiveProps = (props) => {
+    if (props.route.path == '/' && !props.route.dbName) {
+      const openSection = props.user.isAdmin ? 'admin' : 'database'
+      this.setState({ openSection })
+    }
+  }
+
   clickLogout = this.props.logout
 
   showSection = (e) => {
@@ -51,7 +61,6 @@ const SiteHeader = class extends React.Component {
     const { user, route } = this.props
     if (user.getUserFailed) window.location.hash = '#/login'
     const { dbName, currentLocationName } = route
-    // const watermarkLetters = currentLocationName ? currentLocationName.split(' ').map(a => a[0]) : ''
     const headerLink = dbName ? `#d/${dbName}/` : '/'
     const links = hl.getLinks(user, config.isLocal, currentLocationName)
     const subsections = hl.getSublinks(user.prettyRoles, config.isLocal, dbName)
@@ -102,7 +111,6 @@ const SiteHeader = class extends React.Component {
             notifications={this.props.notifications}
           />
         </ClickOutHandler>
-        {/* <span className='watermark'>{watermarkLetters}</span> */}
       </div>
     )
   }
